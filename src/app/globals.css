@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Protest+Guerrilla&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -190,14 +191,257 @@ h1, h2, h3, h4, h5, h6, p {
   line-height: 1.6;
 }
 
-/* slider arrows */
 
-/* .prev-button,
-.next-button {
+.infinite-scroll-component__outerdiv {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  width: 100%;
+}
+
+.active-profile {
+  visibility: visible;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.search-user:last-child > span:first-child {
   display: none;
 }
 
-.prev-button:not(.swiper-button-disabled),
-.next-button:not(.swiper-button-disabled) {
-  display: block;
-} */
+/* Responsive */
+
+@media (max-width: 1000px) {
+  .title-posts {
+    margin-top: 20px;  
+  }
+
+  .profile-detail {
+    display: flex;
+    flex-direction: column-reverse;
+  }
+
+  .block-info {
+    position: static;
+  }
+
+  .posts-profile {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .back-profile {
+    border-radius: 10px;
+  }
+
+  .avatar-profile {
+    margin-top: 0;
+  }
+
+  .profile-top {
+    margin-top: 10px;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .settings-top {
+    margin-top: 10px;
+  }
+}
+
+@media(max-width: 1100px) {
+  .mob-panel {
+    display: block;
+  }
+
+  .header {
+    width: 100%;
+    left: 0;
+  }
+
+  .logo-mob {
+    display: flex;
+  }
+
+  .header-left {
+    gap: 20px;
+  }
+
+  .search-button-mob {
+    display: block;
+  }
+  
+  .search-block {
+    visibility: hidden;
+    opacity: 0;
+    position: absolute;
+    top: -85px;
+    left: 0;
+    max-width: 100%;
+    height: 100%;
+    transition: all .2s ease-in-out;
+    z-index: 1000;
+  }
+
+  .active-search {
+    visibility: visible;
+    opacity: 1;
+    top: 0;
+  }
+
+  .search-block label {
+    width: 100%;
+    height: 100%;
+    @apply bg-[#EAEAEA] dark:bg-[#171717];
+    border: 0;
+  }
+
+  .profile-modal {
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 100%;
+    border-radius: 0;
+    opacity: 1;
+    transform: translateX(100%);
+    transition: all .4s ease-in-out;
+    border: 0;
+
+    display: flex;
+    flex-direction: column;
+  }
+
+  .active-profile {
+    visibility: visible;
+    transform: translateX(0);
+  }
+
+  .main-back {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    @apply bg-[#333333]/40 dark:bg-[#333333]/40;
+    z-index: -1;
+    opacity: 0;
+    visibility: hidden;
+    transition: all .3s ease-in-out;
+  }
+
+  .active-back {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .ul-profile {
+    flex-grow: 1; 
+  }
+
+  .ul-profile li:last-child {
+    margin-top: auto;
+  }
+
+  .dashboard {
+    display: none;
+  }
+
+  .main {
+    grid-template-columns: 1fr;
+    margin-bottom: 60px;
+  }
+
+  .slider {
+    width: 100%;
+  }
+
+  .img-h {
+    max-height: 100%;
+    height: fit-content;
+  }
+
+  .search-mob {
+    display: none;
+  }
+
+  .create-post {
+    display: none;
+  }
+
+  .kepler {
+    display: block;
+  }
+
+}
+
+@media(max-width: 600px) {
+
+  .slide-h {
+    height: 300px;
+  }
+  
+  .s {
+    height: 100vh;
+  }
+ 
+  .skeleton-posts {
+    display: none;
+  }
+
+  .button-comment {
+    width: 100%;
+  }
+
+  .search-post {
+    flex-direction: column-reverse;
+    align-items: start;
+  }
+
+  .search-post > img {
+    width: 100%;
+  }
+
+  .skeleton-post {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 10px;
+  }
+
+  .photo-block {
+    overflow: auto;
+  }
+
+  .create-post-button {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .edit-post {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .edit-post button {
+    width: 100%;
+  }
+
+}
+
+@media (max-width: 500px) {
+  .ul-settings {
+    gap: 30px;
+  }
+
+  .settings-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .settings-grid span {
+    font-size: 20px;
+    font-weight: 700;
+  }
+}

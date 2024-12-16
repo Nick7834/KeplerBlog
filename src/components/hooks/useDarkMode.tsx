@@ -14,7 +14,7 @@ export const UseDarkMode = () => {
     };
 
     if (!mounted) {
-        return { theme: 'dark', handleToggle };
+        return { theme: 'light', handleToggle };
     }
 
     return { theme, handleToggle };

@@ -1,50 +1,186 @@
-import React, { useState } from 'react';
+'use client'
+import React, { useEffect, useState } from 'react';
 import { IComment } from './comments';
 import Image from 'next/image';
 import { ReplyComment } from './replyComment';
-import { Button } from '..';
+import { Button, handleReply, UpdateReply } from '..';
 import { cn } from '@/lib/utils';
+import { FaRegUser } from 'react-icons/fa6';
+import Link from 'next/link';
+import { RiDeleteBinLine } from 'react-icons/ri';
+import { MdCreate } from 'react-icons/md';
+import { IoIosAddCircleOutline } from "react-icons/io";
+import { FaRegComment } from "react-icons/fa6";
+import { IoRemoveCircleOutline } from 'react-icons/io5';
+import axios from 'axios';
+import toast from 'react-hot-toast';
+import { useSession } from 'next-auth/react';
+import { useCommentStore } from '@/store/comment';
+import { useCommentState } from '@/components/hooks/useCommentState';
 
 interface Props {
     className?: string;
     comment: IComment;
     indentLevel: number;
+    user: {
+        id: string;
+        email?: string | undefined;
+        username: string;
+        profileImage: string | null;
+    } | null
 } 
 
-export const Comment: React.FC<Props> = ({ className, comment, indentLevel }) => {
+export const Comment: React.FC<Props> = ({ className, comment, indentLevel, user }) => {
 
-    const maxIndentLevel = 5; 
+    const {data: session} = useSession();
 
-    const indent = Math.min(indentLevel, maxIndentLevel) * 10;
+    const {
+        commentContentMain,
+        setCommentContentMain,
+        isReply,
+        setIsReply,
+        isUpdate,
+        setIsUpdate,
+        isReplyF,
+        setIsReplyF,
+        loaderReply,
+        setLoaderReply,
+        replyInput,
+        setReplyInput,
+        updateComment,
+        setUpdateComment,
+        time,
+        setTime
+    } = useCommentState(comment?.content);
 
-    const [isReply, setIsReply] = useState(false);
+    const { deleteComment, addReply } = useCommentStore();
 
-    const [isReplyF, setIsReplyF] = useState(false);
+    const [isMobile, setIsMobile] = useState(false);
+
+
+    useEffect(() => {
+        const handleResize = () => {
+            setIsMobile(window.innerWidth <= 600);
+        };
+        handleResize();
+        window.addEventListener('resize', handleResize);
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, [])
+
+    const indent = Math.min(indentLevel, 5) * (isMobile ? .5 : 4);
+
 
     const handReply = () => {
         setIsReply(!isReply);
     }
 
+    const handleReplySubmit = async () => {
+        handleReply(
+            replyInput,
+            user!,
+            setReplyInput,
+            setLoaderReply,
+            setIsReply,
+            comment,
+            time,
+            setTime,
+            addReply
+       )
+    }
+    
+    const handleUpdateComment = async () => {
+        UpdateReply(
+            updateComment,
+            comment,
+            setUpdateComment,
+            setIsUpdate,
+            setCommentContentMain,
+            setLoaderReply
+        )
+    }
+
+    const handleDelete = async (id: string) => {
+        const confirmed = window.confirm('Are you sure you want to delete this comment?');
+
+        if(!confirmed) return;
+
+        try {
+            const resp = await axios.delete(`/api/comments/${id}/comment`);
+
+            if(resp.status === 200) {
+                toast.success('Comment deleted successfully');
+                deleteComment(id);
+            }
+
+        } catch(error) {
+            console.error(error);
+            toast.error('Something went wrong');
+        }
+    }
+
     return (
-        <div className={cn('mt-5', className)} style={{ marginLeft: `${indent}px` }}>
+        <div className={cn('pt-[15px] pb-[15px] relative z-[1] flex flex-col', className)} style={{ marginLeft: `${indent}px` }}>
 
-            <div className="flex items-center gap-1">
-                <Image src={comment.avatar} alt="avatar" width={40} height={40} className='w-[40px] h-[40px] block object-cover rounded-full' />
-                <span className='text-[#333333] dark:text-[#d9d9d9] text-base font-medium ml-3'>{comment.author}</span>
+            <div className='absolute top-[15px] left-0 h-[calc(100%-40px)] border-l-[1px] border-[#b0b0b0]/70 dark:border-neutral-300/45 rounded-bl-[10px] border-b w-[20px]'></div>
+
+            <Link href={`/profile/${comment?.author?.id}`} className="flex items-center gap-1 w-fit">
+                {comment?.author?.profileImage ?
+                    <Image 
+                        src={comment?.author?.profileImage} 
+                        alt="avatar" 
+                        width={40} 
+                        height={40} 
+                        className='rounded-full w-[40px] h-[40px] object-cover'
+                    />
+                    : 
+                    <span className='flex flex-col items-center justify-center z-[1] overflow-hidden rounded-full min-w-[40px] h-[40px] bg-[#c7c7c7]' ><FaRegUser size={20} className='text-[#333333]' /></span>
+                }
+                <span className='text-[#333333] dark:text-[#d9d9d9] text-base font-medium ml-3'>{comment?.author?.username}</span>
+            </Link>
+
+            <p className='text-[#333333] dark:text-[#d9d9d9] text-base font-normal mt-2 ml-1'>{commentContentMain}</p>
+
+            <div className='flex items-center gap-5 mt-2 ml-5'>
+                {comment?.replies?.length > 0 && 
+                <Button  onClick={() => setIsReplyF(!isReplyF)} variant='link' className='p-0 h-fit text-[#333333] dark:text-[#d9d9d9] hover:no-underline [&_svg]:size-[20px] '>{!isReplyF ? <IoIosAddCircleOutline /> : <IoRemoveCircleOutline />}</Button>}
+                <Button onClick={handReply} variant='link' className='flex gap-2 items-center p-0 h-fit text-[#333333] dark:text-[#d9d9d9] text-base font-medium hover:no-underline'><FaRegComment /> Reply</Button>
             </div>
 
-            <p className='text-[#333333] dark:text-[#d9d9d9] text-base font-normal mt-2 ml-1'>{comment.text}</p>
+            {isReply && 
+                <ReplyComment 
+                    className='mt-2 ml-5' 
+                    setReply={setIsReply} 
+                    replyInput={replyInput}
+                    setReplyInput={setReplyInput}
+                    handleReply={handleReplySubmit}
+                    loaderReply={loaderReply}
+                />
+            }
 
-            <div className='flex items-center gap-3'>
-                {comment.replies.length > 0 && <Button onClick={() => setIsReplyF(!isReplyF)} variant='link' className='p-0 h-fit text-[#5d92fc] dark:text-[#5d92fc] text-base font-medium mt-2 hover:no-underline'>{comment.replies.length} replies</Button>}
-                <Button onClick={handReply} variant='link' className='p-0 h-fit text-[#333333] dark:text-[#d9d9d9] text-base font-medium mt-2 hover:no-underline'>Reply</Button>
-            </div>
+            {isUpdate && 
+                <ReplyComment 
+                    className='mt-2 ml-5' 
+                    setReply={setIsUpdate} 
+                    replyInput={updateComment}
+                    setReplyInput={setUpdateComment}
+                    handleReply={handleUpdateComment}
+                    comment={comment?.content}
+                    loaderReply={loaderReply}
+                />
+            }
 
-            {isReply && <ReplyComment className='mt-2' setReply={setIsReply} />}
-
-            {isReplyF && comment.replies.map((reply, index) => (
-                <Comment key={index} comment={reply} indentLevel={indentLevel + 1} />
+            {isReplyF && comment?.replies?.map((reply, index) => (
+                <Comment key={index} comment={reply} user={user} indentLevel={indentLevel + 1} className='pl-3' />
             ))}
+
+            {comment.author?.id === session?.user?.id && 
+                <div className='absolute top-[30px] right-0 flex gap-5'>
+                <Button variant='link' className='block p-0 h-fit w-fit' onClick={() => setIsUpdate(!isUpdate)}><MdCreate className='block translate-y-[-1px]' /></Button>
+                <Button variant='link' className='block p-0 h-fit w-fit' onClick={() => handleDelete(comment.id)}><RiDeleteBinLine className='block translate-y-[-1px]' /></Button>
+            </div>
+            }
 
         </div>
     );

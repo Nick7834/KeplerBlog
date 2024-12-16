@@ -8,3 +8,8 @@ export { Editor } from './createPost/editor';
 export { TitlePost } from './createPost/titlePost';
 export { EditorPanel } from './createPost/editorPanel';
 export { SettingsEdit } from './settings/settingsEdit';
+export { Form } from './form';
+export { FormsLogin } from './modals/form-login';
+export { FormsRegister } from './modals/form-register';
+export { handleReply } from './handleReply';
+export { UpdateReply } from './updateReply';

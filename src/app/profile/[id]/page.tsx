@@ -1,19 +1,18 @@
-import { Post } from "@/components/shared/post";
-import { ProfileTop } from "@/components/shared/profileTop";
+import { ProfileDetail } from "@/components/shared/profileDetail";
+import { redirect } from "next/navigation";
 
-export default function Profile() {
+export default async function Profile({ params }: { params: Promise<{ id: string }> }) {
+
+    const { id: id } = await params;
+    
+    const isValidObjectId = /^[a-f\d]{24}$/i.test(id);
+    if (!isValidObjectId) {
+      redirect('/');
+    }
+
     return (
-    <div className="flex flex-col items-center justify-center mt-[50px] mx-[15px]">
-     
-        <ProfileTop />
-
-        <div className="mt-[50px] flex flex-col gap-5">
-        <h2 className="text-[#333333] dark:text-[#d9d9d9] text-2xl font-bold">Publications</h2>
-        {Array.from({ length: 5 }).map((_, index) => (
-            <Post key={index} />
-          ))}
-        </div>
-  
-    </div>
+      <div>
+          <ProfileDetail idUser={id} className="mt-[clamp(1.25rem,0.368rem+3.53vw,3.125rem)]" />
+      </div>
     );
 }

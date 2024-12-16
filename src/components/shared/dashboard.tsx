@@ -9,9 +9,9 @@ interface Props {
 
 export const Dashboard: React.FC<Props> = ({ className }) => {
     return (
-        <div className={cn('sticky top-0 h-[100vh] py-[20px] px-[30px] border-r border-solid border-[#D3D3D3] dark:border-white/80 flex flex-col', className)}>
+        <div className={cn('dashboard sticky top-0 h-[100vh] py-[20px] px-[30px] border-r border-solid border-[#D3D3D3] dark:border-white/80 flex flex-col', className)}>
 
-            <Link href="/" className='w-fit text-[#797d7e] dark:text-[#e3e3e3] text-3xl font-black'>Kepler<span className='text-[#3a9989]'>Blog</span></Link>
+            <Link href="/" className='flex items-center w-fit text-[#848484] dark:text-[#e3e3e3] text-5xl font-medium font-["Protest_Guerrilla"]'>K <span className='text-[#7391d5] font-["Protest_Guerrilla"]'>B</span></Link>
 
             <Nav className='mt-[60px]' />
 

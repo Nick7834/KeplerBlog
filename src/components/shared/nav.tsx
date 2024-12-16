@@ -41,7 +41,7 @@ export const Nav: React.FC<Props> = ({ className }) => {
         {
             name: "My Subscriptions",
             svg: <MdPeopleAlt />,
-            href: "/my-subscriptions"
+            href: "/subscriptions"
         }
     ]
 
@@ -50,7 +50,7 @@ export const Nav: React.FC<Props> = ({ className }) => {
             <ul className='flex flex-col gap-8'>
                     {navMenu.map((item, index) => (
                         <li key={index}>
-                            <Link href={item.href} className={cn('flex items-center gap-3 w-full text-[#333333]  dark:text-[#d9d9d9] text-xl font-medium transition-all ease-in-out duration-[.3s] hover:text-[#3a9989] dark:hover:text-[#3a9989]', namePage === item.href && 'dark:text-[#3a9989] text-[#3a9989]')}>
+                            <Link href={item.href} className={cn('flex items-center gap-3 w-full text-[#333333]  dark:text-[#d9d9d9] text-xl font-medium transition-all ease-in-out duration-[.3s] hover:text-[#7391d5] dark:hover:text-[#7391d5]', namePage === item.href && 'dark:text-[#7391d5] text-[#7391d5]')}>
                                 {item.svg}
                                 {item.name}
                             </Link>

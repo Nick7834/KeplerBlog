@@ -1,36 +1,46 @@
+'use client'
 import { cn } from '@/lib/utils';
-import React from 'react';
+import { AutchModalBlock } from './autchModalBlock';
+import { useSession } from 'next-auth/react';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+import { User } from '@prisma/client';
+import { Search } from './search';
 import Link from 'next/link';
-import { IoIosCreate } from "react-icons/io";
-import { IoLogInOutline } from "react-icons/io5";
-import { Button, Input, Profile } from '.';
-import { FiSearch } from 'react-icons/fi';
-
 
 interface Props {
     className?: string;
 }
 
-export const Header: React.FC<Props> = ({ className }) => {
-
-    const isAutch = true;
+export const Header: React.FC<Props> =  ({ className }) => {
+    const { data: session, status } = useSession();
+    const [user, setUser] = useState<User | null>(null);
+    const [searchMobOpen, setSearchMobOpen] = useState(false);
+  
+    useEffect(() => {
+        if (session?.user?.id) {
+          const fetchUserData = async () => {
+            try {
+              const { data } = await axios.get(`/api/user/${session.user.id}`);
+     
+              setUser(data); 
+            } catch (error) {
+              console.error('Request failed:', error);
+            }
+          };
+     
+          fetchUserData();
+        }
+    }, [session?.user?.id]);
 
     return (
-        <header className={cn('flex items-center justify-between gap-[20px] py-[20px] px-[50px] border-b border-solid border-[#D3D3D3] dark:border-white/80', className)}>
+        <header className={cn('flex items-center justify-between gap-[20px] py-[clamp(0.938rem,0.599rem+0.83vw,1.25rem)] px-[clamp(0.938rem,-1.432rem+5.83vw,3.125rem)] border-b border-solid border-[#D3D3D3] dark:border-white/80', className)}>
             
-            <label className='max-w-[600px] w-full flex items-center gap-2 p-[12px] border border-solid bg-neutral-300/75 dark:bg-neutral-800/75 rounded-[10px]'>
-                <FiSearch size={16} className="text-[#333333] dark:text-[#e3e3e3]" />
-                <Input type='text' placeholder='Search' className='outline-none p-0 h-fit rounded-none border-0 w-full bg-transparent text-[#333333] dark:text-[#e3e3e3] text-base font-medium'  />
-            </label>
+          <Link href="/" className='logo-mob hidden items-center w-fit text-[#848484] dark:text-[#e3e3e3] text-5xl font-medium font-["Protest_Guerrilla"]'>K <span className='text-[#7391d5] font-["Protest_Guerrilla"]'>B</span></Link>
 
-            {isAutch ?
-                <div className='flex items-center gap-10'>
-                    <Link href={"/create"} className='flex items-center gap-1 text-[#333333] dark:text-[#d9d9d9] text-lg font-medium transition-all ease-in-out duration-[.3s] hover:text-[#3a9989] dark:hover:text-[#3a9989]'><IoIosCreate /> Create</Link>
-                    <Profile />
-                </div>
-                :
-                <Button variant='default' className='h-full px-[30px] py-[12px] bg-[#333333] hover:bg-[#3a9989]'>Log in <IoLogInOutline /></Button>
-            }
+          <Search setSearchMobOpen={setSearchMobOpen} searchMobOpen={searchMobOpen} />
+
+          <AutchModalBlock session={session} status={status} user={user} setSearchMobOpen={setSearchMobOpen} />
         </header>
     );
 };

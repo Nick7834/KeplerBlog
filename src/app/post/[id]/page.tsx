@@ -1,26 +1,18 @@
-'use client';
-import { Comments } from "@/components/shared/comments/comments";
-import { Post } from "@/components/shared/post";
-import { useRef } from "react";
+import { PostDetails } from "@/components/shared/postDetailsId";
+import { redirect } from "next/navigation";
 
+export default async function PostDetail({ params }: { params: Promise<{ id: string }> }) {
 
-export default function PostDetail() {
+    const { id: id } = await params;
 
-    const commetsRef = useRef<HTMLDivElement>(null);
+    if(!id) redirect('/');
 
-    const scrollToSection = () => {
-        if (commetsRef.current) {
-            commetsRef.current.scrollIntoView({ behavior: 'smooth' }); 
-        }
-      };
+    const isValidObjectId = /^[a-f\d]{24}$/i.test(id);
+    if (!isValidObjectId) redirect('/');
 
     return (
-    <div className="m-[50px] flex flex-col justify-center items-center">
-     
-        <Post onClick={scrollToSection} className="cursor-auto" />
-
-        <Comments ref={commetsRef} className="scroll-mt-[100px] w-full" />
-
-    </div>
+        <div>
+           <PostDetails idPost={id}  />
+        </div>
     );
 }

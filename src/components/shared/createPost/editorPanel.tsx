@@ -10,9 +10,10 @@ interface Props {
     toggleBold: () => void;
     toggleItalic: () => void;
     toggleUnderline: () => void;
+    handlePgoto: (e: React.ChangeEvent<HTMLInputElement>) => void
 } 
 
-export const EditorPanel: React.FC<Props> = ({ className, toggleBold, toggleItalic, toggleUnderline }) => {
+export const EditorPanel: React.FC<Props> = ({ className, toggleBold, toggleItalic, toggleUnderline, handlePgoto }) => {
 
     const buttonFun = [
         {
@@ -32,7 +33,7 @@ export const EditorPanel: React.FC<Props> = ({ className, toggleBold, toggleItal
         },
         {
             name: 'img',
-            svg: <FaImage size={16} />
+            svg: <FaImage size={16} />,
         }
     ]
 
@@ -47,7 +48,7 @@ export const EditorPanel: React.FC<Props> = ({ className, toggleBold, toggleItal
 
                     if(button.name === 'img') {
                       return <div key={index} className='flex items-center justify-center'>
-                        <input type="file" id="fileImg" className="hidden" />
+                        <input type="file" id="fileImg" className="hidden" onChange={(e) => handlePgoto(e)} />
                         <label htmlFor="fileImg" className='block'><span className='cursor-pointer'>{button.svg}</span></label>
                       </div>
                     }

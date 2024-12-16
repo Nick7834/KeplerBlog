@@ -1,83 +1,99 @@
-import React from 'react';
+'use client'
+import React, {  useState } from 'react';
 import { InputComment } from './inputComment';
 import { cn } from '@/lib/utils';
 import { Comment } from './comment';
+import { IPost } from '../post';
+import { handleCommentPost } from '@/lib/commentHandlers';
+import { useUser } from '@/components/hooks/useUser';
+import { useComments } from '@/components/hooks/useComments';
+import { SkeletonComment } from '../skeletonComment';
+import { FaComments } from "react-icons/fa6";
 
 interface Props {
     className?: string;
     ref?: React.Ref<HTMLDivElement>;
-} 
+    post: IPost;
+}
 
 export interface IComment {
-    id: number;            
-    author: string;  
-    avatar?: string;
-    text: string;           
+    postId: string;
+    id: string;
+    author: {
+        id: string;
+        email?: string | undefined;
+        username: string;
+        profileImage: string | null;
+    } | null;
+    content: string;           
     replies: IComment[];    
+    parentId: string | null;
+}
+
+export const Comments: React.FC<Props> = ({ className, ref, post }) => {
+
+  const user = useUser();
+
+  const { 
+    comments, 
+    loading,
+    addComment
+  } = useComments(post?.id);
+
+  const [commentsValue, setCommentsValue] = useState<string>('');
+
+  const [loaderButtonAdd, setLoaderButtonAdd] = useState<boolean>(false);
+  const [lastCommentTime, setLastCommentTime] = useState<number | null>(null);
+
+  const handleComment = async () => {
+    handleCommentPost({
+      commentsValue,
+      setCommentsValue,
+      setLoaderButtonAdd,
+      lastCommentTime,
+      setLastCommentTime,
+      addComment,
+      post,
+      user,
+    });
   }
 
-const comments: IComment[] = [
-    {
-      id: 1,
-      author: 'Arduzer',
-      text: 'Это основной комментарий',
-      avatar: 'https://avatars.githubusercontent.com/u/125916127?v=4',
-      replies: [
-        {
-          id: 2,
-          author: 'Defix',
-          text: 'Это ответ на комментарий',
-          avatar: 'https://sun9-9.userapi.com/impg/G45FdYv1pidBTgqkgnFTp8uNrXd1hwRRlXVjuA/NgRvMOU0kwE.jpg?size=1280x720&quality=96&sign=c02ebec1210a18322fac13ae29a68bfc&type=album',
-          replies: [
-            {
-                id: 1,
-                author: 'Arduzer',
-                text: 'Это основной комментарий',
-                avatar: 'https://avatars.githubusercontent.com/u/125916127?v=4',
-                replies: [],
-            },
-            {
-                id: 1,
-                author: 'Arduzer',
-                text: 'Это основной комментарий',
-                avatar: 'https://avatars.githubusercontent.com/u/125916127?v=4',
-                replies: [
-                    {
-                        id: 1,
-                        author: 'Arduzer',
-                        text: 'Это основной комментарий',
-                        avatar: 'https://avatars.githubusercontent.com/u/125916127?v=4',
-                        replies: [],
-                    }
-                ],
-            }
-          ],
-        },
-      ],
-    },
-    {
-      id: 3,
-      author: 'Defix',
-      text: 'А какого хуя, я на это подписался?',
-      avatar: 'https://sun9-9.userapi.com/impg/G45FdYv1pidBTgqkgnFTp8uNrXd1hwRRlXVjuA/NgRvMOU0kwE.jpg?size=1280x720&quality=96&sign=c02ebec1210a18322fac13ae29a68bfc&type=album',
-      replies: [],
-    },
-];
-
-export const Comments: React.FC<Props> = ({ className, ref }) => {
     return (
-        <div ref={ref} className={cn('mt-16 max-w-[750px]', className)}>
+        <div ref={ref} className={cn('mt-[clamp(2.5rem,1.984rem+2.58vw,4rem)] max-w-[750px]', className)}>
 
             <h1 className='text-[#333333] dark:text-[#d9d9d9] text-2xl font-bold'>Comments</h1>
 
-            <InputComment className='mt-5' />
+            {user && <InputComment 
+              className='mt-5' 
+              commentsValue={commentsValue}
+              setCommentsValue={setCommentsValue}
+              handleCommetPost={handleComment}
+              setLoaderButtonAdd={setLoaderButtonAdd}
+              loaderButtonAdd={loaderButtonAdd}
+            />}
 
             <div className='mt-5'>
-                {comments.map((comment) => (
-                    <Comment key={comment.id} comment={comment} className='mt-5' indentLevel={0} />
-                ))}
+                {loading ? <SkeletonComment /> :
+                  (!loading && comments.length === 0 ? 
+                    <div className='flex flex-col items-center justify-center gap-2 text-[#333333] dark:text-[#d9d9d9] text-lg font-bold'><FaComments size={50} /> No comments</div>
+                    :
+                    comments.map((comment, index) => (
+                      <Comment key={index} comment={comment} user={user} indentLevel={0} className='pl-3' />
+                    ))
+                  )
+                }
             </div>
+
+            {/* {hasMoreComments && <Button 
+              onClick={moreComments} 
+              variant='outline' 
+              loading={loaderMore}
+              className='block mx-auto w-fit border border-solid border-[#b0b0b0]/70 dark:border-neutral-300/75
+               rounded-[10px] bg-transparent dark:bg-transparent px-[35px] py-[7px] h-fit text-[#333333] dark:text-[#d9d9d9] text-sm 
+               font-medium mt-3 hover:bg-[#333333]/85 dark:hover:bg-[#d9d9d9]/85 
+               hover:text-[#d9d9d9] hover:dark:text-[#333333]'>Show more</Button>} */}
 
         </div>
     );
 };
+

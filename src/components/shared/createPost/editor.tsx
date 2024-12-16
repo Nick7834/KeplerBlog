@@ -1,26 +1,35 @@
 'use client'
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 
-import { EditorState, RichUtils } from 'draft-js';
+import { EditorState, RichUtils  } from 'draft-js';
 import dynamic from 'next/dynamic';
 import { EditorPanel } from '..';
 
 interface Props {
     className?: string;
+    handlePgoto: (e: React.ChangeEvent<HTMLInputElement>) => void
+    editorState: EditorState;
+    setEditorState: React.Dispatch<React.SetStateAction<EditorState>>
 } 
 
-const EditorWithNoSSR = dynamic(() => import('draft-js').then((mod) => mod.Editor), {
-    ssr: false,
-});
+const EditorWithNoSSR = dynamic(() =>
+    import('draft-js').then((mod) => mod.Editor as unknown as React.ComponentType<{ 
+      editorState: EditorState; 
+      onChange: (state: EditorState) => void; 
+      placeholder: string; 
+    }>),
+    { ssr: false }
+  );
+  
+  
 
-export const Editor: React.FC<Props> = ({ className }) => {
-
-    const [editorState, setEditorState] = useState(EditorState.createEmpty());
+export const Editor: React.FC<Props> = ({ className, handlePgoto, editorState, setEditorState  }) => {
+   
     const hasContent = editorState.getCurrentContent().hasText();
 
     useEffect(() => {
         setEditorState(EditorState.createEmpty());
-    }, []);
+    }, [setEditorState]);
 
     const handleEditorChange = (state: EditorState) => {
       setEditorState(state);
@@ -43,8 +52,8 @@ export const Editor: React.FC<Props> = ({ className }) => {
 
     return (
         <div className={className}>
-            <EditorPanel toggleBold={toggleBold} toggleItalic={toggleItalic} toggleUnderline={toggleUnderline} />
-            <div className='custom-draft relative bg-neutral-300/75 dark:bg-neutral-800/75 text-base font-medium h-[200px] overflow-auto rounded-[15px] rounded-tl-[0] p-2 scrollbar'>
+            <EditorPanel toggleBold={toggleBold} toggleItalic={toggleItalic} toggleUnderline={toggleUnderline} handlePgoto={e => handlePgoto(e)} />
+            <div className='custom-draft relative bg-neutral-300/75 dark:bg-neutral-800/75 text-base font-medium h-[400px] overflow-auto rounded-[15px] rounded-tl-[0] p-2 scrollbar'>
                 <EditorWithNoSSR
                     editorState={editorState}
                     onChange={handleEditorChange}
