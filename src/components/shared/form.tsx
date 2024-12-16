@@ -1,3 +1,4 @@
+'use client'
 import React from 'react';
 import { Input } from '.';
 import { useFormContext } from 'react-hook-form';
