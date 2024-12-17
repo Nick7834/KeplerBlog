@@ -18,6 +18,7 @@ import { useSession } from 'next-auth/react';
 import { useCommentStore } from '@/store/comment';
 import { useCommentState } from '@/components/hooks/useCommentState';
 import { formatDistanceToNow } from 'date-fns';
+import { useLogInStore } from '@/store/logIn';
 
 interface Props {
     className?: string;
@@ -53,6 +54,8 @@ export const Comment: React.FC<Props> = ({ className, comment, indentLevel, user
     const {data: session} = useSession();
 
     const timeAgo = getShortTimeAgo(new Date(comment.createdAt));
+    
+     const { setOpen } = useLogInStore();
 
     const {
         commentContentMain,
@@ -70,7 +73,7 @@ export const Comment: React.FC<Props> = ({ className, comment, indentLevel, user
         updateComment,
         setUpdateComment,
         time,
-        setTime
+        setTime,
     } = useCommentState(comment?.content);
 
     const { deleteComment, addReply } = useCommentStore();
@@ -105,7 +108,9 @@ export const Comment: React.FC<Props> = ({ className, comment, indentLevel, user
             comment,
             time,
             setTime,
-            addReply
+            addReply,
+            setOpen,
+            session
        )
     }
     

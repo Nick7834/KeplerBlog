@@ -68,10 +68,18 @@ export const EditPostInput: React.FC<Props> = ({ className, post }) => {
         const oldPhotos = post.image;
     
         const newTitle = title.trim();
-        const newContent = post.content
+        const newContent = post.content;
         const newPhotos = photoPreview;
+
+        const newPhotosLinks = newPhotos.filter((photo) => typeof photo === 'string');
+        const newPhotosFiles = newPhotos.filter((photo) => typeof photo !== 'string');
     
-        if (newTitle === oldTitle && JSON.stringify(newContent) === JSON.stringify(oldContent) && JSON.stringify(newPhotos) === JSON.stringify(oldPhotos)) {
+        const isTitleChanged = newTitle !== oldTitle;
+        const isContentChanged = JSON.stringify(newContent) !== JSON.stringify(oldContent);
+        const isPhotosChanged = 
+        JSON.stringify(newPhotosLinks) !== JSON.stringify(oldPhotos) || newPhotosFiles.length > 0;
+
+        if (!isTitleChanged && !isContentChanged && !isPhotosChanged) {
             setLoading(false);
             toast.error('No changes detected.');
             return;

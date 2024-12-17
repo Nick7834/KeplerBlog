@@ -16,7 +16,6 @@ import { FaRegUser } from "react-icons/fa";
 import { User } from '@prisma/client';
 import { Button } from '.';
 import { IoClose } from 'react-icons/io5';
-import { Skeleton } from '../ui/skeleton';
 
 interface Props {
     className?: string;
@@ -85,12 +84,10 @@ export const Profile: React.FC<Props> =  ({ className, user }) => {
 
                 <div className={cn('main-back', open && 'active-back')}></div>
 
-                {!user?.profileImage ? <Skeleton className='w-[48px] h-[48px] bg-[#c1c1c1] dark:bg-[#2a2a2a] rounded-full' />
-                :
-                    <button ref={buttonRef} className='block w-[48px] h-[48px] overflow-hidden rounded-full' onClick={() => {setOpen(!open)}}>
-                        {user?.profileImage ? <Image src={user?.profileImage} alt="profile" width={48} height={48} className='block w-[48px] h-[48px] object-cover overflow-hidden rounded-full' /> : <span className='flex flex-col items-center justify-center object-cover rounded-full w-[48px] h-[48px] bg-[#c7c7c7]'><FaRegUser className='text-[#333333]' /></span>}
-                    </button>
-                }  
+                <button ref={buttonRef} className='block w-[48px] h-[48px] overflow-hidden rounded-full' onClick={() => {setOpen(!open)}}>
+                    {user?.profileImage ? <Image src={user?.profileImage} alt="profile" width={48} height={48} className='block w-[48px] h-[48px] object-cover overflow-hidden rounded-full' /> : 
+                    <span className='flex flex-col items-center justify-center object-cover rounded-full w-[48px] h-[48px] bg-[#c7c7c7]'><FaRegUser className='text-[#333333]' /></span>}
+                </button>
 
                 <div ref={refProfile} className={cn('profile-modal invisible opacity-0 -translate-y-5 py-5 transition-all ease-in-out duration-[.14s] absolute top-[80px] right-[40px] min-w-[300px] bg-[#E0E0E0] dark:bg-[#2a2a2a] rounded-[10px] border border-[#b0b0b0]/70 dark:border-[#d9d9d9]/70', open && 'active-profile')}>
 

@@ -83,13 +83,14 @@ export const Post: React.FC<Props> = ({ className, onClick, post }) => {
                     <Link onClick={(e) => e.stopPropagation()} href={`/profile/${post?.author?.id}`} className="flex items-center gap-3 w-fit">
                     <div>
                         {
-                            post?.author?.profileImage ? <Image 
-                            src={post?.author?.profileImage} 
-                            alt="avatar" 
-                            width={40} 
-                            height={40} 
-                            className='rounded-full w-[40px] h-[40px] object-cover'
-                        /> : 
+                            post?.author?.profileImage ? 
+                            <Image 
+                                src={post?.author?.profileImage} 
+                                alt="avatar" 
+                                width={40} 
+                                height={40} 
+                                className='rounded-full w-[40px] h-[40px] object-cover'
+                            /> : 
                         <span className='flex flex-col items-center justify-center z-[1] overflow-hidden rounded-full min-w-[40px] h-[40px] bg-[#c7c7c7]' ><FaRegUser size={20} className='text-[#333333]' /></span>
                         }
                     </div>
@@ -99,7 +100,7 @@ export const Post: React.FC<Props> = ({ className, onClick, post }) => {
 
                     {post?.author?.id === session?.data?.user?.id ? 
                         <Button 
-                             onClick={(e) => (e.stopPropagation(), 
+                            onClick={(e) => (e.stopPropagation(), 
                             router.push(`/edit/${post?.id}`))} 
                             className='p-0 min-h-7 min-w-7 h-fit text-xs rounded-full bg-[#d5d5d5] dark:bg-[#e0e0e0]/95 hover:bg-[#d5d5d5] hover:dark:bg-[#e0e0e0]/95'>
                                 <MdCreate size={10} className='text-[#333333] dark:text-[#333333]' />

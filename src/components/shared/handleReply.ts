@@ -1,6 +1,8 @@
 import toast from "react-hot-toast";
 import { IComment } from "./comments/comments";
 import axios from "axios";
+import { Session } from "next-auth";
+
 
 export const handleReply = async (
     replyInput: string,
@@ -11,8 +13,16 @@ export const handleReply = async (
     comment: IComment,
     time: number | null,
     setTime: React.Dispatch<React.SetStateAction<number | null>>,
-    addReply: (reply: IComment, parentId: string) => void
+    addReply: (reply: IComment, parentId: string) => void,
+    setOpen: (open: boolean) => void,
+    session: Session | null
 ) => {
+
+    if(!session) {
+        setOpen(true);
+        return;
+    }
+
     if(replyInput.trim() === '') return;
 
     setLoaderReply(true);
