@@ -17,11 +17,13 @@ import toast from 'react-hot-toast';
 import { useSession } from 'next-auth/react';
 import { useCommentStore } from '@/store/comment';
 import { useCommentState } from '@/components/hooks/useCommentState';
+import { formatDistanceToNow } from 'date-fns';
 
 interface Props {
     className?: string;
     comment: IComment;
     indentLevel: number;
+    createdAt: Date;
     user: {
         id: string;
         email?: string | undefined;
@@ -30,9 +32,27 @@ interface Props {
     } | null
 } 
 
+const getShortTimeAgo = (date: Date): string => {
+    return formatDistanceToNow(date, { addSuffix: true })
+      .replace('minutes', 'm')
+      .replace('minute', 'm')
+      .replace('hours', 'h')
+      .replace('hour', 'h')
+      .replace('days', 'd')
+      .replace('day', 'd')
+      .replace('months', 'mo')
+      .replace('month', 'mo')
+      .replace('years', 'y')
+      .replace('year', 'y')
+      .replace('about ', '') 
+      .replace('less than a minute', '1m'); 
+  };
+
 export const Comment: React.FC<Props> = ({ className, comment, indentLevel, user }) => {
 
     const {data: session} = useSession();
+
+    const timeAgo = getShortTimeAgo(new Date(comment.createdAt));
 
     const {
         commentContentMain,
@@ -70,7 +90,6 @@ export const Comment: React.FC<Props> = ({ className, comment, indentLevel, user
     }, [])
 
     const indent = Math.min(indentLevel, 5) * (isMobile ? .5 : 4);
-
 
     const handReply = () => {
         setIsReply(!isReply);
@@ -137,7 +156,7 @@ export const Comment: React.FC<Props> = ({ className, comment, indentLevel, user
                     : 
                     <span className='flex flex-col items-center justify-center z-[1] overflow-hidden rounded-full min-w-[40px] h-[40px] bg-[#c7c7c7]' ><FaRegUser size={20} className='text-[#333333]' /></span>
                 }
-                <span className='text-[#333333] dark:text-[#d9d9d9] text-base font-medium ml-3'>{comment?.author?.username}</span>
+                <div className='flex items-center gap-1 text-[#333333] dark:text-[#d9d9d9] text-base font-medium ml-3'>{comment?.author?.username} · <span className='text-sm font-normal'>{timeAgo}</span></div>
             </Link>
 
             <p className='text-[#333333] dark:text-[#d9d9d9] text-base font-normal mt-2 ml-1'>{commentContentMain}</p>
@@ -172,8 +191,8 @@ export const Comment: React.FC<Props> = ({ className, comment, indentLevel, user
             }
 
             {isReplyF && comment?.replies?.map((reply, index) => (
-                <Comment key={index} comment={reply} user={user} indentLevel={indentLevel + 1} className='pl-3' />
-            ))}
+                <Comment key={index} comment={reply} user={user} createdAt={reply.createdAt} indentLevel={indentLevel + 1} className='pl-3' />
+            ))} 
 
             {comment.author?.id === session?.user?.id && 
                 <div className='absolute top-[30px] right-0 flex gap-5'>

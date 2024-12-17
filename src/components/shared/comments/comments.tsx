@@ -17,6 +17,7 @@ interface Props {
 }
 
 export interface IComment {
+    createdAt: Date;
     postId: string;
     id: string;
     author: {
@@ -78,7 +79,7 @@ export const Comments: React.FC<Props> = ({ className, ref, post }) => {
                     <div className='flex flex-col items-center justify-center gap-2 text-[#333333] dark:text-[#d9d9d9] text-lg font-bold'><FaComments size={50} /> No comments</div>
                     :
                     comments.map((comment, index) => (
-                      <Comment key={index} comment={comment} user={user} indentLevel={0} className='pl-3' />
+                      <Comment key={index} comment={comment} user={user} indentLevel={0} className='pl-3' createdAt={comment.createdAt} />
                     ))
                   )
                 }

@@ -6,6 +6,7 @@ import { useSession } from 'next-auth/react';
 import axios from 'axios';
 import { usePathname } from 'next/navigation';
 import { useLogInStore } from '@/store/logIn';
+import { Skeleton } from '../ui/skeleton';
 
 interface Props {
     className?: string;
@@ -21,6 +22,7 @@ export const FollowButton: React.FC<Props> = ({ className, idUser, setFollow, fo
     const pathname = usePathname();
 
     const [Isfollow, setIsFollow] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
 
     const { setOpen } = useLogInStore();
 
@@ -31,12 +33,16 @@ export const FollowButton: React.FC<Props> = ({ className, idUser, setFollow, fo
 
         if(!idUser) return;
 
+        setIsLoading(true);
+
         const getFollow = async () => {
             try {
                 const { data } = await axios.get(`/api/user/${idUser}/follow`);
                 setIsFollow(data.isFollow);
             } catch(error) {
                 console.error(error);
+            } finally {
+                setIsLoading(false);
             }
         }
 
@@ -72,6 +78,11 @@ export const FollowButton: React.FC<Props> = ({ className, idUser, setFollow, fo
     }
 
     return (
-      <Button onClick={handleFollow} className={cn('py-[6px] px-5 leading-2 h-fit text-sm transition-all ease-in-out duration-300', className, Isfollow && 'bg-[#7391d5] text-white hover:bg-[#7391d5]/85')}>{Isfollow ? 'Following' : 'Follow'}</Button>
+    <>
+        {isLoading ? 
+            <Skeleton className='w-[100px] h-[32px] bg-[#c1c1c1] dark:bg-[#2a2a2a] rounded-[10px]' /> :
+            <Button onClick={handleFollow} className={cn('py-[6px] px-5 leading-2 h-fit text-sm transition-all ease-in-out duration-300', className, Isfollow && 'bg-[#7391d5] text-white hover:bg-[#7391d5]/85')}>{Isfollow ? 'Following' : 'Follow'}</Button>
+         }
+    </>
     )
 };

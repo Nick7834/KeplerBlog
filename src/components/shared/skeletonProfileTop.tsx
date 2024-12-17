@@ -13,7 +13,7 @@ export const SkeletonProfileTop:React.FC<Props> = ({className}) => {
                 <Skeleton className="avatar-profile min-w-[clamp(4.375rem,3.493rem+3.53vw,6.25rem)] h-[clamp(4.375rem,3.493rem+3.53vw,6.25rem)] rounded-full bg-[#c1c1c1] dark:bg-[#2a2a2a] -mt-[50px] z-[1]" />
                 <div className="mt-[7px] flex items-center justify-between w-full">
                     <div>
-                        <Skeleton className="w-[110px] h-[10px] rounded-[10px] bg-[#c1c1c1] dark:bg-[#2a2a2a]" />
+                        <Skeleton className="w-[clamp(5rem,-2.5rem+37.5vw,6.875rem)] h-[10px] rounded-[10px] bg-[#c1c1c1] dark:bg-[#2a2a2a]" />
                         <Skeleton className="w-[80px] h-[10px] rounded-[10px] bg-[#c1c1c1] dark:bg-[#2a2a2a] mt-1" />
                     </div>
                     <Skeleton className="w-[100px] h-[35px] rounded-[10px] bg-[#c1c1c1] dark:bg-[#2a2a2a]" />

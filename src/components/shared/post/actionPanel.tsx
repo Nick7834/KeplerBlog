@@ -1,5 +1,6 @@
 'use client'
 import { UseFormatNumber } from '@/components/hooks/useFormatNumber';
+import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 import { useLogInStore } from '@/store/logIn';
 import axios from 'axios';
@@ -30,6 +31,7 @@ export const ActionPanel: React.FC<Props> = ({ className, count, pathname, route
 
     const [likes, setLikes] = useState(count.likes);
     const [liked, setLiked] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
 
     const formattedCountLike = UseFormatNumber(Number(likes));
     const formattedCountComment = UseFormatNumber(Number(count?.comments));
@@ -49,12 +51,16 @@ export const ActionPanel: React.FC<Props> = ({ className, count, pathname, route
 
         if(!session) return;
 
+        setIsLoading(true);
+
         const likeStatus = async () => {
             try {
                 const { data } = await axios.get(`/api/posts/${idPost}/status`);
                 setLiked(data.liked);
             } catch (error) {
                 console.error(error);
+            } finally {
+                setIsLoading(false);
             }
         }
 
@@ -91,10 +97,12 @@ export const ActionPanel: React.FC<Props> = ({ className, count, pathname, route
 
     return (
         <div className={cn('mt-4 flex items-center gap-5', className)}>
-            <button onClick={(e) => (e.stopPropagation(), handleLikeClick(idPost))} className={cn('flex items-center gap-2 bg-neutral-300/75 dark:bg-neutral-700/75 p-2 rounded-full', liked && 'bg-[#7391d5] dark:bg-[#7391d5]')}>
-                <div className={cn('block', liked && 'text-[#d9d9d9] dark:text-[#d9d9d9]')}>{liked ? <BiSolidLike size={20} /> : <BiLike size={20} />}</div>
-                <span className={cn('block h-[19px] text-[#333333] dark:text-[#d9d9d9] text-sm font-semibold leading-1', liked && 'text-[#d9d9d9] dark:text-[#d9d9d9]')}>{formattedCountLike}</span>
-            </button>
+           {isLoading ? <Skeleton className='w-[52px] h-[36px] bg-[#c1c1c1] dark:bg-[#2a2a2a] rounded-full' /> :
+                <button onClick={(e) => (e.stopPropagation(), handleLikeClick(idPost))} className={cn('flex items-center gap-2 bg-neutral-300/75 dark:bg-neutral-700/75 p-2 rounded-full', liked && 'bg-[#7391d5] dark:bg-[#7391d5]')}>
+                    <div className={cn('block', liked && 'text-[#d9d9d9] dark:text-[#d9d9d9]')}>{liked ? <BiSolidLike size={20} /> : <BiLike size={20} />}</div>
+                    <span className={cn('block h-[19px] text-[#333333] dark:text-[#d9d9d9] text-sm font-semibold leading-1', liked && 'text-[#d9d9d9] dark:text-[#d9d9d9]')}>{formattedCountLike}</span>
+                </button>
+           }
 
             <button onClick={handleCommentClick} className="flex items-center gap-2 bg-neutral-300/75 dark:bg-neutral-700/75 p-2 rounded-full">
                 <div className='block'><FaRegCommentDots size={20} /></div>

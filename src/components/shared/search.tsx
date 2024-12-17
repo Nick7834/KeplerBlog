@@ -45,8 +45,8 @@ export const Search: React.FC<Props> = ({ className, setSearchMobOpen, searchMob
     }
 
     return (
-        <form className={cn('search-block max-w-[600px] w-full ', searchMobOpen && 'active-search' )} onSubmit={(e) => handleSubmit(e)}>
-            <label ref={ref} className={cn('w-full flex items-center gap-2 p-[12px] border border-solid bg-neutral-300/75 dark:bg-neutral-800/75 rounded-[10px]', focus ? 'border-[#333333] dark:border-[#e3e3e3]' : '', className)}>
+        <form className={cn('search-block max-w-[600px] w-full', searchMobOpen && 'active-search' )} onSubmit={(e) => handleSubmit(e)}>
+            <label ref={ref} className={cn('cursor-text w-full flex items-center gap-2 p-[12px] border border-solid bg-neutral-300/75 dark:bg-neutral-800/75 rounded-[10px]', focus ? 'border-[#333333] dark:border-[#e3e3e3]' : '', className)}>
                     <FiSearch size={16} className="text-[#333333] dark:text-[#e3e3e3]" />
                     <Input 
                         value={search}

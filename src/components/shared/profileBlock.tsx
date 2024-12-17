@@ -38,7 +38,7 @@ export const ProfileBlock: React.FC<Props> = ({ className, user, loader }) => {
     return (
         <div className={cn('block-info sticky top-[110px] h-fit flex flex-col gap-4 bg-[#e0e0e0]/95 dark:bg-[#2a2a2a]/60 p-4 rounded-md', className)}>
 
-          <h2 className="text-[#333333] dark:text-[#d9d9d9] text-xl font-bold">
+          <h2 className="text-[#333333] dark:text-[#d9d9d9] text-xl font-bold break-all">
             {loader ? <Skeleton className='w-[100px] h-[20px] rounded-[10px] bg-[#c1c1c1] dark:bg-[#2a2a2a]' /> : user?.username}
           </h2>
 

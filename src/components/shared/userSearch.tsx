@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import { UserSearchType } from './fetchSerch';
 import { FollowButton } from './followButton';
+import { useSession } from 'next-auth/react';
 
 interface Props {
     className?: string;
@@ -13,6 +14,8 @@ interface Props {
 } 
 
 export const UserSearch: React.FC<Props> = ({ className, user }) => {
+    const { data: session } = useSession();
+
     return (
         <Link href={`/profile/${user?.id}`} className={cn('search-user relative flex gap-5 cursor-pointer hover:bg-[#d1d1d1]/60 hover:dark:bg-[#333333]/60 px-2 py-5 rounded-[10px]', className)}>
 
@@ -33,7 +36,7 @@ export const UserSearch: React.FC<Props> = ({ className, user }) => {
                             </div>
                             <p className='mt-1 text-[#333333] dark:text-[#d9d9d9] text-sm'>{user?.bio}</p>
                         </div>
-                        <div onClick={(e) => e.preventDefault()}><FollowButton idUser={user?.id} /></div>
+                      {session?.user?.id !== user?.id &&  <div onClick={(e) => e.preventDefault()}><FollowButton idUser={user?.id} /></div>}
                     </div>
 
         </Link>
