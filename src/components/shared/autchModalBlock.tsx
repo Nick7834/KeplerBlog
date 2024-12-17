@@ -23,7 +23,7 @@ interface Props {
 export const AutchModalBlock: React.FC<Props> = ({ className, session, user, status, setSearchMobOpen }) => {
     const { open, setOpen } = useLogInStore();
 
-    if (status === 'loading' || !session) {
+    if (status === 'loading') {
         return (
             <Skeleton className='h-[48px] w-[150px] bg-[#c1c1c1] dark:bg-[#676767] rounded' />
         );
