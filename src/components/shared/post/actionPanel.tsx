@@ -49,7 +49,10 @@ export const ActionPanel: React.FC<Props> = ({ className, count, pathname, route
 
     useEffect(() => {
 
-        if(!session) return;
+        if(!session) {
+            setIsLoading(false);
+            return
+        }
 
         setIsLoading(true);
 

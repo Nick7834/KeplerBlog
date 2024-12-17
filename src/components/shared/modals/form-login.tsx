@@ -29,8 +29,6 @@ export const FormsLogin: React.FC<Props> = ({ onClose }) => {
          throw Error();
         }
 
-        
-
         onClose();
 
         toast.success('Logged in successfully');

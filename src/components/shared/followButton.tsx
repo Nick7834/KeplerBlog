@@ -29,9 +29,10 @@ export const FollowButton: React.FC<Props> = ({ className, idUser, setFollow, fo
 
     useEffect(() => {
 
-        if(!session) return;
-
-        if(!idUser) return;
+        if(!session || !idUser) {
+            setIsLoading(false);
+            return
+        }
 
         setIsLoading(true);
 
