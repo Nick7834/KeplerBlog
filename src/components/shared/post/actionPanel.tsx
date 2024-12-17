@@ -36,6 +36,8 @@ export const ActionPanel: React.FC<Props> = ({ className, count, pathname, route
     const formattedCountLike = UseFormatNumber(Number(likes));
     const formattedCountComment = UseFormatNumber(Number(count?.comments));
 
+    const [statusFetched, setStatusFetched] = useState(false);
+
      const { setOpen } = useLogInStore();
 
     const handleCommentClick = (e: React.MouseEvent) => {
@@ -49,17 +51,17 @@ export const ActionPanel: React.FC<Props> = ({ className, count, pathname, route
 
     useEffect(() => {
 
-        if(!session) {
+        if (!session || statusFetched) {
             setIsLoading(false);
             return
         }
 
-        setIsLoading(true);
-
         const likeStatus = async () => {
             try {
+                setIsLoading(true);
                 const { data } = await axios.get(`/api/posts/${idPost}/status`);
                 setLiked(data.liked);
+                setStatusFetched(true);
             } catch (error) {
                 console.error(error);
             } finally {
@@ -69,7 +71,7 @@ export const ActionPanel: React.FC<Props> = ({ className, count, pathname, route
 
         likeStatus();
 
-    }, [idPost, session]);
+    }, [idPost, session, statusFetched]);
 
     const handleLikeClick = async (postId: string) => {
 

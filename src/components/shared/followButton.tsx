@@ -24,12 +24,14 @@ export const FollowButton: React.FC<Props> = ({ className, idUser, setFollow, fo
     const [Isfollow, setIsFollow] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
 
+    const [statusFetched, setStatusFetched] = useState(false);
+
     const { setOpen } = useLogInStore();
 
 
     useEffect(() => {
 
-        if(!session || !idUser) {
+        if(!session || !idUser || statusFetched) {
             setIsLoading(false);
             return
         }
@@ -40,6 +42,7 @@ export const FollowButton: React.FC<Props> = ({ className, idUser, setFollow, fo
             try {
                 const { data } = await axios.get(`/api/user/${idUser}/follow`);
                 setIsFollow(data.isFollow);
+                setStatusFetched(true);
             } catch(error) {
                 console.error(error);
             } finally {
@@ -49,7 +52,7 @@ export const FollowButton: React.FC<Props> = ({ className, idUser, setFollow, fo
 
         getFollow();
 
-    }, [idUser, session]);
+    }, [idUser, session, statusFetched]);
 
     const handleFollow = async () => {
 
