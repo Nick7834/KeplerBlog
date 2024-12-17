@@ -60,6 +60,7 @@ export const handleCommentPost = async ({
 
     const newComment: IComment = {
       id: resp.data.comment.id,
+      createdAt: resp.data.comment.createdAt,
       author: {
         id: user.id,
         username: user.username,
