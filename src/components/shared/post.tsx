@@ -15,8 +15,10 @@ import { JsonValue } from '@prisma/client/runtime/library';
 import { ModalPhoto } from './post/modalPhoto';
 import { FollowButton } from './followButton';
 import axios from 'axios';
+import { getShortTimeAgo } from '../hooks/useDate';
 
 export interface IPost {
+    createdAt: Date;
     id: string;
     title: string;
     content?: RawDraftContentState | JsonValue;
@@ -58,6 +60,8 @@ export const Post: React.FC<Props> = ({ className, onClick, post }) => {
     const text = contentState ? contentState.getPlainText() : '';
     const html = contentState ? stateToHTML(contentState) : '';
 
+      const timeAgo = getShortTimeAgo(new Date(post.createdAt));
+
     const [showModal, setShowModal] = React.useState(false);
     const [slideIndex, setSlideIndex] = useState(0);
     const [photos, setPhotos] = useState<string[]>([]);
@@ -94,7 +98,7 @@ export const Post: React.FC<Props> = ({ className, onClick, post }) => {
                         <span className='flex flex-col items-center justify-center z-[1] overflow-hidden rounded-full min-w-[40px] h-[40px] bg-[#c7c7c7]' ><FaRegUser size={20} className='text-[#333333]' /></span>
                         }
                     </div>
-                            <span className='text-[#333333] dark:text-[#d9d9d9] text-base font-semibold'>{post?.author?.username}</span>
+                            <div className='flex items-center gap-1 text-[#333333] dark:text-[#d9d9d9] text-base font-semibold'>{post?.author?.username} · <div className='text-[#797d7e] dark:text-[#e3e3e3] text-sm font-normal'>{timeAgo}</div></div>
                     </Link>
 
 

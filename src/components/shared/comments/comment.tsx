@@ -17,8 +17,8 @@ import toast from 'react-hot-toast';
 import { useSession } from 'next-auth/react';
 import { useCommentStore } from '@/store/comment';
 import { useCommentState } from '@/components/hooks/useCommentState';
-import { formatDistanceToNow } from 'date-fns';
 import { useLogInStore } from '@/store/logIn';
+import { getShortTimeAgo } from '@/components/hooks/useDate';
 
 interface Props {
     className?: string;
@@ -32,22 +32,6 @@ interface Props {
         profileImage: string | null;
     } | null
 } 
-
-const getShortTimeAgo = (date: Date): string => {
-    return formatDistanceToNow(date, { addSuffix: true })
-      .replace('minutes', 'm')
-      .replace('minute', 'm')
-      .replace('hours', 'h')
-      .replace('hour', 'h')
-      .replace('days', 'd')
-      .replace('day', 'd')
-      .replace('months', 'mo')
-      .replace('month', 'mo')
-      .replace('years', 'y')
-      .replace('year', 'y')
-      .replace('about ', '') 
-      .replace('less than a minute', '1m'); 
-  };
 
 export const Comment: React.FC<Props> = ({ className, comment, indentLevel, user }) => {
 
