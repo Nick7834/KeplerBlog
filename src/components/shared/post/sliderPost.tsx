@@ -93,7 +93,7 @@ export const SliderPost: React.FC<Props> = ({
                         className='absolute top-0 left-0 bg-cover bg-center blur-md z-[1] w-full h-full'
                         style={{ backgroundImage: `url(${photo})` }}></div>
                         <div className='relative z-[2] flex items-center justify-center h-full'>
-                            <img src={photo} alt="slide" className='img-h max-w-full h-full block object-cover' loading="lazy" />
+                            <img src={photo} alt="slide" className='img-h max-w-full h-full block object-contain' loading="lazy" />
                         </div>
                     </div>
 
