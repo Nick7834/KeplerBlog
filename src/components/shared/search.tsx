@@ -25,6 +25,7 @@ export const Search: React.FC<Props> = ({ className, setSearchMobOpen, searchMob
             if(ref.current && !ref.current.contains(e.target as Node)) {
                 setFocus(false);
                 setSearchMobOpen(false);
+                setSearch('');
             }
         }
 

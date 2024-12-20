@@ -33,13 +33,13 @@ export const PostSearch: React.FC<Props> = ({ className, post }) => {
                         <Image src={post?.author?.profileImage} alt="avatar" width={40} height={40} className='block min-w-[40px] h-[40px] object-cover z-[1] overflow-hidden rounded-full' /> :
                         <span className='flex flex-col items-center justify-center z-[1] overflow-hidden rounded-full min-w-[40px] h-[40px] bg-[#c7c7c7]' ><FaRegUser size={20} className='text-[#333333]' /></span>
                         }
-                        <span className='text-[#333333] dark:text-[#d9d9d9] text-base font-medium'>{post?.author?.username}</span>
+                        <span className='text-[#333333] dark:text-[#d9d9d9] text-base font-medium break-all'>{post?.author?.username}</span>
                     </Link>
                     <span className='text-[#797d7e] dark:text-[#e3e3e3] text-sm'>·</span>
                     <span className='text-[#797d7e] dark:text-[#e3e3e3] text-sm'>{post?.createdAt && format(new Date(post?.createdAt), 'dd MMM yyyy')}</span>
                 </div>
 
-                <h2 className='mt-3 text-[#333333] dark:text-[#d9d9d9] text-2xl font-bold'>{post?.title}</h2>
+                <h2 className='mt-3 text-[#333333] dark:text-[#d9d9d9] text-2xl font-bold break-all'>{post?.title}</h2>
 
                 <div className='mt-3 flex items-center gap-2'>
                     <span className='text-[#333333] dark:text-[#d9d9d9] text-sm'>{post?._count?.likes} likes</span>

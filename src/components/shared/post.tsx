@@ -98,7 +98,7 @@ export const Post: React.FC<Props> = ({ className, onClick, post }) => {
                         <span className='flex flex-col items-center justify-center z-[1] overflow-hidden rounded-full min-w-[40px] h-[40px] bg-[#c7c7c7]' ><FaRegUser size={20} className='text-[#333333]' /></span>
                         }
                     </div>
-                            <div className='flex items-center gap-1 text-[#333333] dark:text-[#d9d9d9] text-base font-semibold'>{post?.author?.username} · <div className='text-[#797d7e] dark:text-[#e3e3e3] text-sm font-normal'>{timeAgo}</div></div>
+                            <div className='flex items-center gap-1 text-[#333333] dark:text-[#d9d9d9] text-base font-semibold break-all'>{post?.author?.username} · <div className='text-[#797d7e] dark:text-[#e3e3e3] text-sm font-normal'>{timeAgo}</div></div>
                     </Link>
 
 
@@ -115,7 +115,7 @@ export const Post: React.FC<Props> = ({ className, onClick, post }) => {
                 </div>
 
                 <h2 className='mt-4 text-[#333333] dark:text-[#d9d9d9] text-lg font-bold'>{post?.title}</h2>
-                 {text !== '' && <div className='mt-2 text-[#333333] dark:text-[#d9d9d9] text-sm font-normal leading-6'>
+                 {text !== '' && <div className='mt-2 text-[#333333] dark:text-[#d9d9d9] text-sm font-normal leading-6 break-all'>
                     {!pathname.startsWith('/post') ? 
                     (text.length > 200 ? text.substring(0, 200).trim() + '...' : text.trim()) :
                      <div dangerouslySetInnerHTML={{ __html: html }}></div>

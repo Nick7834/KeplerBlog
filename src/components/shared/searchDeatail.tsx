@@ -139,4 +139,3 @@ export const SearchDeatail: React.FC<Props> = ({ className }) => {
         </div>
     );
 };
-
