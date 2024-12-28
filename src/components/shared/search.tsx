@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { FiSearch } from 'react-icons/fi';
 import { Button, Input } from '.';
 import { cn } from '@/lib/utils';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { IoClose } from "react-icons/io5";
 
 interface Props {
@@ -19,13 +19,13 @@ export const Search: React.FC<Props> = ({ className, setSearchMobOpen, searchMob
     const [focus, setFocus] = useState(false);
     const ref = useRef<HTMLLabelElement>(null);
     const [search, setSearch] = useState('');
+     const pathname = usePathname();
 
     useEffect(() => {
         const handClickOutside = (e: MouseEvent) => {
             if(ref.current && !ref.current.contains(e.target as Node)) {
                 setFocus(false);
                 setSearchMobOpen(false);
-                setSearch('');
             }
         }
 
@@ -44,6 +44,12 @@ export const Search: React.FC<Props> = ({ className, setSearchMobOpen, searchMob
         setFocus(false);
         router.push(`/search?query=${search}`);
     }
+
+    useEffect(() => {
+        if(!pathname.startsWith('/search')) {
+            setSearch('')
+        }
+    }, [pathname]);
 
     return (
         <form className={cn('search-block max-w-[600px] w-full', searchMobOpen && 'active-search' )} onSubmit={(e) => handleSubmit(e)}>

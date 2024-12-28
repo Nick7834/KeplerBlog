@@ -37,14 +37,18 @@ export const FetchSerch = async <T extends PostSearchType | UserSearchType>(
 ) => {
     setLoader(true);
     try {
-        const response = await axios.get(`/api/search?query=${query}&skip=${page * 10}&take=10`);
-        const data = response.data;
+        let response;
+        if (dataType === 'posts') {
+            response = await axios.get(`/api/search/posts?query=${query}&skipPosts=${page}&takePosts=10`);
+        } else {
+            response = await axios.get(`/api/search/users?query=${query}&skipUsers=${page}&takeUsers=10`);
+        }
 
         setData((prev) => [
             ...prev,
-            ...data[dataType].filter((newItem: T) => !prev.some((item: T) => item.id === newItem.id)),
+            ...response.data[dataType].filter((newItem: T) => !prev.some((item: T) => item.id === newItem.id)),
           ]);
-        if (data.posts.length < 10) setHasMore(false);
+          if (response.data[dataType].length < 10) setHasMore(false);
     } catch (error) {
         console.error(error);
     } finally {

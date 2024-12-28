@@ -1,4 +1,4 @@
-import { EditPostInput } from "@/components/shared/editPostInput";
+import { EditPostInput } from "@/components/shared/settings/editPostInput";
 import { getUserSession } from "@/lib/get-user-session";
 import { prisma } from "@/prisma/prisma-client";
 import { redirect } from "next/navigation";

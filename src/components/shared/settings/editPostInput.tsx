@@ -1,13 +1,9 @@
 'use client'
 import React, { useEffect, useState } from 'react';
 
-import { Button } from '../ui/button';
 import { cn } from '@/lib/utils';
 
-import { Photos } from './createPost/photos';
-import { TitlePost, Editor } from '.';
 import toast from 'react-hot-toast';
-import { handlePhotoUpload } from './handlePhotoUpload';
 import { convertFromRaw, convertToRaw, EditorState, RawDraftContentState } from 'draft-js';
 import { redirect, useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
@@ -15,6 +11,9 @@ import axios from 'axios';
 import { Post } from '@prisma/client';
 import { FaRegSave } from "react-icons/fa";
 import { RiDeleteBinLine } from "react-icons/ri";
+import { handlePhotoUpload } from '../handlePhotoUpload';
+import { Button, Editor, TitlePost } from '..';
+import { Photos } from '../createPost/photos';
 
 interface Props {
     className?: string;

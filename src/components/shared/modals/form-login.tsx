@@ -45,7 +45,7 @@ export const FormsLogin: React.FC<Props> = ({ onClose }) => {
                 <Form name='email' label='Email' required />
                 <Form name='password' label='Password' type='password' required />
 
-                <Button className='w-full' type='submit' loading={form.formState.isSubmitting}>Log Out</Button>
+                <Button className='w-full' type='submit' loading={form.formState.isSubmitting}>Log  In</Button>
 
             </form>
         </FormProvider>

@@ -28,7 +28,7 @@ export const TrendingList: React.FC<Props> = ({ className }) => {
             }
         };
         fetchPosts();
-    }, [])
+    }, []);
 
     return (
         <div className={cn("mt-[clamp(1.25rem,0.82rem+2.15vw,2.5rem)] flex flex-col items-center justify-center gap-5", className)}>

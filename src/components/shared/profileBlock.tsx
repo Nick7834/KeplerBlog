@@ -44,7 +44,7 @@ export const ProfileBlock: React.FC<Props> = ({ className, user, loader }) => {
 
           {user?.bio &&
             <div className="flex flex-col gap-1">
-              <h2 className="flex items-center gap-2 text-[#333333] dark:text-[#d9d9d9] text-base font-bold"><MdDescription /> Description</h2>
+              <h2 className="flex items-center gap-2 text-[#333333] dark:text-[#d9d9d9] text-base font-bold break-all"><MdDescription /> Description</h2>
                 {loader ?
                 Array.from({ length: 5 }, (_, index) =>
                 <Skeleton

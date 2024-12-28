@@ -15,35 +15,43 @@ export async function GET(req: Request) {
   const offset = (page - 1) * limit;
 
   try {
-    const following = await prisma.follower.findMany({
-        where: {
-          followerId: userID.id,
-        },
-        skip: offset,
-        take: limit,
-        select: {
-          following: {
-            select: {
-              id: true,
-              username: true,
-              profileImage: true,
-              bio: true,
-              createdAt: true,
-              _count: {
-                select: {
-                    following: true,
-                    posts: true,
-                },
+    const paginatedFollowings = await prisma.follower.findMany({
+      where: {
+        followerId: userID.id,
+      },
+      skip: offset,
+      take: limit,
+      select: {
+        following: {
+          select: {
+            id: true,
+            username: true,
+            profileImage: true,
+            bio: true,
+            createdAt: true,
+            _count: {
+              select: {
+                following: true,
+                posts: true,
               },
             },
           },
         },
-      });
+      },
+    });
+    
   
+    const totalFollowings = await prisma.follower.count({
+      where: {
+        followerId: userID.id,
+      },
+    });
+    
 
-      const followings = following.map(record => record.following);
-
-      return NextResponse.json(followings);
+    return NextResponse.json({
+      totalFollowings,
+      followings: paginatedFollowings.map(record => record.following),
+    });
   } catch (error) {
     console.error(error);
     return NextResponse.json({ message: 'Server error' }, { status: 500 });
