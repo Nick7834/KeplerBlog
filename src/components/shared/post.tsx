@@ -107,7 +107,7 @@ export const Post: React.FC<Props> = ({ className, onClick, post }) => {
                         }
                     </div>
                             <div className={cn('flex items-center text-[#333333] dark:text-[#d9d9d9] text-base font-semibold break-all', 
-                                pathname.startsWith('/post') && post?.author?.username.length >= 7 && widthMob <= 450 ? 'block' : 'flex')}>
+                                pathname.startsWith('/post') && post?.author?.username.length >= 10 && widthMob <= 450 ? 'block' : 'flex')}>
                                 {pathname.startsWith('/post') ? 
                                     post?.author?.username :
                                     post?.author?.username.length > 15 && widthMob <= 380 ? post?.author?.username.substring(0, 15).trim()  + '...' : post?.author?.username.trim()
