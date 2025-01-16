@@ -19,6 +19,7 @@ export const SkeletonPost = () => {
             <div className="flex items-center mt-4 gap-5">
                 <Skeleton className="w-[80px] h-[35px] rounded-full bg-[#c1c1c1] dark:bg-[#676767]" />
                 <Skeleton className="w-[80px] h-[35px] rounded-full bg-[#c1c1c1] dark:bg-[#676767]" />
+                <Skeleton className="w-[80px] h-[35px] rounded-full bg-[#c1c1c1] dark:bg-[#676767]" />
             </div>
         </div>
     );

@@ -22,7 +22,7 @@ export const GetPosts: React.FC<Props> = ({ className }) => {
             try {
                 const response = await axios.get(`/api/posts?page=${page}&limit=10`);
                 const data = await response.data.posts;
-
+                
                 if(!data || data.length === 0) {
                     setHasMore(false);
                 } else {

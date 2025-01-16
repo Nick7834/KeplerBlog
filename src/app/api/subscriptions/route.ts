@@ -41,16 +41,31 @@ export async function GET(req: Request) {
     });
     
   
+    const followingsWithStatus = await Promise.all(
+      paginatedFollowings.map(async (record) => {
+        const isFollowing = await prisma.follower.findFirst({
+          where: {
+            followerId: userID.id,
+            followingId: record.following.id, 
+          },
+        });
+
+        return {
+          ...record.following,
+          isFollowing: !!isFollowing, 
+        };
+      })
+    );
+
     const totalFollowings = await prisma.follower.count({
       where: {
         followerId: userID.id,
       },
     });
-    
 
     return NextResponse.json({
       totalFollowings,
-      followings: paginatedFollowings.map(record => record.following),
+      followings: followingsWithStatus,
     });
   } catch (error) {
     console.error(error);

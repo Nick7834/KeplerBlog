@@ -62,7 +62,7 @@ export const handleReply = async (
                 content: resp.data.comment.content,
                 replies: [],
                 parentId: comment?.parentId,
-                postId: comment?.postId
+                postId: comment?.postId,
               };
 
             addReply(newComment, comment?.id);

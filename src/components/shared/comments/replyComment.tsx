@@ -18,6 +18,7 @@ export const ReplyComment: React.FC<Props> = ({ className, replyInput, setReplyI
     useEffect(() => {
         if(comment) {
             setReplyInput(comment);
+
         }
     }, [comment, setReplyInput])
 

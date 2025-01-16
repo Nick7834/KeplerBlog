@@ -98,7 +98,7 @@ export const ProfileDetail: React.FC<Props> = ({ className, idUser }) => {
                     className={cn('w-full flex-1 flex flex-col justify-center gap-5', className)}
                     >   
                     {!isLoading && posts.length === 0 ?
-                        <div className="flex flex-col items-center justify-center gap-2 text-[#333333] dark:text-[#d9d9d9] text-xl font-bold"><BsPostcard size={60} /> No publications</div>
+                        <div className="flex flex-col items-center justify-center gap-2 text-[#333333] dark:text-[#d9d9d9] text-xl font-bold"><BsPostcard size={60} />No publications</div>
                         :
                         posts.map((post) => (
                             <Post key={post.id} post={post} />

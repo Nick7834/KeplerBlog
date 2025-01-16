@@ -1,8 +1,10 @@
 import { subDays } from 'date-fns';
 import { prisma } from "@/prisma/prisma-client";
 import { NextResponse } from "next/server";
+import { getUserSession } from '@/lib/get-user-session';
 
 export async function GET() {
+  const userIds = await getUserSession();
   try {
     const oneWeekAgo = subDays(new Date(), 7);
    
@@ -20,6 +22,11 @@ export async function GET() {
             profileImage: true,
           },
         },
+        likes: {
+          select: {
+            authorId: true,
+          },
+        },
         _count: {
           select: {
             likes: true,
@@ -30,12 +37,16 @@ export async function GET() {
     });
     
     const trendingPosts = posts
-      .map((post) => ({
+    .map((post) => {
+      const isLiked = post.likes.some((like) => like.authorId === userIds?.id);
+      return {
         ...post,
-        popularity: post._count.likes * 2 + post._count.comments, 
-      }))
-      .sort((a, b) => b.popularity - a.popularity) 
-      .slice(0, 10);
+        isLiked, 
+        popularity: post._count.likes * 2 + post._count.comments,
+      };
+    })
+    .sort((a, b) => b.popularity - a.popularity)
+    .slice(0, 10);
     
     return NextResponse.json({ trendingPosts });
   } catch (error) {

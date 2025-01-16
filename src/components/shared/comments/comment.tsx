@@ -19,6 +19,7 @@ import { useCommentStore } from '@/store/comment';
 import { useCommentState } from '@/components/hooks/useCommentState';
 import { useLogInStore } from '@/store/logIn';
 import { getShortTimeAgo } from '@/components/hooks/useDate';
+import { processContent } from '@/lib/processContent';
 
 interface Props {
     className?: string;
@@ -41,6 +42,12 @@ export const Comment: React.FC<Props> = ({ className, comment, indentLevel, user
     
      const { setOpen } = useLogInStore();
 
+     const [contetnComment, setContetnComment] = useState(comment.content);
+
+     useEffect(() => {
+        setContetnComment(comment.content);
+     }, [comment.content])
+
     const {
         commentContentMain,
         setCommentContentMain,
@@ -58,9 +65,11 @@ export const Comment: React.FC<Props> = ({ className, comment, indentLevel, user
         setUpdateComment,
         time,
         setTime,
-    } = useCommentState(comment?.content);
+    } = useCommentState(contetnComment);
 
-    const { deleteComment, addReply } = useCommentStore();
+    const commentContentText = processContent(commentContentMain, false);
+
+    const { deleteComment, addReply, editComment } = useCommentStore();
 
     const [isMobile, setIsMobile] = useState(false);
 
@@ -102,6 +111,8 @@ export const Comment: React.FC<Props> = ({ className, comment, indentLevel, user
         UpdateReply(
             updateComment,
             comment,
+            editComment,
+            setContetnComment, //ddd
             setUpdateComment,
             setIsUpdate,
             setCommentContentMain,
@@ -148,11 +159,16 @@ export const Comment: React.FC<Props> = ({ className, comment, indentLevel, user
                 <div className='flex items-center gap-1 text-[#333333] dark:text-[#d9d9d9] text-base font-medium ml-3'>{comment?.author?.username} · <span className='text-sm font-normal'>{timeAgo}</span></div>
             </Link>
 
-            <p className='text-[#333333] dark:text-[#d9d9d9] text-base font-normal mt-2 ml-1'>{commentContentMain}</p>
+            <p className='text-[#333333] dark:text-[#d9d9d9] text-base font-normal mt-2 ml-1 break-all'
+                dangerouslySetInnerHTML={{ __html: commentContentText }}
+            />   
 
             <div className='flex items-center gap-5 mt-2 ml-5'>
                 {comment?.replies?.length > 0 && 
-                <Button  onClick={() => setIsReplyF(!isReplyF)} variant='link' className='p-0 h-fit text-[#333333] dark:text-[#d9d9d9] hover:no-underline [&_svg]:size-[20px] '>{!isReplyF ? <IoIosAddCircleOutline /> : <IoRemoveCircleOutline />}</Button>}
+                <Button  onClick={() => setIsReplyF(!isReplyF)} variant='link' className='p-0 h-fit text-[#333333] dark:text-[#d9d9d9] hover:no-underline [&_svg]:size-[20px] flex items-center gap-2'>
+                    {!isReplyF ? <IoIosAddCircleOutline /> : <IoRemoveCircleOutline />}
+                    {/* <span className='block'>{comment?._count?.replies} Replies</span> */}
+                </Button>}
                 <Button onClick={handReply} variant='link' className='flex gap-2 items-center p-0 h-fit text-[#333333] dark:text-[#d9d9d9] text-base font-medium hover:no-underline'><FaRegComment /> Reply</Button>
             </div>
 
@@ -174,7 +190,7 @@ export const Comment: React.FC<Props> = ({ className, comment, indentLevel, user
                     replyInput={updateComment}
                     setReplyInput={setUpdateComment}
                     handleReply={handleUpdateComment}
-                    comment={comment?.content}
+                    comment={contetnComment}
                     loaderReply={loaderReply}
                 />
             }

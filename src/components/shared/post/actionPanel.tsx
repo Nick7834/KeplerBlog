@@ -1,8 +1,9 @@
 'use client'
 import { UseFormatNumber } from '@/components/hooks/useFormatNumber';
-import { Skeleton } from '@/components/ui/skeleton';
+import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useLogInStore } from '@/store/logIn';
+import { useStatusLike } from '@/store/status';
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
@@ -12,6 +13,7 @@ import { BiSolidLike } from "react-icons/bi";
 
 import { BiLike } from "react-icons/bi";
 import { FaRegCommentDots } from "react-icons/fa6";
+import { PiShareFat } from "react-icons/pi";
 
 interface Props {
     className?: string;
@@ -21,24 +23,58 @@ interface Props {
     }
     pathname: string,
     router: AppRouterInstance
+    isLiked?: boolean
     onClick?: () => void
+    setShowModalShare?: React.Dispatch<React.SetStateAction<boolean>>
+    setIdPostShare?: React.Dispatch<React.SetStateAction<string>>
     idPost: string
 } 
 
-export const ActionPanel: React.FC<Props> = ({ className, count, pathname, router, idPost, onClick }) => {
+export const ActionPanel: React.FC<Props> = (
+    { 
+        className, 
+        count, 
+        pathname, 
+        router, 
+        idPost, 
+        isLiked, 
+        setShowModalShare,
+        setIdPostShare,
+        onClick 
+    }) => {
 
     const { data: session } = useSession();
-
     const [likes, setLikes] = useState(count.likes);
-    const [liked, setLiked] = useState(false);
-    const [isLoading, setIsLoading] = useState(true);
-
+    const [liked, setLiked] = useState<boolean>(isLiked || false);
+    const { setStatusLike, statusLike } = useStatusLike();
     const formattedCountLike = UseFormatNumber(Number(likes));
     const formattedCountComment = UseFormatNumber(Number(count?.comments));
+    const [loading, setLoading] = useState(false);
+    const { setOpen } = useLogInStore();
 
-    const [statusFetched, setStatusFetched] = useState(false);
+    useEffect(() => {
+        setLiked(isLiked || false);
+    }, [isLiked, session]);
 
-     const { setOpen } = useLogInStore();
+    useEffect(() => {
+
+        if (!statusLike) {
+            return
+        }
+
+        const likeStatus = async () => {
+            try {
+                const { data } = await axios.get(`/api/posts/${idPost}/status`);
+                setLiked(data.liked);
+                setStatusLike(false);
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        likeStatus();
+
+    }, [setStatusLike, statusLike]);
 
     const handleCommentClick = (e: React.MouseEvent) => {
         e.stopPropagation();
@@ -48,31 +84,7 @@ export const ActionPanel: React.FC<Props> = ({ className, count, pathname, route
             router.push(`/post/${idPost}`);
         }
     };
-
-    useEffect(() => {
-
-        if (!session || statusFetched) {
-            setIsLoading(false);
-            return
-        }
-
-        const likeStatus = async () => {
-            try {
-                setIsLoading(true);
-                const { data } = await axios.get(`/api/posts/${idPost}/status`);
-                setLiked(data.liked);
-                setStatusFetched(true);
-            } catch (error) {
-                console.error(error);
-            } finally {
-                setIsLoading(false);
-            }
-        }
-
-        likeStatus();
-
-    }, [idPost, session, statusFetched]);
-
+  
     const handleLikeClick = async (postId: string) => {
 
         if(!session) {
@@ -88,6 +100,10 @@ export const ActionPanel: React.FC<Props> = ({ className, count, pathname, route
             setLiked(true);
        }
 
+        if (loading) return;
+
+        setLoading(true);
+
         try {
 
             await axios.post(`/api/posts/${postId}/like`);
@@ -95,24 +111,36 @@ export const ActionPanel: React.FC<Props> = ({ className, count, pathname, route
         } catch(error) {
             console.error(error);
             toast.error('Something went wrong');
+        } finally {
+            setLoading(false); 
         }
 
     };
 
+    const handleShareClick = (idPost: string) => {
+        const postUrl = `${window.location.origin}/post/${idPost}`;
+        if (setShowModalShare && setIdPostShare) {
+            setShowModalShare(true);
+            setIdPostShare(postUrl);
+        }
+    }
 
     return (
         <div className={cn('mt-4 flex items-center gap-5', className)}>
-           {isLoading ? <Skeleton className='w-[52px] h-[36px] bg-[#c1c1c1] dark:bg-[#2a2a2a] rounded-full' /> :
-                <button onClick={(e) => (e.stopPropagation(), handleLikeClick(idPost))} className={cn('flex items-center gap-2 bg-neutral-300/75 dark:bg-neutral-700/75 p-2 rounded-full', liked && 'bg-[#7391d5] dark:bg-[#7391d5]')}>
-                    <div className={cn('block', liked && 'text-[#d9d9d9] dark:text-[#d9d9d9]')}>{liked ? <BiSolidLike size={20} /> : <BiLike size={20} />}</div>
-                    <span className={cn('block h-[19px] text-[#333333] dark:text-[#d9d9d9] text-sm font-semibold leading-1', liked && 'text-[#d9d9d9] dark:text-[#d9d9d9]')}>{formattedCountLike}</span>
-                </button>
-           }
-
-            <button onClick={handleCommentClick} className="flex items-center gap-2 bg-neutral-300/75 dark:bg-neutral-700/75 p-2 rounded-full">
-                <div className='block'><FaRegCommentDots size={20} /></div>
+            <Button onClick={(e) => (e.stopPropagation(), handleLikeClick(idPost))} className={cn('flex items-center gap-2 bg-neutral-300/75 dark:bg-neutral-700/75 p-2 rounded-full h-fit hover:bg-color', liked && 'bg-[#7391d5] dark:bg-[#7391d5]')}>
+                <div className={cn('block [&_svg]:size-[20px] text-[#333333] dark:text-[#d9d9d9]', liked && 'text-[#d9d9d9] dark:text-[#d9d9d9] [&_svg]:size-[20px]')}>{liked ? <BiSolidLike size={20} /> : <BiLike size={20} />}</div>
+                <span className={cn('block h-[19px] text-[#333333] dark:text-[#d9d9d9] text-sm font-semibold leading-1', liked && 'text-[#d9d9d9] dark:text-[#d9d9d9]')}>{formattedCountLike}</span>
+            </Button>
+           
+            <Button onClick={handleCommentClick} className="flex items-center gap-2 bg-neutral-300/75 dark:bg-neutral-700/75 p-2 rounded-full h-fit hover:bg-color">
+                <div className='block [&_svg]:size-[20px] text-[#333333] dark:text-[#d9d9d9]'><FaRegCommentDots size={20} /></div>
                 <span className='block h-[19px] text-[#333333] dark:text-[#d9d9d9] text-sm font-semibold leading-1'>{formattedCountComment}</span>
-            </button>
+            </Button>
+
+            <Button onClick={(e) => (e.stopPropagation(), handleShareClick(idPost))} className="flex items-center gap-2 bg-neutral-300/75 dark:bg-neutral-700/75 p-2 rounded-full h-fit hover:bg-color">
+                <div className='block [&_svg]:size-[20px] text-[#333333] dark:text-[#d9d9d9]'><PiShareFat size={20} /></div>
+                <span className='block h-[19px] text-[#333333] dark:text-[#d9d9d9] text-sm font-semibold leading-1'>Share</span>
+            </Button>
         </div>
     );
 };

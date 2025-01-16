@@ -6,12 +6,16 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Button, Form } from '..';
 import { signIn } from 'next-auth/react';
 import { toast } from 'react-hot-toast';
+import { useStatusFollow, useStatusLike } from '@/store/status';
 
 interface Props {
     onClose: () => void
 } 
 
 export const FormsLogin: React.FC<Props> = ({ onClose }) => {
+
+    const { setStatusLike } = useStatusLike();
+    const { setStatusFollow } = useStatusFollow();
 
     const form = useForm<FormLogin>({
         resolver: zodResolver(formLoginSchema),
@@ -28,6 +32,9 @@ export const FormsLogin: React.FC<Props> = ({ onClose }) => {
         if (!resp?.ok) {
          throw Error();
         }
+
+        setStatusLike(true);
+        setStatusFollow(true);
 
         onClose();
 

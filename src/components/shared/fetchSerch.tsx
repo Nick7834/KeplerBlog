@@ -20,6 +20,7 @@ export interface UserSearchType {
     id: string;
     username: string;
     profileImage: string;
+    isFollowing: boolean;
     bio: string;
     _count: {
         following: number;

@@ -76,7 +76,7 @@ export const CreatePostInput: React.FC<Props> = ({ className }) => {
     return (
         <div className={cn('flex flex-col max-w-[600px] mt-8', className)}>
 
-            <Photos photos={photoPreview} setPhotoPreview={setPhotoPreview}  setPhotos={setPhotos} />
+            <Photos photos={photoPreview} setPhotoPreview={setPhotoPreview} setPhotos={setPhotos} />
 
             <TitlePost setTitle={setTitle} title={title} />
 

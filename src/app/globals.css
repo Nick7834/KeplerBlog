@@ -209,6 +209,10 @@ h1, h2, h3, h4, h5, h6, p {
   display: none;
 }
 
+.link-text {
+  @apply inline-block w-fit text-[#3b89ff] dark:text-[#3b89ff] text-sm font-normal leading-6 break-all underline;
+}
+
 /* Responsive */
 
 @media (max-width: 1000px) {

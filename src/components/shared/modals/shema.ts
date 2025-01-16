@@ -19,7 +19,7 @@ export const formUpdateSchema = z.object({
     username: z.string()
     .min(2, { message: 'Username must be at least 2 characters' })
     .max(20, { message: 'Username must be at most 20 characters' }),
-    bio: z.string().max(400, { message: 'Bio must be at most 100 characters' }).optional(),
+    bio: z.string().max(400, { message: 'Bio must be at most 400 characters' }).optional(),
 });
 
 export type FormLogin = z.infer<typeof formLoginSchema>;

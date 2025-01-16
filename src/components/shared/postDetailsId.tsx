@@ -29,7 +29,7 @@ export const PostDetails: React.FC<Props> = ({ className, idPost }) => {
             
             try {
                 const response = await axios.get(`/api/posts/${idPost}/detailPost`);
-                const data = await response.data.posts;
+                const data = await response.data.postWithLikedStatus;
                 setPostDetail(data);
             } catch (error) {
                 console.error('Request failed:', error);

@@ -10,6 +10,7 @@ interface ICommentStore {
     fetchComments: (postId: string) => void;
     addComment: (comment: IComment) => void;
     addReply: (reply: IComment, parentId: string) => void;
+    editComment: (commentId: string, content: string) => void;
     deleteComment: (commentId: string) => void;
 }
 
@@ -68,6 +69,38 @@ export const useCommentStore = create<ICommentStore>((set) => ({
         comments: updateReplies(state.comments, parentId, reply),
       }));
     },
+
+    // edit new fun 
+
+    editComment: (commentId: string, content: string) => {
+
+      const updateComment = (comments: IComment[], commentId: string, content: string): IComment[] => {
+        return comments.map((comment) => {
+          if (comment.id === commentId) {
+            return {
+              ...comment,
+              content,
+            };
+          }
+  
+          if (comment.replies.length > 0) {
+            return {
+              ...comment,
+              replies: updateComment(comment.replies, commentId, content),
+            };
+          }
+  
+          return comment;
+        });
+      }
+
+      set((state) => ({
+        comments: updateComment(state.comments, commentId, content)
+      }))
+    
+    },
+
+    //////
 
     deleteComment: (commentId: string) => {
 

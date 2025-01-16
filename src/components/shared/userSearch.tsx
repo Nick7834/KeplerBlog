@@ -36,7 +36,9 @@ export const UserSearch: React.FC<Props> = ({ className, user }) => {
                             </div>
                             <p className='mt-1 text-[#333333] dark:text-[#d9d9d9] text-sm'>{user?.bio}</p>
                         </div>
-                      {session?.user?.id !== user?.id &&  <div onClick={(e) => e.preventDefault()}><FollowButton idUser={user?.id} /></div>}
+                      {session?.user?.id !== user?.id &&  <div onClick={(e) => e.preventDefault()}>
+                        <FollowButton idUser={user?.id} isFollowUser={user?.isFollowing} />
+                        </div>}
                     </div>
 
         </Link>

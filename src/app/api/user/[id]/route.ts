@@ -1,8 +1,10 @@
+import { getUserSession } from '@/lib/get-user-session';
 import { prisma } from '@/prisma/prisma-client';
 import { NextResponse } from 'next/server';
 
 
 export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const userIds = await getUserSession();
   const { id: id } = await params;
 
   if (!id) {
@@ -48,7 +50,18 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
       return NextResponse.json({ message: 'User not found' }, { status: 404 });
     }
 
-    return NextResponse.json(user);
+    let isFollowing = false;
+    if (userIds?.id) {
+      const follow = await prisma.follower.findFirst({
+        where: {
+          followerId: userIds.id,
+          followingId: user.id,
+        },
+      });
+      isFollowing = !!follow;
+    }
+
+    return NextResponse.json({ ...user, isFollowing });
   } catch (error) {
     console.error(error);
     return NextResponse.json({ message: 'Server error' }, { status: 500 });

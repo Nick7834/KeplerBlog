@@ -17,6 +17,7 @@ export interface ProfileInterface {
       poster: string | null;
       bio: string | null;
       createdAt: Date;
+      isFollowing: boolean;
       followers: {
         id: string;
         followerId: string;
@@ -64,7 +65,7 @@ export const ProfileTop: React.FC<ProfileInterface> = ({ className, user }) => {
                             <span className='text-[#333333] dark:text-[#d9d9d9] text-sm font-medium mt-1'>{formattedCount} followers</span>
                     </div>
                    {session?.user?.id === user?.id ? <Link href="/settings" className='transition-all ease-in-out duration-[.3s] cursor-pointer m-3 hover:rotate-90'><IoMdSettings size={20} className='text-[#333333] dark:text-[#e3e3e3]' /></Link> 
-                   : <FollowButton idUser={user?.id || ''} setFollow={setFollow} follow={follow} /> }
+                   : <FollowButton idUser={user?.id || ''} setFollow={setFollow} follow={follow} isFollowUser={user?.isFollowing} /> }
                 </div>
             </div>
         </div>

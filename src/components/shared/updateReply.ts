@@ -5,6 +5,8 @@ import { IComment } from "./comments/comments";
 export const UpdateReply = async (
     updateComment: string,
     comment: IComment,
+    editComment: (commentId: string, content: string) => void,
+    setContetnComment: React.Dispatch<React.SetStateAction<string>>,
     setUpdateComment: React.Dispatch<React.SetStateAction<string>>,
     setIsUpdate: React.Dispatch<React.SetStateAction<boolean>>,
     setCommentContentMain: React.Dispatch<React.SetStateAction<string>>,
@@ -30,7 +32,11 @@ export const UpdateReply = async (
 
         if(resp.status === 201) {
             toast.success('Comment updated successfully');
-            setUpdateComment('');
+
+            editComment(comment.id, updateComment);
+
+            setUpdateComment(resp.data.comment.content);
+            setContetnComment(resp.data.comment.content);
             setIsUpdate(false);
             setCommentContentMain(resp.data.comment.content);
         }

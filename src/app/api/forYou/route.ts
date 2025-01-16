@@ -45,6 +45,9 @@ export async function GET(req: Request) {
               profileImage: true
             }
           },
+          likes: {
+            select: { authorId: true },
+          },
           _count: {
             select: {
               likes: true,
@@ -61,7 +64,15 @@ export async function GET(req: Request) {
         take: pageSize,
       });
 
-    return NextResponse.json({ posts });
+      const postsWithLikedStatus = posts.map((post) => {
+        const isLiked = post.likes.some((like) => like.authorId === userId.id);
+        return {
+          ...post,
+          isLiked,
+        };
+      });
+  
+      return NextResponse.json({ posts: postsWithLikedStatus });
   } catch (error) {
     console.error('Error fetching posts:', error);
     return NextResponse.json({ error: 'Failed to fetch posts' }, { status: 500 });

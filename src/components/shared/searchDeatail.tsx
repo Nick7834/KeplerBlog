@@ -25,8 +25,8 @@ export const SearchDeatail: React.FC<Props> = ({ className }) => {
     const [loaderPosts, setLoaderPosts] = useState(false);
     const [loaderUsers, setLoaderUsers] = useState(false);
 
-    const [pagePosts, setPagePosts] = useState(1);
-    const [pageUsers, setPageUsers] = useState(1);
+    const [pagePosts, setPagePosts] = useState(0);
+    const [pageUsers, setPageUsers] = useState(0);
 
     const [hasMorePosts, setHasMorePosts] = useState(true);
     const [hasMoreUsers, setHasMoreUsers] = useState(true);
@@ -36,8 +36,8 @@ export const SearchDeatail: React.FC<Props> = ({ className }) => {
     useEffect(() => {
         setUsers([]);
         setPosts([]);
-        setPagePosts(1);
-        setPageUsers(1);
+        setPagePosts(0);
+        setPageUsers(0);
         setHasMorePosts(true);
         setHasMoreUsers(true);
     }, [query]);

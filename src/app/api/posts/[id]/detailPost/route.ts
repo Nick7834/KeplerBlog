@@ -1,8 +1,10 @@
+import { getUserSession } from "@/lib/get-user-session";
 import { prisma } from "@/prisma/prisma-client";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id: postId } = await params;
+  const userIds = await getUserSession();
 
     if(!postId) {
       return NextResponse.json({ error: 'Post not found' }, { status: 404 });
@@ -30,6 +32,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
           likes: {
             select: {
               id: true,
+              authorId: true
             }
           },
           author: {
@@ -53,7 +56,28 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
       return NextResponse.json({ error: 'Posts not found' }, { status: 404 });    
     }
 
-    return NextResponse.json({ posts });
+    let isLiked = false;
+    let isFollowing = false;
+
+    if (userIds?.id) {
+      isLiked = posts.likes.some((like) => like.authorId === userIds.id);
+
+      const follow = await prisma.follower.findFirst({
+        where: {
+          followerId: userIds.id,
+          followingId: posts.author.id,
+        },
+      });
+      isFollowing = !!follow;
+    }
+
+    const postWithLikedStatus = {
+      ...posts,
+      isLiked,
+      isFollowing,
+    };
+
+    return NextResponse.json({ postWithLikedStatus });
 
    } catch (error) {
       console.error(error);

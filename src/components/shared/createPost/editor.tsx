@@ -20,8 +20,6 @@ const EditorWithNoSSR = dynamic(() =>
     }>),
     { ssr: false }
   );
-  
-  
 
 export const Editor: React.FC<Props> = ({ className, handlePgoto, editorState, setEditorState  }) => {
    

@@ -6,53 +6,51 @@ import { useSession } from 'next-auth/react';
 import axios from 'axios';
 import { usePathname } from 'next/navigation';
 import { useLogInStore } from '@/store/logIn';
-import { Skeleton } from '../ui/skeleton';
+import { useStatusFollow } from '@/store/status';
 
 interface Props {
     className?: string;
     idUser: string | undefined;
     setFollow?: (number: number) => void;
     follow?: number;
+    isFollowUser: boolean
 } 
 
-export const FollowButton: React.FC<Props> = ({ className, idUser, setFollow, follow }) => {
+export const FollowButton: React.FC<Props> = ({ className, idUser, setFollow, follow, isFollowUser }) => {
 
     const { data: session } = useSession();
 
     const pathname = usePathname();
 
-    const [Isfollow, setIsFollow] = useState(false);
-    const [isLoading, setIsLoading] = useState(true);
-
-    const [statusFetched, setStatusFetched] = useState(false);
+    const [Isfollow, setIsFollow] = useState(isFollowUser || false);
+    const { statusFollow, setStatusFollow } = useStatusFollow();
+      const [loading, setLoading] = useState(false);
 
     const { setOpen } = useLogInStore();
 
+    useEffect(() => {
+        setIsFollow(isFollowUser || false);
+    }, [isFollowUser, session]);
 
     useEffect(() => {
 
-        if(!session || !idUser || statusFetched) {
-            setIsLoading(false);
+        if(!statusFollow) {
             return
         }
-
-        setIsLoading(true);
 
         const getFollow = async () => {
             try {
                 const { data } = await axios.get(`/api/user/${idUser}/follow`);
                 setIsFollow(data.isFollow);
-                setStatusFetched(true);
+                setStatusFollow(false)
             } catch(error) {
                 console.error(error);
-            } finally {
-                setIsLoading(false);
             }
         }
 
         getFollow();
 
-    }, [idUser, session, statusFetched]);
+    }, [statusFollow, setStatusFollow]);
 
     const handleFollow = async () => {
 
@@ -61,7 +59,7 @@ export const FollowButton: React.FC<Props> = ({ className, idUser, setFollow, fo
             return
         }
 
-        setIsFollow((prev) => !prev);
+        setIsFollow((prev: boolean) => !prev);
 
         if(pathname.startsWith('/profile')) {
             if (Isfollow) {
@@ -71,22 +69,27 @@ export const FollowButton: React.FC<Props> = ({ className, idUser, setFollow, fo
             }
         }
 
+        if (loading) return;
+
+        setLoading(true);
+
         try {
 
            await axios.post(`/api/user/${idUser}/follow`);
 
         } catch(error) {
             console.error(error);
+        } finally {
+            setLoading(false); 
         }
 
     }
 
     return (
-    <>
-        {isLoading ? 
-            <Skeleton className='w-[100px] h-[32px] bg-[#c1c1c1] dark:bg-[#2a2a2a] rounded-[10px]' /> :
-            <Button onClick={handleFollow} className={cn('py-[6px] px-5 leading-2 h-fit text-sm transition-all ease-in-out duration-300', className, Isfollow && 'bg-[#7391d5] text-white hover:bg-[#7391d5]/85')}>{Isfollow ? 'Following' : 'Follow'}</Button>
-         }
-    </>
+        <Button onClick={handleFollow} className={cn('py-[6px] px-5 leading-2 h-fit text-sm transition-all ease-in-out duration-300', 
+        className, 
+        Isfollow && 'bg-[#7391d5] text-white hover:bg-[#7391d5]/85')}>
+            {Isfollow ? 'Following' : 'Follow'}
+        </Button>
     )
 };

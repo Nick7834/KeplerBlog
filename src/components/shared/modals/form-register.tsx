@@ -7,12 +7,16 @@ import { Button, Form } from '..';
 import { toast } from 'react-hot-toast';
 import { registerUser } from '@/app/authProfile';
 import { signIn } from 'next-auth/react';
+import { useStatusFollow, useStatusLike } from '@/store/status';
 
 interface Props {
     onClose: () => void
 }
 
 export const FormsRegister: React.FC<Props> = ({ onClose }) => {
+
+    const { setStatusLike } = useStatusLike();
+     const { setStatusFollow } = useStatusFollow();
 
     const form = useForm<FormRegister>({
         resolver: zodResolver(formRegisterSchema),
@@ -42,6 +46,9 @@ export const FormsRegister: React.FC<Props> = ({ onClose }) => {
         if (!resp?.ok) {
             throw new Error('Something went wrong');
         }
+
+        setStatusLike(true);
+        setStatusFollow(true);
 
         onClose?.();
 

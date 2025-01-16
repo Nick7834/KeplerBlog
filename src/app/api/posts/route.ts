@@ -67,6 +67,7 @@ export async function POST(request: Request) {
 }
 
 export async function GET(req: Request) {
+  const userIds = await getUserSession();
   try {
 
       const url = new URL(req.url);
@@ -101,6 +102,7 @@ export async function GET(req: Request) {
         likes: {
           select: {
             id: true,
+            authorId: true,
           }
         },
         author: {
@@ -120,7 +122,36 @@ export async function GET(req: Request) {
     
     });
 
-    return NextResponse.json({ posts });
+    const postsWithLikedStatus = await Promise.all(posts.map(async (post) => {
+      let isLiked = false;
+      let isFollowing = false;
+    
+      if (userIds?.id) {
+        const like = await prisma.like.findFirst({
+          where: {
+            authorId: userIds.id,
+            postId: post.id,
+          },
+        });
+        isLiked = !!like;
+      }
+
+      const follow = await prisma.follower.findFirst({
+        where: {
+          followerId: userIds?.id,
+          followingId: post.authorId
+        },
+      });
+      isFollowing = !!follow;
+    
+      return {
+        ...post,
+        isLiked,
+        isFollowing
+      };
+    }));
+
+    return NextResponse.json({ posts: postsWithLikedStatus });
   } catch (error) {
     console.error('Error fetching posts:', error);
     return NextResponse.json({ error: 'Failed to fetch posts' }, { status: 500 });
