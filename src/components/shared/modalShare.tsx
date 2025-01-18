@@ -45,17 +45,21 @@ export const ModalShare: React.FC<Props> = ({ idPost, showModalShare, setShowMod
     const [copied, setCopied] = useState(false);
     const refInput = useRef<HTMLInputElement>(null);
 
+    const [isCopied, setIsCopied] = useState(false);
+
     const handleCopyLink = (link: string) => {
         refInput.current?.select();
+        if(isCopied) return;
         navigator.clipboard.writeText(link);
         setCopied(true);
+        setIsCopied(true);
         toast.success('Link copied to clipboard');
     }
 
     if(!showModalShare) return null;
 
     return (
-        <Dialog open={showModalShare} onOpenChange={(open) => (setShowModalShare(open), setCopied(false))}>
+        <Dialog open={showModalShare} onOpenChange={(open) => (setShowModalShare(open), setCopied(false), setIsCopied(false))}>
             <DialogContent className='bg-[#e3e3e3] dark:bg-[#19191b] rounded-md w-full max-w-[95%] sm:max-w-fit p-4 mx-auto '>
 
                 <DialogTitle className='text-center text-[#333333] dark:text-[#d9d9d9] text-xl font-bold'>Share</DialogTitle>
