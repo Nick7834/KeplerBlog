@@ -49,7 +49,10 @@ export const GetPosts: React.FC<Props> = ({ className }) => {
             dataLength={posts.length}
             next={loadMorePosts}
             hasMore={hasMore}
-            loader={Array.from({ length: 5 }).map((_, index) => <SkeletonPost key={index} />)}
+            loader=
+            {Array.from({ length: 5 }).map((_, index) => 
+                <SkeletonPost key={index} />)
+            }
             className={cn('w-full flex-1 flex flex-col items-center justify-center gap-5 mt-[clamp(1.25rem,0.82rem+2.15vw,2.5rem)]', className)}
         >   
             {posts.map((post) => (

@@ -32,8 +32,6 @@ export const SubscriptionsList: React.FC<Props> = ({ className }) => {
     const [page, setPage] = useState(1);
     const formattedCount = UseFormatNumber(countSub);
 
-
-
     useEffect(() => {
 
         if (!session) {

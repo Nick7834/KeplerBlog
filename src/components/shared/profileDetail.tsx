@@ -28,8 +28,7 @@ export const ProfileDetail: React.FC<Props> = ({ className, idUser }) => {
         const fetchUserData = async () => {
             setIsLoading(true);
             try {
-                const response = await axios.get(`/api/user/${idUser}`);
-                const data = await response.data;
+                const { data } = await axios.get(`/api/user/${idUser}`);
                 setUser(data);
             } catch (error) {
                 console.error('Request failed:', error);
@@ -94,7 +93,7 @@ export const ProfileDetail: React.FC<Props> = ({ className, idUser }) => {
                     dataLength={posts.length}
                     next={loadMorePosts}
                     hasMore={hasMore}
-                    loader={Array.from({ length: 5 }).map((_, index) => <SkeletonPost key={index} />)}
+                    loader={isLoading && Array.from({ length: 5 }).map((_, index) => <SkeletonPost key={index} />)}
                     className={cn('w-full flex-1 flex flex-col justify-center gap-5', className)}
                     >   
                     {!isLoading && posts.length === 0 ?
