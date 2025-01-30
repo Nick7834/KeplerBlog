@@ -44,7 +44,7 @@ export const AutchModal: React.FC<Props> = ({ open, onClose }) => {
                                     signIn('google', { callbackUrl: '/', redirect: true })
                                 }
                                 variant='outline' 
-                                className='mt-2 w-full flex items-center gap-2 border border-solid border-[#333333] dark:border-[#d9d9d9] bg-neutral-300/75 dark:bg-neutral-800/75 hover:bg-neutral-200/70 hover:dark:bg-neutral-700/70'>
+                                className='w-full flex items-center gap-2 border border-solid border-[#333333] dark:border-[#d9d9d9] bg-neutral-300/75 dark:bg-neutral-800/75 hover:bg-neutral-200/70 hover:dark:bg-neutral-700/70'>
                                 <FcGoogle /> 
                                 Google
                             </Button>
