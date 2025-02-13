@@ -24,7 +24,8 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
                 select: {
                   id: true,
                   username: true,
-                  profileImage: true
+                  profileImage: true,
+                  isverified: true
                 }
               }
             }
@@ -39,7 +40,8 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
             select: {
               id: true,
               username: true,
-              profileImage: true
+              profileImage: true,
+              isverified: true
             }
           },
           _count: {

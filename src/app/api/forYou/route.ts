@@ -42,7 +42,8 @@ export async function GET(req: Request) {
             select: {
               id: true,
               username: true,
-              profileImage: true
+              profileImage: true,
+              isverified: true
             }
           },
           likes: {

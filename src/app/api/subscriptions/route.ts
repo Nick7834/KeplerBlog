@@ -27,6 +27,7 @@ export async function GET(req: Request) {
             id: true,
             username: true,
             profileImage: true,
+            isverified: true,
             bio: true,
             createdAt: true,
             _count: {

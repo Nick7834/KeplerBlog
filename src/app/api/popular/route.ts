@@ -20,6 +20,7 @@ export async function GET() {
             id: true,
             username: true,
             profileImage: true,
+            isverified: true
           },
         },
         likes: {

@@ -6,7 +6,9 @@ import { Session } from "next-auth";
 
 export const handleReply = async (
     replyInput: string,
-    user: { id: string; username: string; profileImage: string | null }, 
+    user: {
+        isverified: boolean; id: string; username: string; profileImage: string | null 
+}, 
     setReplyInput: React.Dispatch<React.SetStateAction<string>>,
     setLoaderReply: React.Dispatch<React.SetStateAction<boolean>>,
     setIsReply: React.Dispatch<React.SetStateAction<boolean>>,
@@ -57,7 +59,8 @@ export const handleReply = async (
                 author: {
                   id: user!.id,
                   username: user!.username,
-                  profileImage: user!.profileImage
+                  profileImage: user!.profileImage,
+                  isverified: user!.isverified
                 },
                 content: resp.data.comment.content,
                 replies: [],
@@ -66,6 +69,8 @@ export const handleReply = async (
               };
 
             addReply(newComment, comment?.id);
+
+            console.log(user)
         }
 
     } catch(error) {

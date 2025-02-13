@@ -6,6 +6,7 @@ import { MdDescription } from 'react-icons/md';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { Skeleton } from '../ui/skeleton';
+import { BsCheck } from 'react-icons/bs';
 
 interface Props {
     className?: string;
@@ -16,6 +17,7 @@ interface Props {
         poster: string | null;
         bio: string | null;
         createdAt: Date | null;
+        isverified: boolean;
         followers: {
           id: string;
           followerId: string;
@@ -38,8 +40,8 @@ export const ProfileBlock: React.FC<Props> = ({ className, user, loader }) => {
     return (
         <div className={cn('block-info sticky top-[110px] h-fit flex flex-col gap-4 bg-[#e0e0e0]/95 dark:bg-[#2a2a2a]/60 p-4 rounded-md', className)}>
 
-          <h2 className="text-[#333333] dark:text-[#d9d9d9] text-xl font-bold break-all">
-            {loader ? <Skeleton className='w-[100px] h-[20px] rounded-[10px] bg-[#c1c1c1] dark:bg-[#2a2a2a]' /> : user?.username}
+          <h2 className="flex items-center gap-[2px] text-[#333333] dark:text-[#d9d9d9] text-xl font-bold break-all">
+            {loader ? <Skeleton className='w-[100px] h-[20px] rounded-[10px] bg-[#c1c1c1] dark:bg-[#2a2a2a]' /> : user?.username}  {user?.isverified && <BsCheck size={22} className='text-[#7391d5]' />}
           </h2>
 
           {user?.bio &&

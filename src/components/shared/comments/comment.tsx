@@ -20,6 +20,7 @@ import { useCommentState } from '@/components/hooks/useCommentState';
 import { useLogInStore } from '@/store/logIn';
 import { getShortTimeAgo } from '@/components/hooks/useDate';
 import { processContent } from '@/lib/processContent';
+import { BsCheck } from 'react-icons/bs';
 
 interface Props {
     className?: string;
@@ -31,6 +32,7 @@ interface Props {
         email?: string | undefined;
         username: string;
         profileImage: string | null;
+        isverified: boolean
     } | null
 } 
 
@@ -156,7 +158,9 @@ export const Comment: React.FC<Props> = ({ className, comment, indentLevel, user
                     : 
                     <span className='flex flex-col items-center justify-center z-[1] overflow-hidden rounded-full min-w-[40px] h-[40px] bg-[#c7c7c7]' ><FaRegUser size={20} className='text-[#333333]' /></span>
                 }
-                <div className='flex items-center gap-1 text-[#333333] dark:text-[#d9d9d9] text-base font-medium ml-3'>{comment?.author?.username} · <span className='text-sm font-normal'>{timeAgo}</span></div>
+                <div className='flex items-center gap-1 text-[#333333] dark:text-[#d9d9d9] text-base font-medium ml-3'>
+                    <div className='flex items-center gap-[2px]'>{comment?.author?.username} {comment?.author?.isverified && <BsCheck size={22} className='text-[#7391d5]' />}</div> 
+                    · <span className='text-sm font-normal'>{timeAgo}</span></div>
             </Link>
 
             <p className='text-[#333333] dark:text-[#d9d9d9] text-base font-normal mt-2 ml-1 break-all'

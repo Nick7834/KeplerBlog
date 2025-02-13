@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
 import { PostSearchType } from './fetchSerch';
+import { BsCheck } from 'react-icons/bs';
 
 interface Props {
     className?: string;
@@ -33,7 +34,7 @@ export const PostSearch: React.FC<Props> = ({ className, post }) => {
                         <Image src={post?.author?.profileImage} alt="avatar" width={40} height={40} className='block min-w-[40px] h-[40px] object-cover z-[1] overflow-hidden rounded-full' /> :
                         <span className='flex flex-col items-center justify-center z-[1] overflow-hidden rounded-full min-w-[40px] h-[40px] bg-[#c7c7c7]' ><FaRegUser size={20} className='text-[#333333]' /></span>
                         }
-                        <span className='text-[#333333] dark:text-[#d9d9d9] text-base font-medium break-all'>{post?.author?.username}</span>
+                        <span className='flex items-center gap-[2px] ftext-[#333333] dark:text-[#d9d9d9] text-base font-medium break-all'>{post?.author?.username} {post?.author?.isverified && <BsCheck size={22} className='text-[#7391d5]' />}</span>
                     </Link>
                     <span className='text-[#797d7e] dark:text-[#e3e3e3] text-sm'>·</span>
                     <span className='text-[#797d7e] dark:text-[#e3e3e3] text-sm'>{post?.createdAt && format(new Date(post?.createdAt), 'dd MMM yyyy')}</span>

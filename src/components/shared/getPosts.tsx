@@ -8,16 +8,23 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 
 interface Props {
     className?: string;
+    firtsPosts: IPost[]
 } 
 
-export const GetPosts: React.FC<Props> = ({ className }) => {
+export const GetPosts: React.FC<Props> = ({ className, firtsPosts }) => {
 
     const [posts, setPosts] = useState<IPost[]>([]);
 
     const [hasMore, setHasMore] = useState(true);
     const [page, setPage] = useState(1);
 
+    useEffect(() => {
+        setPosts(firtsPosts || []);
+    }, [firtsPosts]);
+
     useEffect(() => {  
+        if (page === 1) return;
+
         const fetchPosts = async () => {
             try {
                 const response = await axios.get(`/api/posts?page=${page}&limit=10`);
@@ -55,7 +62,7 @@ export const GetPosts: React.FC<Props> = ({ className }) => {
             }
             className={cn('w-full flex-1 flex flex-col items-center justify-center gap-5 mt-[clamp(1.25rem,0.82rem+2.15vw,2.5rem)]', className)}
         >   
-            {posts.map((post) => (
+            {posts && posts.map((post) => (
                 <Post key={post.id} post={post} />
             ))}
         </InfiniteScroll>

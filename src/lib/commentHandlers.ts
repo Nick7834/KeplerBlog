@@ -16,6 +16,7 @@ interface HandleCommentPostParams {
     email?: string | undefined;
     username: string;
     profileImage: string | null;
+    isverified: boolean;
   } | null;
 }
 
@@ -64,7 +65,8 @@ export const handleCommentPost = async ({
       author: {
         id: user.id,
         username: user.username,
-        profileImage: user.profileImage
+        profileImage: user.profileImage,
+        isverified: user?.isverified
       },
       content: resp.data.comment.content,
       replies: [],

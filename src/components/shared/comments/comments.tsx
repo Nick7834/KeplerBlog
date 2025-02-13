@@ -25,6 +25,7 @@ export interface IComment {
         email?: string | undefined;
         username: string;
         profileImage: string | null;
+        isverified: boolean;
     } | null;
     content: string;           
     replies: IComment[];    

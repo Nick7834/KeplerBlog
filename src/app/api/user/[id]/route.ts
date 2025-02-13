@@ -21,6 +21,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
         poster: true,
         bio: true,
         createdAt: true,
+        isverified: true,
         followers: {
           select: {
             id: true,
@@ -30,7 +31,8 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
         },
         _count: {
           select: {
-            following: true
+            following: true,
+            posts: true
           }
         },
         posts: {

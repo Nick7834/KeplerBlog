@@ -108,14 +108,18 @@ export const SettingsList: React.FC<Props> = ({ className, user }) => {
                         onSubmit={handleSubmit(onSubmit)}
                     />
                 </li>
-                <li className='settings-grid grid grid-cols-[200px_1fr] items-center'>
-                    <span className=' text-[#333333] dark:text-[#d9d9d9] text-lg font-medium'>Email</span> 
-                    <SettingsEdit 
-                        nameProfile={userData!.email} 
-                        name='email' 
-                        control={control} 
-                        onSubmit={handleSubmit(onSubmit)}
-                     />
+                <li className='flex items-center gap-2'>
+                    <div className='settings-grid grid grid-cols-[200px_1fr] items-center'>
+                        <span className=' text-[#333333] dark:text-[#d9d9d9] text-lg font-medium'>Email</span> 
+                        <SettingsEdit 
+                            nameProfile={userData!.email} 
+                            name='email' 
+                            control={control} 
+                            onSubmit={handleSubmit(onSubmit)}
+                        />
+                    </div>
+
+                    <Button variant='outline' className='px-4 w-fit border-0 text-[#d9d9d9] dark:text-[#d9d9d9] font-medium transition-all ease-in-out duration-[.3s] hover:text-[#d9d9d9] hover:dark:text-[#d9d9d9] hover:bg-[#7391d5] bg-[#7391d5] dark:bg-[#7391d5] hover:bg-[#7391d5]/85 dark:hover:bg-[#7391d5]/85'>Confirm email</Button>
                 </li>
                 <li className='settings-grid grid grid-cols-[200px_1fr] items-center'>
                     <span className=' text-[#333333] dark:text-[#d9d9d9] text-lg font-medium'>Name</span> 
