@@ -83,7 +83,6 @@ h1, h2, h3, h4, h5, h6, p {
 ::selection { 
   color: #ffffff;
   background-color: #1d7593;
-  -webkit-text-fill-color: white;
 }
 
 :root {

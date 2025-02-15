@@ -69,7 +69,7 @@ export const SearchDeatail: React.FC<Props> = ({ className }) => {
     };
 
     return (
-        <div className={cn('max-w-[1250px] w-full', className)}>
+        <div className={cn('max-w-[clamp(65.625rem,22.569rem+44.44vw,78.125rem)] w-full', className)}>
             <h1 className="flex items-center gap-2 text-[#333333] dark:text-[#d9d9d9] text-[clamp(1.563rem,1.455rem+0.54vw,1.875rem)] font-bold"><MdSearch />Search Results</h1>
 
             <div className="flex items-center gap-5 mt-[clamp(1.25rem,0.82rem+2.15vw,2.5rem)]">
@@ -77,7 +77,7 @@ export const SearchDeatail: React.FC<Props> = ({ className }) => {
                     onClick={() => setOpen('posts')}
                     className={cn(
                         'py-5 px-10 bg-[#333333] text-[#d9d9d9] dark:text-[#333333] dark:bg-[#d5d5d5]',
-                        open === 'posts' && 'bg-[#3a9989] dark:bg-[#3a9989] text-[#d9d9d9] dark:text-[#d9d9d9] hover:bg-[#48c0ac] dark:hover:bg-[#48c0ac]'
+                        open === 'posts' && 'bg-[#7391d5] dark:bg-[#7391d5] text-[#d9d9d9] dark:text-[#d9d9d9] hover:bg-[#85a9fd] dark:hover:bg-[#85a9fd]'
                     )}
                 >
                     Posts
@@ -86,7 +86,7 @@ export const SearchDeatail: React.FC<Props> = ({ className }) => {
                     onClick={() => setOpen('users')}
                     className={cn(
                         'py-5 px-10 bg-[#333333] text-[#d9d9d9] dark:text-[#333333] dark:bg-[#d5d5d5]',
-                        open === 'users' && 'bg-[#3a9989] dark:bg-[#3a9989] text-[#d9d9d9] dark:text-[#d9d9d9] hover:bg-[#48c0ac] dark:hover:bg-[#48c0ac]'
+                        open === 'users' && 'bg-[#7391d5] dark:bg-[#7391d5] text-[#d9d9d9] dark:text-[#d9d9d9] hover:bg-[#85a9fd] dark:hover:bg-[#85a9fd]'
                     )}
                 >
                     Users

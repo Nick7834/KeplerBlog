@@ -12,12 +12,21 @@ import { toast } from 'react-hot-toast';
 import { updateUserProfile } from '@/app/authProfile';
 import axios from 'axios';
 import { signOut } from 'next-auth/react';
+import { ModalCheck } from '../modalCheck';
+import { IoMdCheckmarkCircle } from "react-icons/io";
+import { cn } from '@/lib/utils';
+
 interface Props {
     className?: string;
     user: User
 } 
 
 export const SettingsList: React.FC<Props> = ({ className, user }) => {
+
+    const [openCheckModal, setOpenCheckModal] = useState<boolean>(false);
+    const [loaderCode, setLoaderCode] = useState<boolean>(false);
+
+    const [isverifiedEmailState, setIsverifiedEmailState] = useState<boolean>(user?.isverifiedEmail ?? false);
 
     const [isLoading, setIsLoading] = useState(false);
 
@@ -39,14 +48,23 @@ export const SettingsList: React.FC<Props> = ({ className, user }) => {
 
     const onSubmit = async (data: FormUpdate) => {
         try {
+            if (data.email === user?.email && data.username === user?.username && data.bio === user?.bio) {
+                toast.error('No changes detected.');
+                return;
+            }
+
             await updateUserProfile(data);
 
             setUserData({
                 ...userData,
-                bio: data.bio!,
+                bio: data.bio ?? '',
                 email: data.email,
                 username: data.username,
             });
+
+            if(data.email !== user?.email) {
+                setIsverifiedEmailState(false);
+            }
            
             toast.success('Profile updated successfully');
         } catch (error) {
@@ -94,6 +112,25 @@ export const SettingsList: React.FC<Props> = ({ className, user }) => {
             setIsLoading(false);
         }
     };
+
+    const handleOpen = async () => {
+        setLoaderCode(true);
+        try {
+
+        const resp = await axios.post('/api/send-otp', { email: user?.email });
+
+         if(resp.status === 200) {
+            setLoaderCode(false);
+            setOpenCheckModal(true);
+         }
+             
+        } catch (error) {
+            console.error(error);
+            toast.error('Something went wrong');
+        } finally {
+            setLoaderCode(false);
+        }
+    }
     
     return (
         <div className={className}>
@@ -108,9 +145,9 @@ export const SettingsList: React.FC<Props> = ({ className, user }) => {
                         onSubmit={handleSubmit(onSubmit)}
                     />
                 </li>
-                <li className='flex items-center gap-2'>
+                <li className={cn('flex items-center gap-2', !isverifiedEmailState && 'max-[600px]:flex-col max-[600px]:items-start')}>
                     <div className='settings-grid grid grid-cols-[200px_1fr] items-center'>
-                        <span className=' text-[#333333] dark:text-[#d9d9d9] text-lg font-medium'>Email</span> 
+                        <span className='text-[#333333] dark:text-[#d9d9d9] text-lg font-medium'>Email</span> 
                         <SettingsEdit 
                             nameProfile={userData!.email} 
                             name='email' 
@@ -119,7 +156,18 @@ export const SettingsList: React.FC<Props> = ({ className, user }) => {
                         />
                     </div>
 
-                    <Button variant='outline' className='px-4 w-fit border-0 text-[#d9d9d9] dark:text-[#d9d9d9] font-medium transition-all ease-in-out duration-[.3s] hover:text-[#d9d9d9] hover:dark:text-[#d9d9d9] hover:bg-[#7391d5] bg-[#7391d5] dark:bg-[#7391d5] hover:bg-[#7391d5]/85 dark:hover:bg-[#7391d5]/85'>Confirm email</Button>
+                    {!isverifiedEmailState ?
+                        <Button 
+                            onClick={handleOpen}
+                            variant='outline' 
+                            loading={loaderCode}
+                            className='px-4 w-fit min-w-[120px] border-0 text-[#d9d9d9] dark:text-[#d9d9d9] font-medium transition-all ease-in-out duration-[.3s] hover:text-[#d9d9d9] hover:dark:text-[#d9d9d9] hover:bg-[#7391d5] bg-[#7391d5] dark:bg-[#7391d5] hover:bg-[#7391d5]/85 dark:hover:bg-[#7391d5]/85'>
+                            Confirm Email
+                        </Button>
+                    :
+                        <span><IoMdCheckmarkCircle size={22} className='text-[#7391d5] bg-white rounded-full' /></span>
+                    }
+
                 </li>
                 <li className='settings-grid grid grid-cols-[200px_1fr] items-center'>
                     <span className=' text-[#333333] dark:text-[#d9d9d9] text-lg font-medium'>Name</span> 
@@ -140,6 +188,7 @@ export const SettingsList: React.FC<Props> = ({ className, user }) => {
                 </li>
             </ul>
 
+            <ModalCheck open={openCheckModal} setOpen={setOpenCheckModal} email={user.email} setIsverifiedEmailState={setIsverifiedEmailState}   />
 
         </div>
     );

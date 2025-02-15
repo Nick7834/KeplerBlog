@@ -18,7 +18,7 @@ import axios from 'axios';
 import { getShortTimeAgo } from '../hooks/useDate';
 import { processContent } from '@/lib/processContent';
 import { ModalShare } from './modalShare';
-import { BsCheck } from 'react-icons/bs';
+import { CheckProfile } from './checkProfile';
 
 export interface IPost {
     createdAt: Date;
@@ -127,7 +127,7 @@ export const Post: React.FC<Props> = ({ className, onClick, post }) => {
                                 post?.author?.username :
                                 post?.author?.username.length > 15 && widthMob <= 380 ? post?.author?.username.substring(0, 15).trim()  + '...' : post?.author?.username.trim()
                             }
-                            {post?.author?.isverified && <BsCheck size={22} className='text-[#7391d5]' />}
+                            <CheckProfile isverified={post?.author?.isverified} />
                             </div>
                             <span className='mx-2'>·</span> 
                             <div className='text-[#797d7e] dark:text-[#e3e3e3] text-sm font-normal'>{timeAgo}</div>

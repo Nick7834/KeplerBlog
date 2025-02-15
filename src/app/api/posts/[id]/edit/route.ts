@@ -7,7 +7,7 @@ import sharp from "sharp";
 
 export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
     const { id: postId } = await params;
-  const userId = await getUserSession();
+    const userId = await getUserSession();
 
   if (!postId) {
       return NextResponse.json({ error: 'Post not found' }, { status: 404 });

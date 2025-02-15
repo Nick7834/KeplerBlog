@@ -69,8 +69,6 @@ export const handleReply = async (
               };
 
             addReply(newComment, comment?.id);
-
-            console.log(user)
         }
 
     } catch(error) {

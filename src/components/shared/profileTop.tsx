@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { FaRegUser } from 'react-icons/fa6';
 import { FollowButton } from './followButton';
 import { useSession } from 'next-auth/react';
-import { BsCheck } from "react-icons/bs";
+import { CheckProfile } from './checkProfile';
 
 export interface ProfileInterface {
     className?: string;
@@ -50,10 +50,10 @@ export const ProfileTop: React.FC<ProfileInterface> = ({ className, user }) => {
     }, [user?._count.following]);
 
     return (
-        <div className={cn('w-full max-w-[1250px]', className)}>
+        <div className={cn('w-full max-w-[clamp(65.625rem,22.569rem+44.44vw,78.125rem)]', className)}>
             {user?.poster && 
                 <div
-                    className='back-profile w-full max-w-[1250px] h-[clamp(8.125rem,6.066rem+8.24vw,12.5rem)] bg-cover bg-center bg-no-repeat rounded-[20px]'
+                    className='back-profile w-full max-w-[clamp(65.625rem,22.569rem+44.44vw,78.125rem)] h-[clamp(8.125rem,6.066rem+8.24vw,12.5rem)] bg-cover bg-center bg-no-repeat rounded-[20px]'
                     style={{ backgroundImage: `url(${user?.poster})`}}
                 >
             </div>}
@@ -64,7 +64,7 @@ export const ProfileTop: React.FC<ProfileInterface> = ({ className, user }) => {
                 <div className='mt-[7px] flex items-center justify-between gap-5 w-full'>
                     <div className="flex flex-col">
                             <h2 className={cn('flex items-center gap-[2px] text-[#333333] dark:text-[#d9d9d9] text-[clamp(1rem,0.882rem+0.47vw,1.25rem)] font-medium leading-5 break-all', user?.username.length > 15 ? 'text-res' : '')}>
-                              {user?.username} {user?.isverified && <BsCheck size={22} className='text-[#7391d5]' />}
+                              {user?.username} <CheckProfile isverified={user?.isverified} />
                             </h2>
                             <span className='text-[#333333] dark:text-[#d9d9d9] text-sm font-medium mt-1'>{formattedCount} followers</span>
                     </div>

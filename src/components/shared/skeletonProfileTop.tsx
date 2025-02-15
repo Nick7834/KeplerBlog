@@ -7,7 +7,7 @@ interface Props {
 
 export const SkeletonProfileTop:React.FC<Props> = ({className}) => {
     return (
-       <div className={cn("max-w-[1250px] w-full", className)}>
+       <div className={cn("max-w-[clamp(65.625rem,22.569rem+44.44vw,78.125rem)] w-full", className)}>
             <Skeleton className="w-full h-[clamp(8.125rem,6.066rem+8.24vw,12.5rem)] rounded-[20px] bg-[#c1c1c1] dark:bg-[#2a2a2a]" />
             <div className="profile-top flex items-center px-[clamp(0.625rem,-0.551rem+4.71vw,3.125rem)] gap-[clamp(0.625rem,0.449rem+0.71vw,1rem)]">
                 <Skeleton className="avatar-profile min-w-[clamp(4.375rem,3.493rem+3.53vw,6.25rem)] h-[clamp(4.375rem,3.493rem+3.53vw,6.25rem)] rounded-full bg-[#c1c1c1] dark:bg-[#2a2a2a] -mt-[50px] z-[1]" />

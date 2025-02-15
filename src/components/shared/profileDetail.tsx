@@ -83,7 +83,7 @@ export const ProfileDetail: React.FC<Props> = ({ className, idUser }) => {
            user && <ProfileTop user={user} />
         )}
 
-        <div className="profile-detail max-w-[1250px] mt-[clamp(1.875rem,1.287rem+2.35vw,3.125rem)] grid grid-cols-[2fr_1fr] gap-5 w-full">
+        <div className="profile-detail max-w-[clamp(65.625rem,22.569rem+44.44vw,78.125rem)] mt-[clamp(1.875rem,1.287rem+2.35vw,3.125rem)] grid grid-cols-[2fr_1fr] gap-5 w-full">
 
             <div className='posts-profile'>
               <div className='w-full'>
