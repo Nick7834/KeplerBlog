@@ -33,6 +33,7 @@ export async function GET(req: NextRequest) {
                     id: true,
                     username: true,
                     profileImage: true,
+                    isverified: true
                 },
             },
             _count: {

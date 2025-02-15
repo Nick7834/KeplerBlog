@@ -16,6 +16,10 @@ model User {
   provider     String?
   providerId   String?  
   verificationCode VerificationCode?
+  isverifiedEmail   Boolean  @default(false)
+
+  role         Role     @default(user)
+
   isverified   Boolean  @default(false)
 
   profileImage String?   
@@ -96,4 +100,9 @@ model VerificationCode {
   updatedAt DateTime @updatedAt
 
   @@unique([userId, code])
+}
+
+enum Role {
+  user
+  admin
 }

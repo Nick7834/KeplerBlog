@@ -4,6 +4,7 @@ import cloudinary from '@/lib/cloudinary';
 import { prisma } from '@/prisma/prisma-client';
 import { Prisma } from '@prisma/client';
 import sharp from 'sharp';
+import { getInitialPosts } from '@/server/posts';
 
 export async function POST(request: Request) {
   const userId = await getUserSession();
@@ -67,89 +68,14 @@ export async function POST(request: Request) {
 }
 
 export async function GET(req: Request) {
-  const userIds = await getUserSession();
   try {
 
       const url = new URL(req.url);
       const page = parseInt(url.searchParams.get('page') || '1', 10); 
       const limit = parseInt(url.searchParams.get('limit') || '10', 10);
-      const offset = (page - 1) * limit;
+      const userId = url.searchParams.get('userId') || ''; 
 
-       const userId = url.searchParams.get('userId');
-   
-    const posts = await prisma.post.findMany({
-      skip: offset,
-      take: limit,
-      orderBy: {
-        createdAt: 'desc',
-      },
-      where: userId ? { authorId: userId } : {},
-      include: {
-        comments: {
-          select: {
-            id: true,
-            content: true,
-            createdAt: true,
-            author: {
-              select: {
-                id: true,
-                username: true,
-                profileImage: true,
-              },
-            },
-          },
-        },
-        likes: {
-          select: {
-            id: true,
-            authorId: true,
-          }
-        },
-        author: {
-          select: {
-            id: true,
-            username: true,
-            profileImage: true
-          }
-        },
-        _count: {
-          select: {
-            comments: true,
-            likes: true,
-          }
-        },
-      }
-    
-    });
-
-    const postsWithLikedStatus = await Promise.all(posts.map(async (post) => {
-      let isLiked = false;
-      let isFollowing = false;
-    
-      if (userIds?.id) {
-        const like = await prisma.like.findFirst({
-          where: {
-            authorId: userIds.id,
-            postId: post.id,
-          },
-        });
-        isLiked = !!like;
-      }
-
-      const follow = await prisma.follower.findFirst({
-        where: {
-          followerId: userIds?.id,
-          followingId: post.authorId
-        },
-      });
-      isFollowing = !!follow;
-    
-      return {
-        ...post,
-        isLiked,
-        isFollowing
-      };
-    }));
+      const postsWithLikedStatus = await getInitialPosts(page, limit, userId); 
 
     return NextResponse.json({ posts: postsWithLikedStatus });
   } catch (error) {

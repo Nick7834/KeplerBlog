@@ -69,6 +69,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
             id: true,
             username: true,
             profileImage: true,
+            isverified: true,
           },
         },
         _count: {

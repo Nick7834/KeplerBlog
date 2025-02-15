@@ -12,6 +12,7 @@ export interface PostSearchType {
         id: string;
         username: string;
         profileImage: string | null;
+        isverified: boolean;
     };
     createdAt: Date;
 }
@@ -21,6 +22,7 @@ export interface UserSearchType {
     username: string;
     profileImage: string;
     isFollowing: boolean;
+    isverified: boolean;
     bio: string;
     _count: {
         following: number;

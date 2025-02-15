@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { UserSearchType } from './fetchSerch';
 import { FollowButton } from './followButton';
 import { useSession } from 'next-auth/react';
+import { CheckProfile } from './checkProfile';
 
 interface Props {
     className?: string;
@@ -28,7 +29,7 @@ export const UserSearch: React.FC<Props> = ({ className, user }) => {
 
                     <div className='w-full flex justify-between gap-1'>
                         <div>
-                            <h2 className='text-[#333333] dark:text-[#d9d9d9] text-base font-medium break-all'>{user?.username}</h2>
+                            <h2 className='flex items-center gap-[2px] text-[#333333] dark:text-[#d9d9d9] text-base font-medium break-all'>{user?.username} <CheckProfile isverified={user?.isverified} /></h2>
                             <div className='mt-3 flex items-center gap-2'>
                                 <span className='text-[#797d7e] dark:text-[#b9b8b8] text-sm'>{user?._count?.following} followers</span>
                                 <span className='text-[#797d7e] dark:text-[#b9b8b8] text-sm'>·</span>

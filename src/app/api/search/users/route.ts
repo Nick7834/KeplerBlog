@@ -29,6 +29,7 @@ export async function GET(req: NextRequest) {
                 username: true,
                 bio: true,
                 profileImage: true,
+                isverified: true,
                 _count: {
                     select: {
                         following: true,

@@ -18,6 +18,7 @@ import axios from 'axios';
 import { getShortTimeAgo } from '../hooks/useDate';
 import { processContent } from '@/lib/processContent';
 import { ModalShare } from './modalShare';
+import { CheckProfile } from './checkProfile';
 
 export interface IPost {
     createdAt: Date;
@@ -29,6 +30,7 @@ export interface IPost {
         id: string;
         username: string;
         profileImage: string | null;
+        isverified: boolean;
     };
     comments: {
         id: string;
@@ -38,6 +40,7 @@ export interface IPost {
             id: string;
             username: string;
             profileImage: string | null;
+            isverified: boolean;
         }
     }[]; 
     isLiked: boolean;
@@ -119,10 +122,13 @@ export const Post: React.FC<Props> = ({ className, onClick, post }) => {
                 </div>
                         <div className={cn('flex items-center text-[#333333] dark:text-[#d9d9d9] text-base font-semibold break-all', 
                             pathname.startsWith('/post') && post?.author?.username.length >= 10 && widthMob <= 450 ? 'block' : 'flex')}>
+                            <div className='flex items-center gap-[2px]'>
                             {pathname.startsWith('/post') ? 
                                 post?.author?.username :
                                 post?.author?.username.length > 15 && widthMob <= 380 ? post?.author?.username.substring(0, 15).trim()  + '...' : post?.author?.username.trim()
                             }
+                            <CheckProfile isverified={post?.author?.isverified} />
+                            </div>
                             <span className='mx-2'>·</span> 
                             <div className='text-[#797d7e] dark:text-[#e3e3e3] text-sm font-normal'>{timeAgo}</div>
                         </div>

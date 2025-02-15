@@ -7,7 +7,7 @@ interface Props {
 
 export const SkeletonUserSearch:React.FC<Props> = ({className}) => {
     return (
-       <div className={cn("[&:not(:first-child)]:mt-5 max-w-[1250px] w-full flex-1 flex items-center gap-5", className)}>
+       <div className={cn("[&:not(:first-child)]:mt-5 max-w-[clamp(65.625rem,22.569rem+44.44vw,78.125rem)] w-full flex-1 flex items-center gap-5", className)}>
              <Skeleton className="min-w-[60px] h-[60px] bg-[#c1c1c1] dark:bg-[#676767] rounded-full" />
 
             <div className="flex flex-col gap-2 w-full">

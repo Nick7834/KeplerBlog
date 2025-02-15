@@ -57,7 +57,7 @@ export const authOptions: AuthOptions   = {
         return {
           id: fintUser.id,
           name: fintUser.username,
-          email: fintUser.email
+          email: fintUser.email,
         }
 
       }
