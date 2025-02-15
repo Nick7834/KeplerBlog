@@ -24,14 +24,10 @@ export async function PUT(req: Request) {
 
    try {
         const publicId = getPublicIdFromUrl(photoUrl);
-
-        const cloudinaryResources = await cloudinary.api.resources({
-            public_ids: [publicId]
-        });
         
-        const resourceExists = cloudinaryResources.resources?.[0] != null;
+        const response = await cloudinary.api.resource(`uploads/${publicId}`).catch(() => null);
 
-        if(resourceExists) {
+        if (response && response.public_id) {
             const cloudinaryResponse = await cloudinary.uploader.destroy(`uploads/${publicId}`);
 
             if(cloudinaryResponse.result !== 'ok') {

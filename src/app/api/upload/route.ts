@@ -33,15 +33,9 @@ export async function PUT(request: Request) {
     }
 
     if (oldPublicId) {
-        const cloudinaryResources = await cloudinary.api.resources({
-          public_ids: [oldPublicId]
-        });
-      
-        const resourceExists = cloudinaryResources.resources?.[0] != null;
+        const response = await cloudinary.api.resource(`uploads/${oldPublicId}`).catch(() => null);
 
-        console.log(resourceExists);
-
-        if (resourceExists) {
+        if (response && response.public_id) {
           const cloudinaryResponse = await cloudinary.uploader.destroy(`uploads/${oldPublicId}`);
 
           if (cloudinaryResponse.result !== 'ok') {
