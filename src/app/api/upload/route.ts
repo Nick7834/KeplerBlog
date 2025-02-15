@@ -33,11 +33,21 @@ export async function PUT(request: Request) {
     }
 
     if (oldPublicId) {
-      const cloudinaryResponse = await cloudinary.uploader.destroy(`uploads/${oldPublicId}`);
+        const cloudinaryResources = await cloudinary.api.resources({
+          public_ids: [oldPublicId]
+        });
+      
+        const resourceExists = cloudinaryResources.resources?.[0] != null;
 
-      if (cloudinaryResponse.result !== 'ok') {
-        return NextResponse.json({ error: 'Failed to delete old photo' }, { status: 500 });
-      }
+        console.log(resourceExists);
+
+        if (resourceExists) {
+          const cloudinaryResponse = await cloudinary.uploader.destroy(`uploads/${oldPublicId}`);
+
+          if (cloudinaryResponse.result !== 'ok') {
+            return NextResponse.json({ error: 'Failed to delete old photo' }, { status: 500 });
+          }
+        }
     }
 
    if(file) {

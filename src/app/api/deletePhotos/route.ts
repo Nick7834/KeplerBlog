@@ -24,11 +24,19 @@ export async function PUT(req: Request) {
 
    try {
         const publicId = getPublicIdFromUrl(photoUrl);
-        
-        const cloudinaryResponse = await cloudinary.uploader.destroy(`uploads/${publicId}`);
 
-        if(cloudinaryResponse.result !== 'ok') {
-            return NextResponse.json({ error: "Failed to delete photo" }, { status: 500 });
+        const cloudinaryResources = await cloudinary.api.resources({
+            public_ids: [publicId]
+        });
+        
+        const resourceExists = cloudinaryResources.resources?.[0] != null;
+
+        if(resourceExists) {
+            const cloudinaryResponse = await cloudinary.uploader.destroy(`uploads/${publicId}`);
+
+            if(cloudinaryResponse.result !== 'ok') {
+                return NextResponse.json({ error: "Failed to delete photo" }, { status: 500 });
+            }
         }
 
         const updateData = {
