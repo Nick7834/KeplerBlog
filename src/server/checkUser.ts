@@ -12,6 +12,7 @@ export async function checkAndVerifyActiveUsers() {
         { posts: { some: { createdAt: { gte: oneMonthAgo } } } },
         { likes: { some: { createdAt: { gte: oneMonthAgo } } } },
         { followers: { some: { createdAt: { gte: oneMonthAgo } } } },
+        { comments: { some: { createdAt: { gte: oneMonthAgo } } } },
       ],
     },
     include: {
