@@ -23,7 +23,7 @@ export async function checkAndVerifyActiveUsers() {
       createdAt: true,
       _count: {
         select: {
-          followers: true,
+          following: true,
           posts: true,
         },
       },
@@ -40,7 +40,7 @@ export async function checkAndVerifyActiveUsers() {
   const userUpdates = activeUsers
     .map((user) => {
       const hasEnoughPosts = user._count.posts >= 10;
-      const hasEnoughFollowers = user._count.followers >= 10;
+      const hasEnoughFollowers = user._count.following >= 10;
       const totalLikes = user.posts.reduce((sum, post) => sum + post._count.likes, 0);
       const hasEnoughLikes = totalLikes >= 200;
       const isOldEnough = new Date().getTime() - new Date(user.createdAt).getTime() >= 30 * 24 * 60 * 60 * 1000;
