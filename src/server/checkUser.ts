@@ -15,7 +15,12 @@ export async function checkAndVerifyActiveUsers() {
         { comments: { some: { createdAt: { gte: oneMonthAgo } } } },
       ],
     },
-    include: {
+    select: {
+      id: true,
+      role: true,
+      isverified: true,
+      isverifiedEmail: true,
+      createdAt: true,
       _count: {
         select: {
           followers: true,
@@ -25,30 +30,30 @@ export async function checkAndVerifyActiveUsers() {
       posts: {
         select: {
           _count: {
-            select: {
-              likes: true,
-            },
+            select: { likes: true }, 
           },
         },
       },
-
     },
   });
 
-  for (const user of activeUsers) {
-    const hasEnoughPosts = user._count.posts >= 10;
-    const hasEnoughFollowers = user._count.followers >= 10;
-    const hasEnoughLikes =  user?.posts.reduce((total, post) => total + post._count.likes, 0) >= 200;
-    const isOldEnough = new Date().getTime() - new Date(user.createdAt).getTime() >= 30 * 24 * 60 * 60 * 1000;
-    const shouldHaveCheckmark = user.role === 'admin' || hasEnoughFollowers && hasEnoughPosts && hasEnoughLikes && isOldEnough && user.isverifiedEmail;
+  const userUpdates = activeUsers
+    .map((user) => {
+      const hasEnoughPosts = user._count.posts >= 10;
+      const hasEnoughFollowers = user._count.followers >= 10;
+      const totalLikes = user.posts.reduce((sum, post) => sum + post._count.likes, 0);
+      const hasEnoughLikes = totalLikes >= 200;
+      const isOldEnough = new Date().getTime() - new Date(user.createdAt).getTime() >= 30 * 24 * 60 * 60 * 1000;
+      const shouldHaveCheckmark =
+        user.role === 'admin' || (hasEnoughFollowers && hasEnoughPosts && hasEnoughLikes && isOldEnough && user.isverifiedEmail);
 
-    if (shouldHaveCheckmark !== !!user.isverified) {
-      await prisma.$transaction(async (prisma) => {
-        await prisma.user.update({
-          where: { id: user.id },
-          data: { isverified: shouldHaveCheckmark },
-        });
-      });
-    }
+      return shouldHaveCheckmark !== !!user.isverified
+        ? { where: { id: user.id }, data: { isverified: shouldHaveCheckmark } }
+        : null;
+    })
+    .filter(Boolean); 
+
+  if (userUpdates.length > 0) {
+    await prisma.$transaction(userUpdates.map((update) => prisma.user.update(update!)));
   }
 }
