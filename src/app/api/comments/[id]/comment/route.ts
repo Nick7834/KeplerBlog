@@ -9,7 +9,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
   const postId = (await params).id;
   const body = await request.json();
 
-  const { content, parentId, avatar, userName } = body;
+  const { content, parentId } = body;
 
   if (!content || !authorId) {
     return NextResponse.json({ error: 'Content or authorId is missing' }, { status: 400 });
