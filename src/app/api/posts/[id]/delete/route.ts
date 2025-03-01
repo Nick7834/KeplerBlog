@@ -1,14 +1,30 @@
+import { getUserSession } from "@/lib/get-user-session";
 import { prisma } from "@/prisma/prisma-client";
 import { NextResponse } from "next/server";
 
 export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const userId = await getUserSession();
   const { id: postId } = await params;
 
   if (!postId) {
     return NextResponse.json({ error: "Post ID is required" }, { status: 400 });
   }
 
+  if (!userId) {
+    return NextResponse.json({ error: "User not authenticated" }, { status: 401 });
+  }
+
   try {
+
+    const post = await prisma.post.findUnique({
+      where: { id: postId },
+      select: { authorId: true },
+    });
+
+    if (post?.authorId !== userId.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     await prisma.$transaction(async (tx) => {
 
       const rootComments = await tx.comment.findMany({

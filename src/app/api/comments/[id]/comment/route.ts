@@ -1,5 +1,7 @@
 import { getUserSession } from "@/lib/get-user-session";
 import { prisma } from "@/prisma/prisma-client";
+import { getNotificationComment } from "@/server/getNotificationComment";
+import { getNotificationRecipients } from "@/server/notificationRecipient";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -7,7 +9,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
   const postId = (await params).id;
   const body = await request.json();
 
-  const { content, parentId } = body;
+  const { content, parentId, avatar, userName } = body;
 
   if (!content || !authorId) {
     return NextResponse.json({ error: 'Content or authorId is missing' }, { status: 400 });
@@ -15,8 +17,27 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
 
   try {
     let newComment;
+    let notificationRecipientId = null;
 
     if (parentId) {
+
+      const parentComment = await prisma.comment.findUnique({
+        where: { id: parentId },
+        select: { 
+          authorId: true,
+          post: {
+            select: {
+              title: true,}
+          }
+        },
+      });
+    
+      if (!parentComment) {
+        return NextResponse.json({ error: 'Parent comment not found' }, { status: 404 });
+      }
+
+      notificationRecipientId = parentComment.authorId;
+
       newComment = await prisma.comment.create({
         data: {
           content,
@@ -31,6 +52,18 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
           },
         },
       });
+
+      getNotificationRecipients(
+        authorId.id,
+        notificationRecipientId,
+        postId, 
+        userName, 
+        newComment.id, 
+        content,
+        parentComment.post.title,
+        avatar
+      ); 
+    
     } else {
       newComment = await prisma.comment.create({
         data: {
@@ -43,6 +76,35 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
           },
         },
       });
+
+      const post = await prisma.comment.findUnique({
+        where: { id: newComment.id },
+        select: {
+          authorId: true,
+          post: {
+            select: {
+              authorId: true,
+              title: true,
+            },
+          },
+        }
+      });
+
+
+      if (!post) {
+        return NextResponse.json({ error: 'Post not found' }, { status: 404 });
+      }
+
+      getNotificationComment(
+        authorId.id,
+        post.post.authorId,
+        postId, 
+        userName, 
+        post.post.title, 
+        content,
+        avatar
+      )
+
     }
 
     return NextResponse.json({ message: 'Comment created successfully', comment: newComment }, { status: 201 });
@@ -99,6 +161,18 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
   }
 
   try {
+    const existingComment = await prisma.comment.findUnique({
+      where: { id: commentId },
+    });
+
+    if (!existingComment) {
+      return NextResponse.json({ error: 'Comment not found  ' }, { status: 404 });
+    }
+
+    if (existingComment.authorId !== authorId.id) {
+      return NextResponse.json({ error: 'You are not authorized to update this comment' }, { status: 403 });
+    }
+
     const updatedComment = await prisma.comment.update({
       where: {
         id: commentId,
@@ -128,6 +202,14 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ i
   }
 
   try {
+    const existingComment = await prisma.comment.findUnique({
+      where: { id: commentId },
+      select: { authorId: true },
+    });
+
+    if (existingComment?.authorId !== authorId.id) {
+      return NextResponse.json({ error: 'You are not authorized to delete this comment' }, { status: 403 });
+    }
 
     async function deleteCommentWithReplies(commentId: string) {
 

@@ -29,7 +29,7 @@ interface Props {
     createdAt: Date;
     user: {
         id: string;
-        email?: string | undefined;
+        email: string;
         username: string;
         profileImage: string | null;
         isverified: boolean
@@ -111,10 +111,11 @@ export const Comment: React.FC<Props> = ({ className, comment, indentLevel, user
     
     const handleUpdateComment = async () => {
         UpdateReply(
+            session?.user?.id,
             updateComment,
             comment,
             editComment,
-            setContetnComment, //ddd
+            setContetnComment,
             setUpdateComment,
             setIsUpdate,
             setCommentContentMain,
@@ -126,6 +127,14 @@ export const Comment: React.FC<Props> = ({ className, comment, indentLevel, user
         const confirmed = window.confirm('Are you sure you want to delete this comment?');
 
         if(!confirmed) return;
+
+        setIsUpdate(false);
+        setIsReply(false);
+
+        if(comment.author?.id !== session?.user?.id) {
+            toast.error('You cannot delete your own comment');
+            return;
+        }
 
         try {
             const resp = await axios.delete(`/api/comments/${id}/comment`);
@@ -169,7 +178,7 @@ export const Comment: React.FC<Props> = ({ className, comment, indentLevel, user
 
             <div className='flex items-center gap-5 mt-2 ml-5'>
                 {comment?.replies?.length > 0 && 
-                <Button  onClick={() => setIsReplyF(!isReplyF)} variant='link' className='p-0 h-fit text-[#333333] dark:text-[#d9d9d9] hover:no-underline [&_svg]:size-[20px] flex items-center gap-2'>
+                <Button onClick={() => setIsReplyF(!isReplyF)} variant='link' className='p-0 h-fit text-[#333333] dark:text-[#d9d9d9] hover:no-underline [&_svg]:size-[20px] flex items-center gap-2'>
                     {!isReplyF ? <IoIosAddCircleOutline /> : <IoRemoveCircleOutline />}
                     {/* <span className='block'>{comment?._count?.replies} Replies</span> */}
                 </Button>}

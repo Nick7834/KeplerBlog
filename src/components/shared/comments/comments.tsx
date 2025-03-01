@@ -3,12 +3,12 @@ import React, {  useState } from 'react';
 import { InputComment } from './inputComment';
 import { cn } from '@/lib/utils';
 import { Comment } from './comment';
-import { IPost } from '../post';
 import { handleCommentPost } from '@/lib/commentHandlers';
 import { useUser } from '@/components/hooks/useUser';
 import { useComments } from '@/components/hooks/useComments';
 import { SkeletonComment } from '../skeletonComment';
 import { FaComments } from "react-icons/fa6";
+import { IPost } from '@/@type/post';
 
 interface Props {
     className?: string;

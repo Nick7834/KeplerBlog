@@ -3,6 +3,7 @@ import toast from "react-hot-toast";
 import { IComment } from "./comments/comments";
 
 export const UpdateReply = async (
+    id: string | undefined,
     updateComment: string,
     comment: IComment,
     editComment: (commentId: string, content: string) => void,
@@ -12,6 +13,13 @@ export const UpdateReply = async (
     setCommentContentMain: React.Dispatch<React.SetStateAction<string>>,
     setLoaderReply: React.Dispatch<React.SetStateAction<boolean>>
 ) => {
+
+    if(comment.author?.id !== id) {
+        toast.error('You cannot reply to your own comment');
+        setLoaderReply(false);
+        return;
+    }
+
     if(updateComment.trim() === '') return;
 
     setLoaderReply(true);
