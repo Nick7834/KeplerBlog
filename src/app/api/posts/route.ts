@@ -63,7 +63,7 @@ export async function POST(request: Request) {
       },
     });
 
-    await notificationQueue.add('send_notifications', {
+    notificationQueue.add('send_notifications', {
       userId: userId.id,
       userName,
       avatarUser,

@@ -15,10 +15,5 @@ export const notificationQueue = new Queue("notification", {
   defaultJobOptions: {
     removeOnComplete: true, 
     removeOnFail: true, 
-    attempts: 5,
-    backoff: {
-      type: 'exponential', 
-      delay: 1000,  
-    },
   },
 });
