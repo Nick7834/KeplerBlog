@@ -201,7 +201,7 @@ h1, h2, h3, h4, h5, h6, p {
 .active-profile {
   visibility: visible;
   opacity: 1;
-  transform: translateY(0);
+  transform: scale(1);
 }
 
 .search-user:last-child > span:first-child {
@@ -363,7 +363,6 @@ h1, h2, h3, h4, h5, h6, p {
 
   .img-h {
     max-height: 100%;
-    height: fit-content;
   }
 
   .search-mob {

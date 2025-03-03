@@ -1,7 +1,7 @@
 'use client'
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
-import React, {  useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { UserSearch } from './userSearch';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { SkeletonUserSearch } from './skeletonUserSearch';
@@ -29,20 +29,20 @@ export const SubscriptionsList: React.FC<Props> = ({ className }) => {
     const [countSub, setCountSub] = useState<number>(0);
     const [isLoading, setIsLoading] = useState(true);
     const [hasMore, setHasMore] = useState(true); 
-    const [page, setPage] = useState(1);
+    const [pageSub, setPageSub] = useState(1);
     const formattedCount = UseFormatNumber(countSub);
 
     useEffect(() => {
 
         if (!session) {
-            setIsLoading(false);
-            return;
+            setIsLoading(false)
+            return
         }
 
-        setIsLoading(true);
         const fetchProfile = async () => {
+            setIsLoading(true);
           try {
-            const response = await axios.get(`/api/subscriptions?page=${page}&limit=10`);
+            const response = await axios.get(`/api/subscriptions?page=${pageSub}&limit=10`);
             const data = await response.data;
 
             setCountSub(data?.totalFollowings);
@@ -65,8 +65,14 @@ export const SubscriptionsList: React.FC<Props> = ({ className }) => {
     
         fetchProfile();
 
-    }, [page, session]);
+    }, [pageSub, session]);
 
+    
+    const loadMoreData = () => {
+        if (!isLoading && hasMore) {
+          setPageSub((prevPage) => prevPage + 1)
+        }
+    }
 
     return (
        <>
@@ -93,9 +99,11 @@ export const SubscriptionsList: React.FC<Props> = ({ className }) => {
                 :
                 <InfiniteScroll
                     dataLength={profile.length}
-                    next={() => setPage(prevPage => prevPage + 1)}
+                    next={loadMoreData}
                     hasMore={hasMore}
                     loader={isLoading && Array.from({ length: 3 }).map((_, index) => <SkeletonUserSearch key={index} />)}
+                    scrollThreshold={0.8}
+                    key="subscriptions-scroll" 
                 >
                     {!isLoading && profile.length === 0 ? 
                         <div className="flex flex-col items-center justify-center gap-4">

@@ -3,12 +3,11 @@ import { IComment } from "./comments/comments";
 import axios from "axios";
 import { Session } from "next-auth";
 
-
 export const handleReply = async (
     replyInput: string,
     user: {
         isverified: boolean; id: string; username: string; profileImage: string | null 
-}, 
+    }, 
     setReplyInput: React.Dispatch<React.SetStateAction<string>>,
     setLoaderReply: React.Dispatch<React.SetStateAction<boolean>>,
     setIsReply: React.Dispatch<React.SetStateAction<boolean>>,
@@ -43,7 +42,9 @@ export const handleReply = async (
 
         const datas = {
             content: replyInput,
-            parentId: comment?.id
+            parentId: comment?.id,
+            avatar: user?.profileImage,
+            userName: user?.username
         }
 
         const resp = await axios.post(`/api/comments/${comment?.postId}/comment`, datas);

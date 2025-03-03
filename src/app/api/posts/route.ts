@@ -5,6 +5,7 @@ import { prisma } from '@/prisma/prisma-client';
 import { Prisma } from '@prisma/client';
 import sharp from 'sharp';
 import { getInitialPosts } from '@/server/posts';
+import { notificationQueue } from '@/lib/queue';
 
 export async function POST(request: Request) {
   const userId = await getUserSession();
@@ -14,9 +15,11 @@ export async function POST(request: Request) {
 
   try {
     const formData = await request.formData();
-    const title = formData.get('title') as string | null;
+    const title = formData.get('title') as string;
     const content = JSON.parse(formData.get('content') as string) as Prisma.JsonValue | null;
     const photos = formData.getAll('photos') as File[];
+    const avatarUser = formData.get('avatarUser') as string | null;
+    const userName = formData.get('userName') as string;
 
     if (!title || !content) {
       return NextResponse.json({ error: 'Missing title or content' }, { status: 400 });
@@ -60,7 +63,16 @@ export async function POST(request: Request) {
       },
     });
 
-    return NextResponse.json({ post: newPost });
+    await notificationQueue.add('send_notifications', {
+      userId: userId.id,
+      userName,
+      avatarUser,
+      newPostId: newPost.id,
+      title,
+      photoUrls,
+    });
+
+    return NextResponse.json({ message: 'Post created successfully' });
     } catch (error) {
         console.error('Error uploading files or saving post:', error);
         return NextResponse.json({ error: 'Upload or database operation failed' }, { status: 500 });

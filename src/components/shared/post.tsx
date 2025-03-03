@@ -11,7 +11,6 @@ import { stateToHTML } from 'draft-js-export-html';
 import { useSession } from 'next-auth/react';
 import { MdCreate } from 'react-icons/md';
 import { FaRegUser } from 'react-icons/fa6';
-import { JsonValue } from '@prisma/client/runtime/library';
 import { ModalPhoto } from './post/modalPhoto';
 import { FollowButton } from './followButton';
 import axios from 'axios';
@@ -19,40 +18,7 @@ import { getShortTimeAgo } from '../hooks/useDate';
 import { processContent } from '@/lib/processContent';
 import { ModalShare } from './modalShare';
 import { CheckProfile } from './checkProfile';
-
-export interface IPost {
-    createdAt: Date;
-    id: string;
-    title: string;
-    content?: RawDraftContentState | JsonValue;
-    image?: string[];
-    author: {
-        id: string;
-        username: string;
-        profileImage: string | null;
-        isverified: boolean;
-    };
-    comments: {
-        id: string;
-        content: string;
-        createdAt: Date;
-        author: {
-            id: string;
-            username: string;
-            profileImage: string | null;
-            isverified: boolean;
-        }
-    }[]; 
-    isLiked: boolean;
-    isFollowing: boolean;
-    likes: {
-        id: string;
-    }[];
-    _count: {
-        comments: number;
-        likes: number;
-    };
-}
+import { IPost } from '@/@type/post';
 
 interface Props {
     className?: string;

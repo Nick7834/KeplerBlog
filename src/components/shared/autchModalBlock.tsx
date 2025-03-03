@@ -11,6 +11,7 @@ import { User } from '@prisma/client';
 import { useLogInStore } from '@/store/logIn';
 import { IoSearch } from "react-icons/io5";
 import { Skeleton } from '../ui/skeleton';
+import { NotificationComponent } from './notificationComponent';
 
 interface Props {
     className?: string;
@@ -34,8 +35,9 @@ export const AutchModalBlock: React.FC<Props> = ({ className, session, user, sta
              <div className='flex items-center gap-[20px]'>
                 <Button onClick={() => setSearchMobOpen(true)} variant='outline' className='search-button-mob hidden p-0 h-fit bg-transparent border-0 hover:bg-transparent [&_svg]:size-[20px]'><IoSearch className='text-[#333333] dark:text-[#d9d9d9] text-xl' /></Button>
                 {session ?
-                    <div className='header-left flex items-center gap-10'>
+                    <div className='header-left flex items-center gap-5'>
                         <Link href={"/create"} className='flex items-center gap-1 text-[#333333] dark:text-[#d9d9d9] text-lg font-medium transition-all ease-in-out duration-[.3s] hover:text-[#7391d5] dark:hover:text-[#7391d5] create-post '><IoIosCreate /> Create</Link>
+                        <NotificationComponent session={session} />
                         <Profile user={user} />
                     </div>
                     :

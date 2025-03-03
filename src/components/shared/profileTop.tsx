@@ -8,6 +8,7 @@ import { FaRegUser } from 'react-icons/fa6';
 import { FollowButton } from './followButton';
 import { useSession } from 'next-auth/react';
 import { CheckProfile } from './checkProfile';
+import Counter from '../ui/Counter';
 
 export interface ProfileInterface {
     className?: string;
@@ -66,7 +67,25 @@ export const ProfileTop: React.FC<ProfileInterface> = ({ className, user }) => {
                             <h2 className={cn('flex items-center gap-[2px] text-[#333333] dark:text-[#d9d9d9] text-[clamp(1rem,0.882rem+0.47vw,1.25rem)] font-medium leading-5 break-all', user?.username.length > 15 ? 'text-res' : '')}>
                               {user?.username} <CheckProfile isverified={user?.isverified} />
                             </h2>
-                            <span className='text-[#333333] dark:text-[#d9d9d9] text-sm font-medium mt-1'>{formattedCount} followers</span>
+                            <span className='flex items-center gap-1 text-[#333333] dark:text-[#d9d9d9] text-sm font-medium mt-1'>
+                               {follow >= 1000 ? 
+                                    formattedCount
+                                  :
+                                    <Counter
+                                      value={Number(formattedCount)}
+                                      fontSize={18}
+                                      gap={0}
+                                      textColor="inherit"
+                                      gradientHeight={0}
+                                      places={Array.from({ length: String(formattedCount).length }, (_, i) => Math.pow(10, i)).reverse()}
+                                      containerStyle={{ display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'transparent', padding: 0, width: 'fit-content'}}
+                                      counterStyle={{ display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px', lineHeight: '20px', fontWeight: '500', width: 'fit-content', padding: 0 }}
+                                      topGradientStyle={{ display: 'none' }}
+                                      bottomGradientStyle={{ display: 'none' }}
+                                  />
+                                }
+                              followers
+                            </span>
                     </div>
                    {session?.user?.id === user?.id ? <Link href="/settings" className='transition-all ease-in-out duration-[.3s] cursor-pointer m-3 hover:rotate-90'><IoMdSettings size={20} className='text-[#333333] dark:text-[#e3e3e3]' /></Link> 
                    : <FollowButton idUser={user?.id || ''} setFollow={setFollow} follow={follow} isFollowUser={user?.isFollowing} /> }

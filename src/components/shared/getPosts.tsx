@@ -1,10 +1,11 @@
 'use client'
 import React, { useEffect, useState } from 'react';
 import { SkeletonPost } from './skeletonPost';
-import { IPost, Post } from './post';
+import { Post } from './post';
 import axios from 'axios';
 import { cn } from '@/lib/utils';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import { IPost } from '@/@type/post';
 
 interface Props {
     className?: string;

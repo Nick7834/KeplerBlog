@@ -89,7 +89,7 @@ export const Profile: React.FC<Props> =  ({ className, user }) => {
                     <span className='flex flex-col items-center justify-center object-cover rounded-full w-[48px] h-[48px] bg-[#c7c7c7]'><FaRegUser className='text-[#333333]' /></span>}
                 </button>
 
-                <div ref={refProfile} className={cn('profile-modal invisible opacity-0 -translate-y-5 py-5 transition-all ease-in-out duration-[.14s] absolute top-[80px] right-[40px] min-w-[300px] bg-[#E0E0E0] dark:bg-[#2a2a2a] rounded-[10px] border border-[#b0b0b0]/70 dark:border-[#d9d9d9]/70', open && 'active-profile')}>
+                <div ref={refProfile} className={cn('profile-modal invisible opacity-0 scale-[.9] py-5 transition-all ease-in-out duration-[.14s] absolute top-[80px] right-[40px] min-w-[300px] bg-[#E0E0E0] dark:bg-[#2a2a2a] rounded-[10px] border border-[#b0b0b0]/70 dark:border-[#d9d9d9]/70', open && 'active-profile')}>
 
                     <Link href={`/profile/${user?.id}`} onClick={() => setOpen(false)} className='flex items-center gap-3 px-5 w-fit'>
                         {user?.profileImage ? 

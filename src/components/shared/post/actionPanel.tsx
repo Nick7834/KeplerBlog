@@ -1,6 +1,7 @@
 'use client'
 import { UseFormatNumber } from '@/components/hooks/useFormatNumber';
 import { Button } from '@/components/ui/button';
+import Counter from '@/components/ui/Counter';
 import { cn } from '@/lib/utils';
 import { useLogInStore } from '@/store/logIn';
 import { useStatusLike } from '@/store/status';
@@ -129,7 +130,29 @@ export const ActionPanel: React.FC<Props> = (
         <div className={cn('mt-4 flex items-center gap-5', className)}>
             <Button onClick={(e) => (e.stopPropagation(), handleLikeClick(idPost))} className={cn('flex items-center gap-2 bg-neutral-300/75 dark:bg-neutral-700/75 p-2 rounded-full h-fit hover:bg-color', liked && 'bg-[#7391d5] dark:bg-[#7391d5]')}>
                 <div className={cn('block [&_svg]:size-[20px] text-[#333333] dark:text-[#d9d9d9]', liked && 'text-[#d9d9d9] dark:text-[#d9d9d9] [&_svg]:size-[20px]')}>{liked ? <BiSolidLike size={20} /> : <BiLike size={20} />}</div>
-                <span className={cn('block h-[19px] text-[#333333] dark:text-[#d9d9d9] text-sm font-semibold leading-1', liked && 'text-[#d9d9d9] dark:text-[#d9d9d9]')}>{formattedCountLike}</span>
+                <span className={cn('flex items-center justify-center h-[19px] text-[#333333] dark:text-[#d9d9d9] text-sm font-semibold leading-1', liked && 'text-[#d9d9d9] dark:text-[#d9d9d9]')}>
+                        {likes >= 1000 ? 
+                             formattedCountLike
+                        :
+                        <Counter
+                            value={Number(formattedCountLike)}
+                            fontSize={18}
+                            gap={0}
+                            textColor="inherit"
+                            gradientHeight={0}
+                            places={Array.from({ length: String(formattedCountLike).length }, (_, i) => Math.pow(10, i)).reverse()}
+                            containerStyle={{ display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'transparent', padding: 0, width: 'fit-content', height: '19px'}}
+                            counterStyle={{ display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px', lineHeight: '20px', fontWeight: '600', width: 'fit-content', padding: 0, height: '19px' }}
+                            digitStyle={{
+                                height: '19px',
+                                top: '1px',
+                                transition: 'height 0.3s ease, top 0.3s ease',
+                            }}
+                            topGradientStyle={{ display: 'none' }}
+                            bottomGradientStyle={{ display: 'none' }}
+                        />
+                    }
+                 </span>
             </Button>
            
             <Button onClick={handleCommentClick} className="flex items-center gap-2 bg-neutral-300/75 dark:bg-neutral-700/75 p-2 rounded-full h-fit hover:bg-color">

@@ -1,9 +1,10 @@
 'use client'
 import React, { useEffect, useState } from 'react';
-import { IPost, Post } from './post';
+import { Post } from './post';
 import axios from 'axios';
 import { SkeletonPost } from './skeletonPost';
 import { cn } from '@/lib/utils';
+import { IPost } from '@/@type/post';
 
 interface Props {
     className?: string;

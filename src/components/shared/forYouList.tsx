@@ -1,6 +1,6 @@
 'use client'
 import React, { useEffect, useState } from 'react';
-import { IPost, Post } from './post';
+import { Post } from './post';
 import axios from 'axios';
 import { SkeletonPost } from './skeletonPost';
 import InfiniteScroll from 'react-infinite-scroll-component';
@@ -11,6 +11,7 @@ import { Button } from '../ui/button';
 import { FaUser } from "react-icons/fa6";
 import { useLogInStore } from '@/store/logIn';
 import { BsPostcard } from "react-icons/bs";
+import { IPost } from '@/@type/post';
 
 interface Props {
     className?: string;
@@ -55,7 +56,13 @@ export const ForYouList: React.FC<Props> = ({ className }) => {
             }
         };
         fetchPosts();
-    }, [page, session])
+    }, [page, session]);
+
+    const loadMoreData = () => {
+        if (!loader && hasMore) {
+          setPage((prevPage) => prevPage + 1)
+        }
+    }
 
     return (
         <div className={cn("mt-[clamp(1.25rem,0.82rem+2.15vw,2.5rem)]", className)}>
@@ -72,7 +79,7 @@ export const ForYouList: React.FC<Props> = ({ className }) => {
                 :
                 <InfiniteScroll
                     dataLength={posts.length}
-                    next={() => setPage(page + 1)}
+                    next={loadMoreData}
                     hasMore={hasMore}
                     loader={loader && Array.from({ length: 5 }).map((_, index) => <SkeletonPost key={index} />)}
                     className='flex flex-col items-center justify-center gap-5'

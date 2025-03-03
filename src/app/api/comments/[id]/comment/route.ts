@@ -1,7 +1,7 @@
 import { getUserSession } from "@/lib/get-user-session";
 import { prisma } from "@/prisma/prisma-client";
-// import { getNotificationComment } from "@/server/getNotificationComment";
-// import { getNotificationRecipients } from "@/server/notificationRecipient";
+import { getNotificationComment } from "@/server/getNotificationComment";
+import { getNotificationRecipients } from "@/server/notificationRecipient";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -9,7 +9,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
   const postId = (await params).id;
   const body = await request.json();
 
-  const { content, parentId } = body;
+  const { content, parentId, avatar, userName } = body;
 
   if (!content || !authorId) {
     return NextResponse.json({ error: 'Content or authorId is missing' }, { status: 400 });
@@ -17,7 +17,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
 
   try {
     let newComment;
-    // let notificationRecipientId = null;
+    let notificationRecipientId = null;
 
     if (parentId) {
 
@@ -36,7 +36,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
         return NextResponse.json({ error: 'Parent comment not found' }, { status: 404 });
       }
 
-      // notificationRecipientId = parentComment.authorId;
+      notificationRecipientId = parentComment.authorId;
 
       newComment = await prisma.comment.create({
         data: {
@@ -53,16 +53,16 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
         },
       });
 
-      // getNotificationRecipients(
-      //   authorId.id,
-      //   notificationRecipientId,
-      //   postId, 
-      //   userName, 
-      //   newComment.id, 
-      //   content,
-      //   parentComment.post.title,
-      //   avatar
-      // ); 
+      getNotificationRecipients(
+        authorId.id,
+        notificationRecipientId,
+        postId, 
+        userName, 
+        newComment.id, 
+        content,
+        parentComment.post.title,
+        avatar
+      ); 
     
     } else {
       newComment = await prisma.comment.create({
@@ -95,15 +95,15 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
         return NextResponse.json({ error: 'Post not found' }, { status: 404 });
       }
 
-      // getNotificationComment(
-      //   authorId.id,
-      //   post.post.authorId,
-      //   postId, 
-      //   userName, 
-      //   post.post.title, 
-      //   content,
-      //   avatar
-      // )
+      getNotificationComment(
+        authorId.id,
+        post.post.authorId,
+        postId, 
+        userName, 
+        post.post.title, 
+        content,
+        avatar
+      )
 
     }
 

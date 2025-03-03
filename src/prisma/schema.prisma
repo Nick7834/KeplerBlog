@@ -31,6 +31,8 @@ model User {
   followers    Follower[] @relation("UserFollowers")
   following    Follower[] @relation("UserFollowing") 
 
+  Notification Notification[]
+
   verified     DateTime? 
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
@@ -45,6 +47,7 @@ model Post {
   authorId     String    @db.ObjectId
   comments     Comment[]
   likes        Like[]
+  Notification Notification[]
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
 }
@@ -86,6 +89,23 @@ model Follower {
 
   @@unique([followerId, followingId])
 }
+
+model Notification {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     String   @db.ObjectId
+  type       String  
+  message    String
+  post       Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId     String?  @db.ObjectId
+  avatar     String?  
+  postImage  String? 
+  isRead     Boolean  @default(false)
+  isNew      Boolean  @default(true)
+  commentId  String?  @db.ObjectId
+  createdAt  DateTime @default(now())
+}
+
 
 model VerificationCode {
   id          String    @id @default(auto()) @map("_id") @db.ObjectId

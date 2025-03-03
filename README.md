@@ -1,36 +1,45 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# KeplerBlog
 
-## Getting Started
+KeplerBlog is a modern blogging platform where users can share their ideas, discuss posts, and build communities. With a sleek interface, dark/light theme support, and tons of convenient features, this blog is the perfect place for creativity and communication.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+### 🚀 **Features:**
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- **📝 Post Creation & Editing**  
+  Create and edit posts, including text and images (up to 5 images, 15MB each), with a mini-editor for content formatting.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **💬 Comments**  
+  Post comments with replies and create a nested comment tree for engaging discussions.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **🔔 Notifications**  
+  Get real-time notifications about new posts and replies to your comments.
 
-## Learn More
+- **👥 Subscriptions**  
+  Subscribe to users and posts to stay updated on fresh content.
 
-To learn more about Next.js, take a look at the following resources:
+- **📷 Image Upload**  
+  Upload up to 5 images per post (15MB per image).
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **⚡ Adaptive Interface**  
+  Seamlessly switch between dark and light themes for a personalized experience.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **🖼️ Image Slider**  
+  View post images in a slider that opens them in fullscreen mode when clicked.
 
-## Deploy on Vercel
+- **💡 Skeletons**  
+  A smooth and beautiful loading animation for content loading.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### 💻 **Tech Stack:**
+
+- **Next.js** — Server-side rendering and React development.
+- **Prisma** — Database interaction.
+- **NextAuth** — Authentication via Google, GitHub, and email.
+- **React Hook Form** & **Zod** — Form handling and validation.
+- **Swiper.js** — For creating image sliders.
+- **Zustand** — Global state management.
+- **Pusher** — Real-time notifications.
+- **Redis** & **BullMQ** — Background tasks and task queues.
+- **Cloud Storage (C Storage)** — For image storage.

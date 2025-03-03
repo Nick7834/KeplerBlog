@@ -7,6 +7,7 @@ import axios from 'axios';
 import { User } from '@prisma/client';
 import { Search } from './search';
 import Link from 'next/link';
+import { useUserAvatar } from '@/store/user';
 
 interface Props {
     className?: string;
@@ -16,6 +17,7 @@ export const Header: React.FC<Props> =  ({ className }) => {
     const { data: session, status } = useSession();
     const [user, setUser] = useState<User | null>(null);
     const [searchMobOpen, setSearchMobOpen] = useState(false);
+    const { setAvatarUser, setUserName } = useUserAvatar();
   
     useEffect(() => {
         if (session?.user?.id) {
@@ -24,6 +26,8 @@ export const Header: React.FC<Props> =  ({ className }) => {
               const { data } = await axios.get(`/api/user/${session.user.id}`);
      
               setUser(data); 
+              setAvatarUser(data.profileImage);
+              setUserName(data.username);
             } catch (error) {
               console.error('Request failed:', error);
             }

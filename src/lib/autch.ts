@@ -3,8 +3,8 @@ import GithubProvider from "next-auth/providers/github"
 import GoogleProvider from "next-auth/providers/google"
 import CredentialsProvider from "next-auth/providers/credentials"
 import { prisma } from "@/prisma/prisma-client";
-import { compare, hashSync } from "bcryptjs";
 import { nanoid } from 'nanoid';
+import bcrypt from "bcryptjs";
 import { User } from "@prisma/client";
 
 export const authOptions: AuthOptions   = {
@@ -48,7 +48,7 @@ export const authOptions: AuthOptions   = {
           return null;
         }
 
-        const isPasswordValid = await compare(credentials.password, fintUser.password);
+        const isPasswordValid = await bcrypt.compare(credentials.password, fintUser.password);
 
         if(!isPasswordValid) {
           return null;
@@ -109,8 +109,8 @@ export const authOptions: AuthOptions   = {
             email: user.email,
             username: user.name || 'User #' + user.id,
             password: account?.provider === 'credentials' 
-            ? hashSync((user as User).password, 10) 
-            : hashSync(nanoid(), 10),
+            ? bcrypt.hashSync((user as User).password, 10) 
+            : bcrypt.hashSync(nanoid(), 10),
             verified: new Date(),
             provider: account?.provider,
             providerId: account?.providerAccountId,

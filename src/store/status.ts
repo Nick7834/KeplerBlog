@@ -10,12 +10,12 @@ interface statusFollow {
     setStatusFollow: (open: boolean) => void
 }
 
-export const useStatusLike  = create<statusLike>((set) => ({
+export const useStatusLike = create<statusLike>((set) => ({
     statusLike: false,
     setStatusLike: (statusLike: boolean) => set({ statusLike }),
 }))
 
-export const useStatusFollow  = create<statusFollow>((set) => ({
+export const useStatusFollow = create<statusFollow>((set) => ({
     statusFollow: false,
     setStatusFollow: (statusFollow: boolean) => set({ statusFollow }),
 }))

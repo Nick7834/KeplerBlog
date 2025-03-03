@@ -13,6 +13,7 @@ import { convertToRaw, EditorState } from 'draft-js';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import axios from 'axios';
+import { useUserAvatar } from '@/store/user';
 
 interface Props {
     className?: string;
@@ -29,6 +30,7 @@ export const CreatePostInput: React.FC<Props> = ({ className }) => {
     
     const [photos, setPhotos] = useState<File[]>([]);
     const [photoPreview, setPhotoPreview] = useState<string[]>([]);
+    const { avatarUser, userName } = useUserAvatar();
 
     const [loading, setLoading] = useState(false);
 
@@ -52,6 +54,8 @@ export const CreatePostInput: React.FC<Props> = ({ className }) => {
         formData.append('title', title);
         formData.append('content', JSON.stringify(rawContent));
         photos.forEach((photo) => formData.append('photos', photo)); 
+        formData.append('avatarUser', avatarUser || '');
+        formData.append('userName', userName)
 
         try {
 

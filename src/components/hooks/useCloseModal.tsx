@@ -6,13 +6,15 @@ const UseCloseModal= (buttonRef: React.RefObject<HTMLButtonElement>, ref: React.
   
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
-          if (event.key === 'Escape') {
+          if (event.key === 'Escape' && buttonRef.current) {
+            buttonRef.current.blur();
             onClose();
           }
         };
 
         const handleClickOutside = (event: MouseEvent) => {
           if (ref.current && !ref.current.contains(event.target as Node) && buttonRef.current && !buttonRef.current.contains(event.target as Node)) {
+            buttonRef.current.blur();
             onClose();
           }
         };

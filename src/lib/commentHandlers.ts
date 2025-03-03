@@ -1,5 +1,5 @@
+import { IPost } from '@/@type/post';
 import { IComment } from '@/components/shared/comments/comments';
-import { IPost } from '@/components/shared/post';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
@@ -50,6 +50,8 @@ export const handleCommentPost = async ({
   const datas = {
     content: commentsValue,
     parentId: null,
+    avatar: user?.profileImage,
+    userName: user?.username
   };
 
   try {

@@ -1,12 +1,13 @@
 'use client'
 import React, { useEffect, useRef, useState } from 'react';
-import { IPost, Post } from './post';
+import { Post } from './post';
 import { Comments } from './comments/comments';
 import { cn } from '@/lib/utils';
 import axios from 'axios';
 import { redirect, useRouter } from 'next/navigation';
 import { SkeletonPost } from './skeletonPost';
 import { SkeletonComment } from './skeletonComment';
+import { IPost } from '@/@type/post';
 
 interface Props {
     className?: string;
