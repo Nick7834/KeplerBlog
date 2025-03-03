@@ -53,7 +53,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
         },
       });
 
-      getNotificationRecipients(
+      await getNotificationRecipients(
         authorId.id,
         notificationRecipientId,
         postId, 
@@ -95,7 +95,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
         return NextResponse.json({ error: 'Post not found' }, { status: 404 });
       }
 
-      getNotificationComment(
+      await getNotificationComment(
         authorId.id,
         post.post.authorId,
         postId, 
