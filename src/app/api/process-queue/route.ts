@@ -56,7 +56,7 @@ export async function GET() {
             ),
           )
 
-          pusher.triggerBatch(
+          await pusher.triggerBatch(
             createdNotifications.map((notification) => ({
               channel: `user-${notification.userId}`,
               name: "new_notification",
