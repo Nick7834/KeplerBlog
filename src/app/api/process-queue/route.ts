@@ -4,7 +4,7 @@ import { prisma } from "@/prisma/prisma-client"
 import chunk from "lodash.chunk"
 import { NextResponse } from "next/server"
 
-const CHUNK_SIZE = 1000
+const CHUNK_SIZE = 10
 
 export async function GET() {
   try {
@@ -56,7 +56,7 @@ export async function GET() {
             ),
           )
 
-          await pusher.triggerBatch(
+         await pusher.triggerBatch(
             createdNotifications.map((notification) => ({
               channel: `user-${notification.userId}`,
               name: "new_notification",

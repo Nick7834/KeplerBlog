@@ -90,7 +90,6 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
         }
       });
 
-
       if (!post) {
         return NextResponse.json({ error: 'Post not found' }, { status: 404 });
       }

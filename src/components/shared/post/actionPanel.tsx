@@ -146,7 +146,7 @@ export const ActionPanel: React.FC<Props> = (
                             digitStyle={{
                                 height: '19px',
                                 top: '1px',
-                                transition: 'height 0.3s ease, top 0.3s ease',
+                                transition: 'height 0.6s ease-in-out, top 0.6s ease-in-out',
                             }}
                             topGradientStyle={{ display: 'none' }}
                             bottomGradientStyle={{ display: 'none' }}
