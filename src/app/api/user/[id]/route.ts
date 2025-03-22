@@ -22,6 +22,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
         bio: true,
         createdAt: true,
         isverified: true,
+        verified: true,
         followers: {
           select: {
             id: true,

@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Post } from './post';
 import axios from 'axios';
 import { SkeletonPost } from './skeletonPost';
@@ -11,63 +11,45 @@ import { Button } from '../ui/button';
 import { FaUser } from "react-icons/fa6";
 import { useLogInStore } from '@/store/logIn';
 import { BsPostcard } from "react-icons/bs";
-import { IPost } from '@/@type/post';
+import { useInfiniteQuery } from '@tanstack/react-query';
 
 interface Props {
     className?: string;
 } 
 
+const fetchForYou = async ({ pageParam = 1 }) => {
+    const response = await axios.get(`/api/forYou?page=${pageParam}&limit=10`);
+    return response.data.posts;
+};
+
 export const ForYouList: React.FC<Props> = ({ className }) => {
 
     const { data: session } = useSession();
 
-    const [posts, setPosts] = useState<IPost[]>([]);
-    const [loader, setLoader] = useState(true);
-    const [hasMore, setHasMore] = useState(true);
-    const [page, setPage] = useState(1);
-
     const { setOpen } = useLogInStore();
 
-    useEffect(() => {
-        if(!session) {
-            setLoader(false);
-            return
-        }
+    const {
+        data,
+        fetchNextPage,
+        hasNextPage,
+        isLoading,
+    } = useInfiniteQuery({
+        queryKey: ['forYou'],
+        queryFn: fetchForYou,
+        getNextPageParam: (lastPage, allPages) => (lastPage.length < 10 ? undefined : allPages.length + 1),
+        initialPageParam: 1,
+        enabled: !!session,
+        staleTime: 1000 * 60 * 5, 
+        refetchOnWindowFocus: false,  
+        refetchOnMount: false
+    });
 
-        const fetchPosts = async () => {
-            setLoader(true);
-            try {
-                const response = await axios.get(`/api/forYou?page=${page}&limit=10`);
-                const data = await response.data?.posts;
-               
-                if (!data || data.length === 0 ) {
-                    setHasMore(false);
-                } else {
-                    setPosts((prevPosts) => {
-                        const newPosts = data.filter((post: { id: string; }) => !prevPosts.some(p => p.id === post.id));
-                        return [...prevPosts, ...newPosts];
-                    });
-                    if (data.length < 10) setHasMore(false);
-                }
-            } catch (error) {
-                console.error('Request failed:', error);
-            } finally {
-                setLoader(false);
-            }
-        };
-        fetchPosts();
-    }, [page, session]);
-
-    const loadMoreData = () => {
-        if (!loader && hasMore) {
-          setPage((prevPage) => prevPage + 1)
-        }
-    }
+    const posts = data?.pages.flat() || [];
 
     return (
         <div className={cn("mt-[clamp(1.25rem,0.82rem+2.15vw,2.5rem)]", className)}>
 
-            {!session && !loader ? 
+            {!session && !isLoading ? 
                 <div className='flex flex-col items-center justify-center'>
                     <span className='text-[#333333] dark:text-[#d9d9d9] text-[clamp(5rem,3.968rem+5.16vw,8rem)]'><BsPostcard /></span>
                     <h2 className="mt-3 text-[#333333] dark:text-[#d9d9d9] text-3xl font-bold text-center">Log in to your account</h2>
@@ -79,12 +61,13 @@ export const ForYouList: React.FC<Props> = ({ className }) => {
                 :
                 <InfiniteScroll
                     dataLength={posts.length}
-                    next={loadMoreData}
-                    hasMore={hasMore}
-                    loader={loader && Array.from({ length: 5 }).map((_, index) => <SkeletonPost key={index} />)}
+                    next={fetchNextPage}
+                    hasMore={hasNextPage || false}
+                    loader={Array.from({ length: 5 }).map((_, index) => <SkeletonPost key={index} />)}
                     className='flex flex-col items-center justify-center gap-5'
                 >
-                    {!loader && posts.length === 0 ? 
+                    {isLoading && Array.from({ length: 5 }).map((_, index) => <SkeletonPost key={index} />)}
+                    {!isLoading && posts.length === 0 ? 
                         <div className="flex flex-col items-center justify-center gap-4">
                             <FaUsers size={85} className="text-[#333333] dark:text-[#d9d9d9]" />
                             <p className="text-[#333333] dark:text-[#d9d9d9] text-xl font-bold">You not signed up for anything.</p>

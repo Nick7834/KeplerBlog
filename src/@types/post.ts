@@ -34,3 +34,7 @@ export interface IPost {
         likes: number;
     };
 }
+
+export interface IPostData {
+    pages: IPost[][]
+}

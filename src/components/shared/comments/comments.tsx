@@ -8,7 +8,7 @@ import { useUser } from '@/components/hooks/useUser';
 import { useComments } from '@/components/hooks/useComments';
 import { SkeletonComment } from '../skeletonComment';
 import { FaComments } from "react-icons/fa6";
-import { IPost } from '@/@type/post';
+import { IPost } from '@/@types/post';
 
 interface Props {
     className?: string;

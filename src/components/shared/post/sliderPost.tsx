@@ -27,7 +27,7 @@ export const SliderPost: React.FC<Props> = ({
     idPost, 
     slideIndex,
     between,
-    showModal 
+    showModal
 }) => {
 
     const [swiper, setSwiper] = useState<SwiperType | null>(null);

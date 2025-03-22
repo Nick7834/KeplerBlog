@@ -10,9 +10,11 @@ interface Props {
     required?: boolean;
     className?: string;
     type?: string;
+    labelOff?: boolean;
+    placeholder?: string
 } 
 
-export const Form: React.FC<Props> = ({ className, name, label, required, ...props }) => {
+export const Form: React.FC<Props> = ({ className, name, label, required, labelOff, placeholder, ...props }) => {
 
     const {
         register,
@@ -23,9 +25,9 @@ export const Form: React.FC<Props> = ({ className, name, label, required, ...pro
 
     return (
         <div className={ className }>
-            <label htmlFor={name}>{ label }{required && <span className='text-red-500'> *</span>}</label>
+            {!labelOff && <label htmlFor={name}>{ label }{required && <span className='text-red-500'> *</span>}</label>}
 
-            <Input className="h-12 text-md bg-neutral-300/75 dark:bg-neutral-800/75 border border-solid border-neutral-800/30 dark:border-[#b0b0b0]/70" {...register(name)} {...props} />
+            <Input className="h-12 text-md bg-neutral-300/75 dark:bg-neutral-800/75 border border-solid border-neutral-800/30 dark:border-[#b0b0b0]/70" placeholder={placeholder} {...register(name)} {...props} />
 
             {errotText && <p className={cn('text-red-500 text-sm mt-2', className)}>{errotText}</p>}
         </div>

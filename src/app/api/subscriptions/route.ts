@@ -16,6 +16,7 @@ export async function GET(req: Request) {
 
   try {
     const paginatedFollowings = await prisma.follower.findMany({
+      orderBy: { createdAt: "desc" },
       where: {
         followerId: userID.id,
       },

@@ -72,7 +72,7 @@ export async function POST(request: Request) {
       photoUrls,
     });
 
-    return NextResponse.json({ message: 'Post created successfully' });
+    return NextResponse.json({ message: 'Post created successfully', newPost });
     } catch (error) {
         console.error('Error uploading files or saving post:', error);
         return NextResponse.json({ error: 'Upload or database operation failed' }, { status: 500 });

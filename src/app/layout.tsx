@@ -13,8 +13,10 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({
   children,
+  // modal
 }: Readonly<{
   children: React.ReactNode;
+  // modal: React.ReactNode;
 }>) {
 
   return (
@@ -31,6 +33,7 @@ export default async function RootLayout({
             <Dashboard className="bg-[#EAEAEA] dark:bg-[#171717] z-[1000px]" />
             <div className="pt-[clamp(5.063rem,4.521rem+1.33vw,5.563rem)]">
               {children}
+              {/* <Suspense fallback={null}>{modal}</Suspense> */}
               <Toaster position="top-center" />
             </div>
           </main>

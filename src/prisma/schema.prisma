@@ -8,112 +8,111 @@ datasource db {
 }
 
 model User {
-  id           String    @id @default(auto()) @map("_id") @db.ObjectId
-  username     String    @unique
-  email        String    @unique
-  password     String
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  username String @unique
+  email    String @unique
+  password String
 
-  provider     String?
-  providerId   String?  
+  provider         String?
+  providerId       String?
   verificationCode VerificationCode?
-  isverifiedEmail   Boolean  @default(false)
+  isverifiedEmail  Boolean           @default(false)
 
-  role         Role     @default(user)
+  role Role @default(user)
 
-  isverified   Boolean  @default(false)
+  isverified Boolean @default(false)
 
-  profileImage String?   
+  profileImage String?
   poster       String?
-  bio          String?  
-  posts        Post[]   
+  bio          String?
+  posts        Post[]
   comments     Comment[]
   likes        Like[]
   followers    Follower[] @relation("UserFollowers")
-  following    Follower[] @relation("UserFollowing") 
+  following    Follower[] @relation("UserFollowing")
 
   Notification Notification[]
 
-  verified     DateTime? 
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
+  verified  DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 }
 
 model Post {
-  id           String    @id @default(auto()) @map("_id") @db.ObjectId
+  id           String         @id @default(auto()) @map("_id") @db.ObjectId
   title        String
   content      Json?
   image        String[]
-  author       User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  authorId     String    @db.ObjectId
+  author       User           @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId     String         @db.ObjectId
   comments     Comment[]
   likes        Like[]
   Notification Notification[]
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
 }
 
 model Comment {
-  id           String    @id @default(auto()) @map("_id") @db.ObjectId
-  content      String
-  author       User      @relation(fields: [authorId], references: [id],  onDelete: Cascade)
-  authorId     String    @db.ObjectId
-  post         Post      @relation(fields: [postId], references: [id],  onDelete: Cascade)
-  postId       String    @db.ObjectId
-  parent       Comment?  @relation("CommentReplies", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  parentId     String?   @db.ObjectId
-  replies      Comment[] @relation("CommentReplies")
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  content   String
+  author    User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId  String    @db.ObjectId
+  post      Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId    String    @db.ObjectId
+  parent    Comment?  @relation("CommentReplies", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  parentId  String?   @db.ObjectId
+  replies   Comment[] @relation("CommentReplies")
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 }
-  
+
 model Like {
-  id           String    @id @default(auto()) @map("_id") @db.ObjectId
-  author       User      @relation(fields: [authorId], references: [id],  onDelete: Cascade)
-  authorId     String    @db.ObjectId
-  post         Post      @relation(fields: [postId], references: [id],  onDelete: Cascade)
-  postId       String    @db.ObjectId
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId  String   @db.ObjectId
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId    String   @db.ObjectId
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@unique([authorId, postId])
 }
 
 model Follower {
-  id           String    @id @default(auto()) @map("_id") @db.ObjectId
-  follower     User      @relation("UserFollowers", fields: [followerId], references: [id],  onDelete: Cascade)
-  followerId   String    @db.ObjectId
-  following    User      @relation("UserFollowing", fields: [followingId], references: [id],  onDelete: Cascade)
-  followingId  String    @db.ObjectId
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  follower    User     @relation("UserFollowers", fields: [followerId], references: [id], onDelete: Cascade)
+  followerId  String   @db.ObjectId
+  following   User     @relation("UserFollowing", fields: [followingId], references: [id], onDelete: Cascade)
+  followingId String   @db.ObjectId
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   @@unique([followerId, followingId])
 }
 
 model Notification {
-  id         String   @id @default(auto()) @map("_id") @db.ObjectId
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId     String   @db.ObjectId
-  type       String  
-  message    String
-  post       Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
-  postId     String?  @db.ObjectId
-  avatar     String?  
-  postImage  String? 
-  isRead     Boolean  @default(false)
-  isNew      Boolean  @default(true)
-  commentId  String?  @db.ObjectId
-  createdAt  DateTime @default(now())
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String   @db.ObjectId
+  type      String
+  message   String
+  post      Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId    String?  @db.ObjectId
+  avatar    String?
+  postImage String?
+  isRead    Boolean  @default(false)
+  isNew     Boolean  @default(true)
+  commentId String?  @db.ObjectId
+  createdAt DateTime @default(now())
 }
 
-
 model VerificationCode {
-  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  id String @id @default(auto()) @map("_id") @db.ObjectId
 
-  userId      String    @db.ObjectId @unique
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @unique @db.ObjectId
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  code        String
+  code String
 
   expiresAt DateTime @default(now())
   createdAt DateTime @default(now())

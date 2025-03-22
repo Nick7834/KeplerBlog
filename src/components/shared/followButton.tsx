@@ -7,13 +7,16 @@ import axios from 'axios';
 import { usePathname } from 'next/navigation';
 import { useLogInStore } from '@/store/logIn';
 import { useStatusFollow } from '@/store/status';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import toast from 'react-hot-toast';
+import { updatePostFollow } from '@/lib/updateQueryData';
 
 interface Props {
     className?: string;
     idUser: string | undefined;
     setFollow?: (number: number) => void;
     follow?: number;
-    isFollowUser: boolean
+    isFollowUser: boolean;
 } 
 
 export const FollowButton: React.FC<Props> = ({ className, idUser, setFollow, follow, isFollowUser }) => {
@@ -25,12 +28,22 @@ export const FollowButton: React.FC<Props> = ({ className, idUser, setFollow, fo
     const [Isfollow, setIsFollow] = useState(isFollowUser || false);
     const { statusFollow, setStatusFollow } = useStatusFollow();
       const [loading, setLoading] = useState(false);
+      const queryClient = useQueryClient();
 
     const { setOpen } = useLogInStore();
 
     useEffect(() => {
         setIsFollow(isFollowUser || false);
     }, [isFollowUser, session]);
+
+    const followingMutation = useMutation({
+        mutationFn: async () => {
+          await axios.post(`/api/user/${idUser}/follow`);
+        },
+        onError: () => {
+          toast.error("Something went wrong");
+        },
+      });
 
     useEffect(() => {
 
@@ -75,7 +88,11 @@ export const FollowButton: React.FC<Props> = ({ className, idUser, setFollow, fo
 
         try {
 
-           await axios.post(`/api/user/${idUser}/follow`);
+            followingMutation.mutate(undefined, {
+                onSettled: () => {
+                    updatePostFollow(queryClient, idUser as string, !Isfollow);
+                }
+            })
 
         } catch(error) {
             console.error(error);

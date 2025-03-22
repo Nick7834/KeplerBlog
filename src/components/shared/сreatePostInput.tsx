@@ -14,16 +14,22 @@ import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import axios from 'axios';
 import { useUserAvatar } from '@/store/user';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { addNewPost, keyQuery } from '@/lib/updateQueryData';
+import { IPost } from '@/@types/post';
+import { useUser } from '../hooks/useUser';
 
 interface Props {
     className?: string;
-} 
+}
 
 export const CreatePostInput: React.FC<Props> = ({ className }) => {
 
     const router = useRouter();
 
     const { data: session} = useSession();
+    const user = useUser();
+    const queryClient = useQueryClient();
     
     const [title, setTitle] = useState('');
     const [editorState, setEditorState] = useState(EditorState.createEmpty());
@@ -37,6 +43,24 @@ export const CreatePostInput: React.FC<Props> = ({ className }) => {
     const handlePhoto = (e: React.ChangeEvent<HTMLInputElement>) => {
         handlePhotoUpload(e, photoPreview, setPhotoPreview, setPhotos);
     };
+
+    const mutation = useMutation({
+        mutationFn: async (newPost: IPost) => {
+            return newPost;
+        },
+        onSuccess: (data) => {
+            toast.success('Post created successfully.');
+            keyQuery.forEach((key) => addNewPost(queryClient, key, data));
+            router.replace(`/profile/${session?.user?.id}`);
+        },
+        onError: (error) => {
+            toast.error('Something went wrong.');
+            console.error(error);
+        },
+        onSettled: () => {
+            setLoading(false);
+        }
+    });
 
     const handlePost = async () => {
 
@@ -58,23 +82,31 @@ export const CreatePostInput: React.FC<Props> = ({ className }) => {
         formData.append('userName', userName)
 
         try {
-
             const response = await axios.post('/api/posts', formData);
+            if(response.status === 200) {
+                if (!user) return;
 
-            if (response.status === 200) {
-                toast.success('Post created successfully.');
+                const newComment: IPost = {
+                    ...response.data.newPost,
+                    isLiked: false,
+                    author: {
+                        id: user.id,
+                        username: user.username,
+                        profileImage: user.profileImage,
+                        isverified: user?.isverified
+                    },
+                    _count: {
+                        comments: 0,
+                        likes: 0
+                    }
+                };
+
+                mutation.mutate(newComment);
             }
-
-            router.replace(`/profile/${session?.user?.id}`); 
-
-
-        } catch(error) {
+        } catch (error) {
             toast.error('Something went wrong.');
             console.error(error);
-        } finally {
-            setLoading(false);
         }
-
     }
 
     return (

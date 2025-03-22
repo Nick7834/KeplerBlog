@@ -1,5 +1,6 @@
-import { IPost } from '@/@type/post';
+import { IPost } from '@/@types/post';
 import { IComment } from '@/components/shared/comments/comments';
+import { User } from '@prisma/client';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
@@ -11,13 +12,7 @@ interface HandleCommentPostParams {
   setLastCommentTime: React.Dispatch<React.SetStateAction<number | null>>;
   addComment: (comment: IComment) => void;
   post: IPost;
-  user: {
-    id: string;
-    email?: string | undefined;
-    username: string;
-    profileImage: string | null;
-    isverified: boolean;
-  } | null;
+  user: User | null;
 }
 
 export const handleCommentPost = async ({

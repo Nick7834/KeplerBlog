@@ -7,8 +7,18 @@ export async function GET(req: NextRequest) {
     const userID = await getUserSession();
 
     const query = (req.nextUrl.searchParams.get('query') || '').trim();
-    const skipUsers = parseInt(req.nextUrl.searchParams.get('skipUsers') || '0', 10);
+    const skipUsers = parseInt(req.nextUrl.searchParams.get('skipUsers') || '1', 10);
     const takeUsers = parseInt(req.nextUrl.searchParams.get('takeUsers') || '10', 10);
+    const offset = (skipUsers - 1) * takeUsers;
+
+    const specialSymbols = ['.', ',', '?', '!', ':', ';', '"', "'", '<', '>', '(', ')'];
+    const hasSpecialSymbolOnly = query.split('').every(char => specialSymbols.includes(char));
+
+    if (hasSpecialSymbolOnly) {
+        return NextResponse.json({ users: [] });
+    }
+
+    const safeQuery = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
     try {
         const users = await prisma.user.findMany({
@@ -16,13 +26,13 @@ export async function GET(req: NextRequest) {
                 OR: [
                     {
                         username: {
-                            contains: query,
+                            contains: safeQuery,
                             mode: 'insensitive',
                         },
                     },
                 ],
             },
-            skip: skipUsers,
+            skip: offset,
             take: takeUsers,
             select: {
                 id: true,

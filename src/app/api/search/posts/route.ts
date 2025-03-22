@@ -2,16 +2,26 @@ import { prisma } from "@/prisma/prisma-client";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
-    const query = req.nextUrl.searchParams.get('query') || '';
-    const skipPosts = parseInt(req.nextUrl.searchParams.get('skipPosts') || '0', 10);
+    const query = req.nextUrl.searchParams.get('query')?.trim() || '';
+    const skipPosts = parseInt(req.nextUrl.searchParams.get('skipPosts') || '1', 10);
     const takePosts = parseInt(req.nextUrl.searchParams.get('takePosts') || '10', 10);
+    const offset = (skipPosts - 1) * takePosts;
+
+    const specialSymbols = ['.', ',', '?', '!', ':', ';', '"', "'", '<', '>', '(', ')'];
+    const hasSpecialSymbolOnly = query.split('').every(char => specialSymbols.includes(char));
+
+    if (hasSpecialSymbolOnly) {
+        return NextResponse.json({ posts: [] });
+    }
+
+    const safeQuery = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
     const posts = await prisma.post.findMany({
         where: {
             OR: [
                 {
                     title: {
-                        contains: query,
+                        contains: safeQuery,
                         mode: 'insensitive',
                     },
                 },
@@ -20,7 +30,7 @@ export async function GET(req: NextRequest) {
         orderBy: {
             createdAt: 'desc',
         },
-        skip: skipPosts,
+        skip: offset,
         take: takePosts,
         select: {
             id: true,

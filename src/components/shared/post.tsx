@@ -18,7 +18,7 @@ import { getShortTimeAgo } from '../hooks/useDate';
 import { processContent } from '@/lib/processContent';
 import { ModalShare } from './modalShare';
 import { CheckProfile } from './checkProfile';
-import { IPost } from '@/@type/post';
+import { IPost } from '@/@types/post';
 
 interface Props {
     className?: string;
@@ -139,6 +139,7 @@ export const Post: React.FC<Props> = ({ className, onClick, post }) => {
 
             <ActionPanel 
                 idPost={post?.id} 
+                idUserPost={post?.author?.id}
                 count={post?._count} 
                 pathname={pathname} 
                 router={router} 

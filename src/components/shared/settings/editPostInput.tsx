@@ -8,12 +8,16 @@ import { convertFromRaw, convertToRaw, EditorState, RawDraftContentState } from 
 import { redirect, useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import axios from 'axios';
-import { Post } from '@prisma/client';
 import { FaRegSave } from "react-icons/fa";
 import { RiDeleteBinLine } from "react-icons/ri";
 import { handlePhotoUpload } from '../handlePhotoUpload';
 import { Button, Editor, TitlePost } from '..';
 import { Photos } from '../createPost/photos';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { IPost } from '@/@types/post';
+import { deletePost, keyQuery, updatePostUser, updatePostUserDetail } from '@/lib/updateQueryData';
+import { Post } from '@prisma/client';
+import { usePostId } from '@/components/hooks/UsePostDetailFetch';
 
 interface Props {
     className?: string;
@@ -25,18 +29,21 @@ export const EditPostInput: React.FC<Props> = ({ className, post }) => {
     const router = useRouter();
 
     const { data: session} = useSession();
+    const postId = usePostId(post.id);
 
     if(session?.user?.id !== post.authorId) redirect('/');
     
     const [title, setTitle] = useState(post?.title);
     const [editorState, setEditorState] = useState(EditorState.createEmpty());
     
-    const [oldPhoto, setOldPhotos] = useState<string[]>(post?.image);
-    const [photoPreview, setPhotoPreview] = useState<string[]>(post?.image);
+    const [oldPhoto, setOldPhotos] = useState<string[]>(post.image || []);
+    const [photoPreview, setPhotoPreview] = useState<string[]>(post.image || []);
     const [newPhoto, setNewPhotos] = useState<File[]>([]);
 
     const [loading, setLoading] = useState(false);
     const [deleting, setDeleting] = useState(false);
+
+    const queryClient = useQueryClient();
 
     useEffect(() => {
         const initializePhotos = async () => {
@@ -53,6 +60,24 @@ export const EditPostInput: React.FC<Props> = ({ className, post }) => {
         initializePhotos();
     }, [post]);
 
+    const mutation = useMutation({
+        mutationFn: async (updatePost: IPost) => {
+            return updatePost;
+        },
+        onSuccess: (updatePost) => {
+            toast.success('Post updated successfully.');
+            updatePostUserDetail(queryClient, 'post', post.id, updatePost);
+            keyQuery.forEach((key) => updatePostUser(queryClient, key, updatePost));
+            router.replace(`/profile/${session?.user?.id}`);
+        },
+        onError: (error) => {
+            toast.error('Something went wrong.');
+            console.error(error);
+        },
+        onSettled: () => {
+            setLoading(false);
+        }
+    });
 
     const handlePhoto = (e: React.ChangeEvent<HTMLInputElement>) => {
         handlePhotoUpload(e, photoPreview, setPhotoPreview, setNewPhotos, setOldPhotos);
@@ -103,7 +128,17 @@ export const EditPostInput: React.FC<Props> = ({ className, post }) => {
             const response = await axios.put(`/api/posts/${post.id}/edit`, formData);
 
             if (response.status === 200) {
-                toast.success('Post updated successfully.');
+
+                if(!postId) return;
+
+                const editPost: IPost = {
+                    ...postId,
+                    title: isTitleChanged ? newTitle : oldTitle,
+                    content: isContentChanged ? rawContent : oldContent,
+                    image: isPhotosChanged ? newPhotos : oldPhotos
+                };
+
+                mutation.mutate(editPost);
             }
 
             router.replace(`/profile/${session?.user?.id}`); 
@@ -111,11 +146,29 @@ export const EditPostInput: React.FC<Props> = ({ className, post }) => {
         } catch(error) {
             toast.error('Something went wrong.');
             console.error(error);
-        } finally {
+        } finally { 
             setLoading(false);
         }
 
     }
+
+    const mutationDelete = useMutation({
+        mutationFn: async (post: Post) => {
+            return post;
+        },
+        onSuccess: () => {
+            toast.success('Post deleted successfully.');
+            keyQuery.forEach((key) => deletePost(queryClient, key, post.authorId, post.id));
+            router.replace(`/profile/${session?.user?.id}`); 
+        },
+        onError: (error) => {
+            toast.error('Something went wrong.');
+            console.error(error);
+        },
+        onSettled: () => {
+            setDeleting(false);
+        }
+    });
 
     const handleDelete = async () => {
 
@@ -131,9 +184,8 @@ export const EditPostInput: React.FC<Props> = ({ className, post }) => {
         try {
             const response = await axios.delete(`/api/posts/${post.id}/delete`);
             if (response.status === 200) {
-                toast.success('Post deleted successfully.'); 
+                mutationDelete.mutate(post);
             }
-            router.replace(`/profile/${session?.user?.id}`); 
         } catch(error) {
             toast.error('Something went wrong.'); 
             console.error(error);

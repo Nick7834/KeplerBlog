@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import axios from 'axios';
+import { User } from '@prisma/client';
 
 export const useUser = () => {
   const { data: session } = useSession();
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
     if (session?.user?.id) {

@@ -62,15 +62,15 @@ export const ModalCheck: React.FC<Props> = ({ className, open, setOpen, email, s
                         }}
                     >
                         <InputOTPGroup>
-                            <InputOTPSlot index={0} />
-                            <InputOTPSlot index={1} />
-                            <InputOTPSlot index={2} />
+                            <InputOTPSlot index={0}  className="w-12 h-12 text-xl text-center border-[#333333] bg-transparent dark:bg-transparent dark:border-white" />
+                            <InputOTPSlot index={1}  className="w-12 h-12 text-xl text-center border-[#333333] bg-transparent dark:bg-transparent dark:border-white" />
+                            <InputOTPSlot index={2}  className="w-12 h-12 text-xl text-center border-[#333333] bg-transparent dark:bg-transparent dark:border-white" />
                         </InputOTPGroup>
                             <InputOTPSeparator />
                         <InputOTPGroup>
-                            <InputOTPSlot index={3} />
-                            <InputOTPSlot index={4} />
-                            <InputOTPSlot index={5} />
+                            <InputOTPSlot index={3}  className="w-12 h-12 text-xl text-center border-[#333333] bg-transparent dark:bg-transparent dark:border-white" />
+                            <InputOTPSlot index={4}  className="w-12 h-12 text-xl text-center border-[#333333] bg-transparent dark:bg-transparent dark:border-white" />
+                            <InputOTPSlot index={5}  className="w-12 h-12 text-xl text-center border-[#333333] bg-transparent dark:bg-transparent dark:border-white" />
                         </InputOTPGroup>
                     </InputOTP>
                 </div>
