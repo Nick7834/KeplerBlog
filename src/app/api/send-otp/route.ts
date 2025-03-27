@@ -1,6 +1,7 @@
 import { getUserSession } from "@/lib/get-user-session";
 import sendVerificationEmail from "@/lib/sendVerificationEmail";
 import { prisma } from "@/prisma/prisma-client";
+import { hashSync } from "bcryptjs";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
@@ -29,7 +30,7 @@ export async function POST(request: Request) {
     const codeBD = await prisma.verificationCode.create({
         data: {
             userId: user.id,
-            code,
+            code: hashSync(code, 10),
             expiresAt: new Date(Date.now() + 15 * 60 * 1000),
         },
     });

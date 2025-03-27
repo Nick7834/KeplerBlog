@@ -27,7 +27,6 @@ export const formUpdateSchema = z.object({
     bio: z.string().max(400, { message: 'Bio must be at most 400 characters' }).optional(),
 });
 
-
 export const resetPasswordEmail = z.object({
     email: z.string().email({ message: 'Invalid email address' }),
 })

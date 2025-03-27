@@ -17,7 +17,7 @@ interface Props {
 export const AutchModal: React.FC<Props> = ({ open, onClose }) => {
   const [type, setType] = useState<"login" | "register">("login");
   const [forgotPassword, setForgotPassword] = useState<boolean>(false);
-   const { reset } = usePasswordReset();
+  const { reset } = usePasswordReset();
 
   const onClickSwitch = () => {
     setType((prev) => (prev === "login" ? "register" : "login"));
@@ -30,13 +30,13 @@ export const AutchModal: React.FC<Props> = ({ open, onClose }) => {
   const handleCloseReset = () => {
     const confirm = window.confirm(
       "Are you sure you want to close the reset password modal?"
-    )
+    );
 
     if (confirm) {
       setForgotPassword(false);
       reset();
     }
-  }
+  };
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>

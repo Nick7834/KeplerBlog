@@ -40,24 +40,24 @@ export const authOptions: AuthOptions   = {
           email: credentials.email,
         }
 
-        const fintUser = await prisma.user.findUnique({
+        const findUser = await prisma.user.findUnique({
           where: values,
         })
 
-        if(!fintUser) {
+        if(!findUser) {
           return null;
         }
 
-        const isPasswordValid = await bcrypt.compare(credentials.password, fintUser.password);
+        const isPasswordValid = await bcrypt.compare(credentials.password, findUser.password);
 
         if(!isPasswordValid) {
           return null;
         }
 
         return {
-          id: fintUser.id,
-          name: fintUser.username,
-          email: fintUser.email,
+          id: findUser.id,
+          name: findUser.username,
+          email: findUser.email,
         }
 
       }

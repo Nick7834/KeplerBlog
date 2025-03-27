@@ -129,7 +129,7 @@ export const ActionPanel: React.FC<Props> = ({
       <Button
         onClick={(e) => (e.stopPropagation(), handleLikeClick())}
         className={cn(
-          "flex items-center gap-2 bg-neutral-300/75 dark:bg-neutral-700/75 p-2 rounded-full h-fit hover:bg-color",
+          "flex items-center gap-2 bg-neutral-300/50 dark:bg-neutral-700/50 backdrop-blur-xl p-2 rounded-full h-fit hover:bg-color",
           liked && "bg-[#7391d5] dark:bg-[#7391d5]"
         )}
       >
@@ -194,7 +194,7 @@ export const ActionPanel: React.FC<Props> = ({
 
       <Button
         onClick={handleCommentClick}
-        className="flex items-center gap-2 bg-neutral-300/75 dark:bg-neutral-700/75 p-2 rounded-full h-fit hover:bg-color"
+        className="flex items-center gap-2 bg-neutral-300/50 dark:bg-neutral-700/50 backdrop-blur-xl p-2 rounded-full h-fit hover:bg-color"
       >
         <div className="block [&_svg]:size-[20px] text-[#333333] dark:text-[#d9d9d9]">
           <FaRegCommentDots size={20} />
@@ -206,7 +206,7 @@ export const ActionPanel: React.FC<Props> = ({
 
       <Button
         onClick={(e) => (e.stopPropagation(), handleShareClick(idPost))}
-        className="flex items-center gap-2 bg-neutral-300/75 dark:bg-neutral-700/75 p-2 rounded-full h-fit hover:bg-color"
+        className="flex items-center gap-2 bg-neutral-300/50 backdrop-blur-xl dark:bg-neutral-700/50 p-2 rounded-full h-fit hover:bg-color"
       >
         <div className="block [&_svg]:size-[20px] text-[#333333] dark:text-[#d9d9d9]">
           <PiShareFat size={20} />

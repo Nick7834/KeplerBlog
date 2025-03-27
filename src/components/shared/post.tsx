@@ -19,6 +19,8 @@ import { processContent } from '@/lib/processContent';
 import { ModalShare } from './modalShare';
 import { CheckProfile } from './checkProfile';
 import { IPost } from '@/@types/post';
+import {FastAverageColor} from 'fast-average-color';
+import { hexToRgb } from '@/lib/hex';
 
 interface Props {
     className?: string;
@@ -27,6 +29,8 @@ interface Props {
 } 
 
 export const Post: React.FC<Props> = ({ className, onClick, post }) => {
+
+    const fac = new FastAverageColor();
 
     const session = useSession();
 
@@ -37,6 +41,8 @@ export const Post: React.FC<Props> = ({ className, onClick, post }) => {
     const commentContentText = processContent(html, true);
 
     const timeAgo = getShortTimeAgo(new Date(post.createdAt));
+
+    const [background, setBackground] = useState('');
 
     const [showModal, setShowModal] = useState(false);
     const [slideIndex, setSlideIndex] = useState(0);
@@ -67,9 +73,26 @@ export const Post: React.FC<Props> = ({ className, onClick, post }) => {
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
+
+    const getDominantColor = async (imageUrl: string) => {
+        if(!imageUrl) return;
+        try {
+          const color = await fac.getColorAsync(imageUrl);
+          setBackground(color.hex);
+        } catch (error) {
+          console.error('Error getting dominant color:', error);
+        }
+      };
+
     return (
         <>
-            <div onClick={() => pathname.startsWith('/post') ? null : router.push(`/post/${post?.id}`)} className={cn('max-w-[750px] w-full flex-1 p-3 bg-[#e0e0e0]/95 dark:bg-[#2a2a2a] rounded-[10px] border border-[#b0b0b0]/70 transition-all ease-in-out duration-[.3s] cursor-pointer dark:bg-[#1d1d1d]/95 hover:bg-[#d1d1d1]/60 hover:dark:bg-[#333333]/60', className)}>
+            <div 
+                onClick={() => pathname.startsWith('/post') ? null : router.push(`/post/${post?.id}`)} 
+                className={cn(`max-w-[750px] w-full flex-1 p-3 bg-[#e0e0e0]/95 dark:bg-[#2a2a2a] rounded-[10px] border border-[#b0b0b0]/70 transition-all ease-in-out duration-300 cursor-pointer dark:bg-[#1d1d1d]/95 hover:bg-[#d1d1d1]/60 hover:dark:bg-[#333333]/60`, className)}
+                onMouseEnter={() => getDominantColor(post?.image?.[0] || '')}
+                onMouseLeave={() => setBackground('')}
+                style={{ background: background ? `rgba(${hexToRgb(background)}, 0.4)` : '' }}
+                >
 
             <div className='flex gap-1 items-center justify-between'>
                 <Link onClick={(e) => e.stopPropagation()} href={`/profile/${post?.author?.id}`} className="flex items-center gap-3 w-fit">

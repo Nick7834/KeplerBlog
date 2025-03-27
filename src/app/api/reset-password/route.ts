@@ -1,5 +1,5 @@
 import { prisma } from "@/prisma/prisma-client";
-import { hashSync } from "bcryptjs";
+import { compare, hashSync } from "bcryptjs";
 import { NextResponse } from "next/server";
 
 export async function PUT(request: Request) {
@@ -21,11 +21,21 @@ export async function PUT(request: Request) {
         const verificationCode = await prisma.verificationCode.findFirst({
             where: {
                 userId: user.id,
-                code: code,
             },
+            select: {
+                code: true,
+                expiresAt: true,
+                id: true,
+            }
         });
 
         if (!verificationCode) {
+            return NextResponse.json({ error: 'Invalid verification code' }, { status: 400 });
+        }
+
+        const isCodeValid = await compare(code, verificationCode.code);
+
+        if (!isCodeValid) {
             return NextResponse.json({ error: 'Invalid verification code' }, { status: 400 });
         }
 
