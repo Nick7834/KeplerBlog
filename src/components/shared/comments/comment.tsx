@@ -173,7 +173,7 @@ export const Comment: React.FC<Props> = ({ className, comment, indentLevel, user
             </Link>
 
             <p className='text-[#333333] dark:text-[#d9d9d9] text-base font-normal mt-2 ml-1 break-all'
-                dangerouslySetInnerHTML={{ __html: commentContentText }}
+                dangerouslySetInnerHTML={{ __html: String(commentContentText) }}
             />   
 
             <div className='flex items-center gap-5 mt-2 ml-5'>

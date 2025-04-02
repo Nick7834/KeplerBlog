@@ -21,6 +21,7 @@ import { CheckProfile } from './checkProfile';
 import { IPost } from '@/@types/post';
 import {FastAverageColor} from 'fast-average-color';
 import { hexToRgb } from '@/lib/hex';
+import { UseDarkMode } from '../hooks/useDarkMode';
 
 interface Props {
     className?: string;
@@ -33,6 +34,7 @@ export const Post: React.FC<Props> = ({ className, onClick, post }) => {
     const fac = new FastAverageColor();
 
     const session = useSession();
+    const { theme } = UseDarkMode();
 
     const contentState = post?.content ? convertFromRaw(post?.content as RawDraftContentState) : '';
     const text = contentState ? contentState.getPlainText() : '';
@@ -91,7 +93,7 @@ export const Post: React.FC<Props> = ({ className, onClick, post }) => {
                 className={cn(`max-w-[750px] w-full flex-1 p-3 bg-[#e0e0e0]/95 dark:bg-[#2a2a2a] rounded-[10px] border border-[#b0b0b0]/70 transition-all ease-in-out duration-300 cursor-pointer dark:bg-[#1d1d1d]/95 hover:bg-[#d1d1d1]/60 hover:dark:bg-[#333333]/60`, className)}
                 onMouseEnter={() => getDominantColor(post?.image?.[0] || '')}
                 onMouseLeave={() => setBackground('')}
-                style={{ background: background ? `rgba(${hexToRgb(background)}, 0.4)` : '' }}
+                style={{ background: background ? `rgba(${hexToRgb(background)}, ${theme === 'dark' ? 0.4 : 0.25})` : '' }}
                 >
 
             <div className='flex gap-1 items-center justify-between'>
