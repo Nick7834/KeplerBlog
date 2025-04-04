@@ -46,9 +46,6 @@ export async function GET(req: Request) {
               isverified: true
             }
           },
-          likes: {
-            select: { authorId: true },
-          },
           _count: {
             select: {
               likes: true,
@@ -65,15 +62,8 @@ export async function GET(req: Request) {
         take: pageSize,
       });
 
-      const postsWithLikedStatus = posts.map((post) => {
-        const isLiked = post.likes.some((like) => like.authorId === userId.id);
-        return {
-          ...post,
-          isLiked,
-        };
-      });
   
-      return NextResponse.json({ posts: postsWithLikedStatus });
+      return NextResponse.json({ posts });
   } catch (error) {
     console.error('Error fetching posts:', error);
     return NextResponse.json({ error: 'Failed to fetch posts' }, { status: 500 });

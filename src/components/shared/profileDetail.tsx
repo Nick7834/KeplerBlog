@@ -95,7 +95,7 @@ export const ProfileDetail: React.FC<Props> = ({ className, idUser }) => {
               dataLength={posts.length}
               next={fetchNextPage}
               hasMore={hasNextPage}
-              loader={Array.from({ length: 5 }).map((_, index) => (
+              loader={Array.from({ length: 2 }).map((_, index) => (
                 <SkeletonPost key={index} />
               ))}
               className={cn(
@@ -103,7 +103,7 @@ export const ProfileDetail: React.FC<Props> = ({ className, idUser }) => {
               )}
             >
               {isLoading &&
-                Array.from({ length: 5 }).map((_, index) => (
+                Array.from({ length: 2 }).map((_, index) => (
                   <SkeletonPost key={index} />
                 ))}
               {!isLoading && posts.length === 0 ? (

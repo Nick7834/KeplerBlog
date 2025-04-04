@@ -89,6 +89,7 @@ h1, h2, h3, h4, h5, h6, p {
   scroll-behavior: smooth;
 }
 
+
 @layer base {
   :root {
     --background: 0 0% 100%;

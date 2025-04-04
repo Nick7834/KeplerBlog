@@ -63,10 +63,10 @@ export const ForYouList: React.FC<Props> = ({ className }) => {
                     dataLength={posts.length}
                     next={fetchNextPage}
                     hasMore={hasNextPage || false}
-                    loader={Array.from({ length: 5 }).map((_, index) => <SkeletonPost key={index} />)}
+                    loader={Array.from({ length: 2 }).map((_, index) => <SkeletonPost key={index} />)}
                     className='flex flex-col items-center justify-center gap-5'
                 >
-                    {isLoading && Array.from({ length: 5 }).map((_, index) => <SkeletonPost key={index} />)}
+                    {isLoading && Array.from({ length: 2 }).map((_, index) => <SkeletonPost key={index} />)}
                     {!isLoading && posts.length === 0 ? 
                         <div className="flex flex-col items-center justify-center gap-4">
                             <FaUsers size={85} className="text-[#333333] dark:text-[#d9d9d9]" />

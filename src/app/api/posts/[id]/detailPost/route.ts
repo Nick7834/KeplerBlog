@@ -30,12 +30,6 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
               }
             }
           },
-          likes: {
-            select: {
-              id: true,
-              authorId: true
-            }
-          },
           author: {
             select: {
               id: true,
@@ -57,24 +51,24 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
       return NextResponse.json({ error: 'Posts not found' }, { status: 404 });    
     }
 
-    let isLiked = false;
     let isFollowing = false;
 
     if (userIds?.id) {
-      isLiked = posts.likes.some((like) => like.authorId === userIds.id);
 
       const follow = await prisma.follower.findFirst({
         where: {
           followerId: userIds.id,
           followingId: posts.author.id,
         },
+        select: {
+          id: true,
+        },
       });
-      isFollowing = !!follow;
+      isFollowing = Boolean(follow);
     }
 
     const postWithLikedStatus = {
       ...posts,
-      isLiked,
       isFollowing,
     };
 

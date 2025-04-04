@@ -1,21 +1,21 @@
 import { useTheme } from 'next-themes';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 export const UseDarkMode = () => {
-    const { theme, setTheme } = useTheme();
+    const { theme, setTheme, systemTheme } = useTheme();
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
         setMounted(true);
     }, []);
 
-    const handleToggle = () => {
+    const handleToggle = useMemo(() => () => {
         setTheme(theme === 'dark' ? 'light' : 'dark');
-    };
+    }, [theme, setTheme]); 
 
     if (!mounted) {
-        return { theme: 'light', handleToggle };
+        return { theme: undefined, handleToggle };
     }
 
-    return { theme, handleToggle };
+    return { theme: theme === "system" ? systemTheme : theme, handleToggle };
 };

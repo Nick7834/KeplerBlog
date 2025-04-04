@@ -1,10 +1,8 @@
 import { subDays } from 'date-fns';
 import { prisma } from "@/prisma/prisma-client";
 import { NextResponse } from "next/server";
-import { getUserSession } from '@/lib/get-user-session';
 
 export async function GET() {
-  const userIds = await getUserSession();
   try {
     const oneWeekAgo = subDays(new Date(), 7);
    
@@ -23,11 +21,6 @@ export async function GET() {
             isverified: true
           },
         },
-        likes: {
-          select: {
-            authorId: true,
-          },
-        },
         _count: {
           select: {
             likes: true,
@@ -39,10 +32,8 @@ export async function GET() {
     
     const trendingPosts = posts
     .map((post) => {
-      const isLiked = post.likes.some((like) => like.authorId === userIds?.id);
       return {
         ...post,
-        isLiked, 
         popularity: post._count.likes * 2 + post._count.comments,
       };
     })

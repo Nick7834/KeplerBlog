@@ -5,12 +5,11 @@ import Counter from "@/components/ui/Counter";
 import { updatePost, updateQueryData } from "@/lib/updateQueryData";
 import { cn } from "@/lib/utils";
 import { useLogInStore } from "@/store/logIn";
-import { useStatusLike } from "@/store/status";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
-import React, { useEffect, useState } from "react";
+import React, { memo, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import { BiSolidLike } from "react-icons/bi";
 
@@ -26,7 +25,6 @@ interface Props {
   };
   pathname: string;
   router: AppRouterInstance;
-  isLiked?: boolean;
   onClick?: () => void;
   setShowModalShare?: React.Dispatch<React.SetStateAction<boolean>>;
   setIdPostShare?: React.Dispatch<React.SetStateAction<string>>;
@@ -34,77 +32,49 @@ interface Props {
   idUserPost: string;
 }
 
-export const ActionPanel: React.FC<Props> = ({
+export const ActionPanel: React.FC<Props> = memo(({
   className,
   count,
   pathname,
   router,
   idPost,
   idUserPost,
-  isLiked,
   setShowModalShare,
   setIdPostShare,
   onClick,
 }) => {
   const { data: session } = useSession();
   const [likes, setLikes] = useState(count.likes);
-  const [liked, setLiked] = useState<boolean>(isLiked || false);
-  const { setStatusLike, statusLike } = useStatusLike();
-  const formattedCountLike = UseFormatNumber(Number(likes));
-  const formattedCountComment = UseFormatNumber(Number(count?.comments));
+  const formattedCountLike = useMemo(() => UseFormatNumber(Number(likes)), [likes]);
+  const formattedCountComment = useMemo(() => UseFormatNumber(Number(count?.comments)), [count?.comments]);
   const { setOpen } = useLogInStore();
   const queryClient = useQueryClient();
 
-  useEffect(() => {
-    setLiked(isLiked || false);
-  }, [isLiked, session]);
-
-  useEffect(() => {
-    if (!statusLike) {
-      return;
-    }
-
-    const likeStatus = async () => {
-      try {
-        const { data } = await axios.get(`/api/posts/${idPost}/status`);
-        setLiked(data.liked);
-        setStatusLike(false);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    likeStatus();
-  }, [setStatusLike, statusLike]);
-
-  const handleCommentClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (pathname.startsWith("/post") && onClick) {
-      onClick();
-    } else {
-      router.push(`/post/${idPost}`);
-    }
-  };
+  const { data: status, isLoading } = useQuery({
+    queryKey: ["statusLike", idPost],
+    queryFn: () => axios.get(`/api/posts/${idPost}/status`),
+    refetchOnWindowFocus: false,
+    refetchOnMount: false
+  });
 
   const likeMutation = useMutation({
-    mutationFn: async () => {
-      await axios.post(`/api/posts/${idPost}/like`);
+    mutationFn: () => {
+      return axios.post(`/api/posts/${idPost}/like`)
     },
     onError: () => {
       toast.error("Something went wrong");
     },
   });
-
+  
   const handleLikeClick = async () => {
     if (!session) {
-      setOpen(true);
-      return;
+      setOpen(true)
+      return
     }
-
-    const newLiked = !liked;
-    setLiked(newLiked);
-    setLikes((prev) => prev + (newLiked ? 1 : -1));
-
+    
+    const newLiked = !status?.data.liked;
+    queryClient.setQueryData(["statusLike", idPost], { data: { liked: newLiked } });
+    setLikes(newLiked ? likes + 1 : likes - 1);
     likeMutation.mutate(undefined, {
       onSettled: () => {
         updatePost(queryClient, "post", idPost, newLiked);
@@ -114,6 +84,15 @@ export const ActionPanel: React.FC<Props> = ({
         });
       },
     });
+  }
+
+  const handleCommentClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (pathname.startsWith("/post") && onClick) {
+      onClick();
+    } else {
+      router.push(`/post/${idPost}`);
+    }
   };
 
   const handleShareClick = (idPost: string) => {
@@ -128,23 +107,24 @@ export const ActionPanel: React.FC<Props> = ({
     <div className={cn("mt-4 flex items-center gap-5", className)}>
       <Button
         onClick={(e) => (e.stopPropagation(), handleLikeClick())}
+        disabled={isLoading}
         className={cn(
           "flex items-center gap-2 bg-neutral-300/50 dark:bg-neutral-700/50 backdrop-blur-xl p-2 rounded-full h-fit hover:bg-color",
-          liked && "bg-[#7391d5] dark:bg-[#7391d5]"
+          status?.data.liked && "bg-[#7391d5] dark:bg-[#7391d5]"
         )}
       >
         <div
           className={cn(
             "block [&_svg]:size-[20px] text-[#333333] dark:text-[#d9d9d9]",
-            liked && "text-[#d9d9d9] dark:text-[#d9d9d9] [&_svg]:size-[20px]"
+            status?.data.liked && "text-[#d9d9d9] dark:text-[#d9d9d9] [&_svg]:size-[20px]"
           )}
         >
-          {liked ? <BiSolidLike size={20} /> : <BiLike size={20} />}
+          { status?.data.liked ? <BiSolidLike size={20} /> : <BiLike size={20} />}
         </div>
         <span
           className={cn(
             "flex items-center justify-center h-[19px] text-[#333333] dark:text-[#d9d9d9] text-sm font-semibold leading-1",
-            liked && "text-[#d9d9d9] dark:text-[#d9d9d9]"
+            status?.data.liked && "text-[#d9d9d9] dark:text-[#d9d9d9]"
           )}
         >
           {likes >= 1000 ? (
@@ -217,4 +197,6 @@ export const ActionPanel: React.FC<Props> = ({
       </Button>
     </div>
   );
-};
+});
+
+ActionPanel.displayName = "ActionPanel";
