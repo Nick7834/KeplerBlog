@@ -352,7 +352,7 @@ h1, h2, h3, h4, h5, h6, p {
   }
 
   .main {
-    grid-template-columns: 1fr;
+    padding-left: 0;
     margin-bottom: 60px;
   }
 

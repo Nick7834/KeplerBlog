@@ -9,7 +9,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
-import React, { memo, useMemo, useState } from "react";
+import React, { memo, useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import { BiSolidLike } from "react-icons/bi";
 
@@ -48,13 +48,26 @@ export const ActionPanel: React.FC<Props> = memo(({
   const formattedCountLike = useMemo(() => UseFormatNumber(Number(likes)), [likes]);
   const formattedCountComment = useMemo(() => UseFormatNumber(Number(count?.comments)), [count?.comments]);
   const { setOpen } = useLogInStore();
+
+  const [isLiking, setIsLiking] = useState(false);
+
   const queryClient = useQueryClient();
+
+  const [hasTriggered, setHasTriggered] = useState(false);
+
+  useEffect(() => {
+    if (session && !hasTriggered) {
+      setHasTriggered(true);
+    }
+  }, [session]);
 
   const { data: status, isLoading } = useQuery({
     queryKey: ["statusLike", idPost],
     queryFn: () => axios.get(`/api/posts/${idPost}/status`),
     refetchOnWindowFocus: false,
-    refetchOnMount: false
+    refetchOnMount: false,
+    enabled: hasTriggered,
+    staleTime: 1000 * 60 * 5,
   });
 
   const likeMutation = useMutation({
@@ -63,6 +76,7 @@ export const ActionPanel: React.FC<Props> = memo(({
     },
     onError: () => {
       toast.error("Something went wrong");
+      setIsLiking(false);
     },
   });
   
@@ -71,6 +85,10 @@ export const ActionPanel: React.FC<Props> = memo(({
       setOpen(true)
       return
     }
+
+    if(isLiking) return
+
+    setIsLiking(true);
     
     const newLiked = !status?.data.liked;
     queryClient.setQueryData(["statusLike", idPost], { data: { liked: newLiked } });
@@ -82,6 +100,8 @@ export const ActionPanel: React.FC<Props> = memo(({
         ["posts", "trending", "forYou", "postsUser"].forEach((key) => {
           updateQueryData(queryClient, key, idPost, idUserPost, newLiked);
         });
+
+        setIsLiking(false);
       },
     });
   }

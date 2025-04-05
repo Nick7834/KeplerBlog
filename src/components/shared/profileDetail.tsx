@@ -7,11 +7,11 @@ import { ProfileTop } from "./profileTop";
 import { redirect } from "next/navigation";
 import { SkeletonProfileTop } from "./skeletonProfileTop";
 import { Post } from "./post";
-import InfiniteScroll from "react-infinite-scroll-component";
 import { SkeletonPost } from "./skeletonPost";
 import { BsPostcard } from "react-icons/bs";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import Head from "next/head";
+import { Virtuoso } from "react-virtuoso";
 
 interface Props {
   className?: string;
@@ -36,16 +36,17 @@ export const ProfileDetail: React.FC<Props> = ({ className, idUser }) => {
     queryFn: () => fetchUser(idUser),
   });
 
-  const { data, fetchNextPage, hasNextPage, isLoading } = useInfiniteQuery({
-    queryKey: ["postsUser", idUser],
-    queryFn: ({ pageParam = 1 }) => fetchPosts({ pageParam }, idUser),
-    getNextPageParam: (lastPage, allPages) =>
-      lastPage.length < 10 ? undefined : allPages.length + 1,
-    initialPageParam: 1,
-    staleTime: 1000 * 60 * 5,
-    refetchOnWindowFocus: false,
-    refetchOnMount: false,
-  });
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
+    useInfiniteQuery({
+      queryKey: ["postsUser", idUser],
+      queryFn: ({ pageParam = 1 }) => fetchPosts({ pageParam }, idUser),
+      getNextPageParam: (lastPage, allPages) =>
+        lastPage.length < 10 ? undefined : allPages.length + 1,
+      initialPageParam: 1,
+      staleTime: 1000 * 60 * 5,
+      refetchOnWindowFocus: false,
+      refetchOnMount: false,
+    });
 
   const posts = data?.pages.flat() || [];
 
@@ -56,7 +57,7 @@ export const ProfileDetail: React.FC<Props> = ({ className, idUser }) => {
   return (
     <div
       className={cn(
-        "flex flex-col items-center justify-center mt-[50px] mx-[15px] mb-[30px]",
+        "flex flex-col items-center justify-center mt-[50px] mx-[15px] pb-[30px]",
         className
       )}
     >
@@ -90,31 +91,44 @@ export const ProfileDetail: React.FC<Props> = ({ className, idUser }) => {
             <h2 className="title-posts text-[#333333] dark:text-[#d9d9d9] text-2xl font-bold">
               Publications
             </h2>
-
-            <InfiniteScroll
-              dataLength={posts.length}
-              next={fetchNextPage}
-              hasMore={hasNextPage}
-              loader={Array.from({ length: 2 }).map((_, index) => (
-                <SkeletonPost key={index} />
-              ))}
-              className={cn(
-                "w-full flex-1 flex flex-col justify-center gap-5 mt-[20px]"
-              )}
-            >
-              {isLoading &&
-                Array.from({ length: 2 }).map((_, index) => (
-                  <SkeletonPost key={index} />
-                ))}
-              {!isLoading && posts.length === 0 ? (
-                <div className="flex flex-col items-center justify-center gap-2 text-[#333333] dark:text-[#d9d9d9] text-xl font-bold">
-                  <BsPostcard size={60} />
-                  No publications
+            <div className="mt-[20px] w-full">
+              {isLoading ? (
+                <div className="flex flex-col gap-5 mt-5">
+                  <SkeletonPost />
+                  <SkeletonPost />
                 </div>
               ) : (
-                posts.map((post) => <Post key={post.id} post={post} />)
+                <Virtuoso
+                  data={posts}
+                  useWindowScroll
+                  overscan={5}
+                  endReached={() => {
+                    if (hasNextPage && !isFetchingNextPage) fetchNextPage();
+                  }}
+                  components={{
+                    Footer: () =>
+                      isFetchingNextPage ? (
+                        <div className="flex flex-col gap-5 pt-5">
+                          <SkeletonPost />
+                          <SkeletonPost />
+                        </div>
+                      ) : null,
+                    EmptyPlaceholder: () =>
+                      !isLoading && posts.length === 0 ? (
+                        <div className="flex flex-col items-center justify-center gap-2 text-[#333333] dark:text-[#d9d9d9] text-xl font-bold mt-10">
+                          <BsPostcard size={60} />
+                          No publications
+                        </div>
+                      ) : null,
+                  }}
+                  itemContent={(index, post) => (
+                    <div className={index > 0 ? "pt-5" : ""}>
+                      <Post key={post.id} post={post} />
+                    </div>
+                  )}
+                />
               )}
-            </InfiniteScroll>
+            </div>
           </div>
         </div>
 
