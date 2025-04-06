@@ -30,6 +30,12 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
               }
             }
           },
+          likes: {
+            where: { authorId: userIds?.id },
+            select: {
+              id: true,
+            },
+          },
           author: {
             select: {
               id: true,
@@ -67,9 +73,10 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
       isFollowing = Boolean(follow);
     }
 
-    const postWithLikedStatus = {
+    const postWithLikedStatus =  {
       ...posts,
       isFollowing,
+      isLiked: userIds && Boolean(posts.likes[0])
     };
 
     return NextResponse.json({ postWithLikedStatus });

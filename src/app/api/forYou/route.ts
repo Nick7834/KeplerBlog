@@ -26,18 +26,20 @@ export async function GET(req: Request) {
       });
   
       const followingIds = followedUsers.map((f) => f.followingId);
-  
-      if (followingIds.length === 0) {
-        return NextResponse.json([]);
-      }
 
-      const posts = await prisma.post.findMany({
+      const postsGet = await prisma.post.findMany({
         where: {
           authorId: {
             in: followingIds,
           },
         },
         include: {
+          likes: {
+            where: { authorId: userId?.id },
+            select: {
+              id: true,
+            },
+          },
           author: {
             select: {
               id: true,
@@ -62,6 +64,10 @@ export async function GET(req: Request) {
         take: pageSize,
       });
 
+      const posts = postsGet.map(post => ({
+        ...post,
+        isLiked: userId && Boolean(post.likes[0])
+      }));
   
       return NextResponse.json({ posts });
   } catch (error) {

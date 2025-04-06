@@ -202,6 +202,7 @@ export const Post: React.FC<Props> = memo(({ className, onClick, post }) => {
           idPost={post?.id}
           count={post?._count}
           idUserPost={post?.author?.id}
+          isLike={post?.isLiked}
           pathname={pathname}
           router={router}
           setShowModalShare={setShowModalShare}

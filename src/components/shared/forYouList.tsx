@@ -69,9 +69,13 @@ export const ForYouList: React.FC<Props> = ({ className }) => {
         </div>
       ) : (
         <Virtuoso
+          style={{ height: "100vh", width: "100%" }}
           data={posts}
           useWindowScroll
-          overscan={5}
+          overscan={10}
+          initialTopMostItemIndex={0}
+          initialItemCount={posts.length - 1}
+          increaseViewportBy={600}
           endReached={() => {
             if (hasNextPage && !isFetchingNextPage) fetchNextPage();
           }}
@@ -84,7 +88,7 @@ export const ForYouList: React.FC<Props> = ({ className }) => {
                 </div>
               ) : null,
             EmptyPlaceholder: () =>
-              !isLoading && posts.length === 0 ? (
+              !isLoading && posts.length === 0? (
                 <div className="flex flex-col items-center justify-center gap-4">
                   <FaUsers
                     size={85}

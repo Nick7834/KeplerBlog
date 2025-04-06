@@ -118,7 +118,7 @@ export const SearchDeatail: React.FC<Props> = ({ className }) => {
         </Button>
       </div>
 
-      <div className="mt-10">
+      <div>
         {open === "posts" && (
           <InfiniteScroll
             dataLength={posts.length}
@@ -129,6 +129,7 @@ export const SearchDeatail: React.FC<Props> = ({ className }) => {
                 <SkeletonPostSearch key={index} />
               ))
             }
+            className="mt-10"
           >
             {loaderPosts && Array.from({ length: 3 }).map((_, index) => <SkeletonPostSearch key={index} />)}
             {!loaderPosts && posts.length === 0 ? (
@@ -147,7 +148,7 @@ export const SearchDeatail: React.FC<Props> = ({ className }) => {
         )}
       </div>
 
-      <div className="mt-[clamp(1.25rem,0.82rem+2.15vw,2.5rem)]">
+      <div>
         {open === "users" && (
           <InfiniteScroll
             dataLength={users.length}
@@ -158,6 +159,7 @@ export const SearchDeatail: React.FC<Props> = ({ className }) => {
                 <SkeletonUserSearch key={index} />
               ))
             }
+            className="mt-[clamp(1.25rem,0.82rem+2.15vw,2.5rem)]"
           >
             {loaderUsers && Array.from({ length: 3 }).map((_, index) => <SkeletonUserSearch key={index} />)}
             {!loaderUsers && users.length === 0 ? (

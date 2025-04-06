@@ -1,50 +1,67 @@
-'use client'
-import { cn } from '@/lib/utils';
-import { AutchModalBlock } from './autchModalBlock';
-import { useSession } from 'next-auth/react';
-import { useEffect, useState } from 'react';
-import axios from 'axios';
-import { User } from '@prisma/client';
-import { Search } from './search';
-import Link from 'next/link';
-import { useUserAvatar } from '@/store/user';
+"use client";
+import { cn } from "@/lib/utils";
+import { AutchModalBlock } from "./autchModalBlock";
+import { useSession } from "next-auth/react";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { User } from "@prisma/client";
+import { Search } from "./search";
+import Link from "next/link";
+import { useUserAvatar } from "@/store/user";
 
 interface Props {
-    className?: string;
+  className?: string;
 }
 
-export const Header: React.FC<Props> =  ({ className }) => {
-    const { data: session, status } = useSession();
-    const [user, setUser] = useState<User | null>(null);
-    const [searchMobOpen, setSearchMobOpen] = useState(false);
-    const { setAvatarUser, setUserName } = useUserAvatar();
-  
-    useEffect(() => {
-        if (session?.user?.id) {
-          const fetchUserData = async () => {
-            try {
-              const { data } = await axios.get(`/api/user/${session.user.id}`);
-     
-              setUser(data); 
-              setAvatarUser(data.profileImage);
-              setUserName(data.username);
-            } catch (error) {
-              console.error('Request failed:', error);
-            }
-          };
-     
-          fetchUserData();
+export const Header: React.FC<Props> = ({ className }) => {
+  const { data: session, status } = useSession();
+  const [user, setUser] = useState<User | null>(null);
+  const [searchMobOpen, setSearchMobOpen] = useState(false);
+  const { setAvatarUser, setUserName } = useUserAvatar();
+
+  useEffect(() => {
+    if (session?.user?.id) {
+      const fetchUserData = async () => {
+        try {
+          const { data } = await axios.get(`/api/user/${session.user.id}`);
+
+          setUser(data);
+          setAvatarUser(data.profileImage);
+          setUserName(data.username);
+        } catch (error) {
+          console.error("Request failed:", error);
         }
-    }, [session?.user?.id]);
+      };
 
-    return (
-        <header className={cn('flex items-center justify-between gap-[20px] py-[clamp(0.938rem,0.599rem+0.83vw,1.25rem)] px-[clamp(0.938rem,-1.432rem+5.83vw,3.125rem)] border-b border-solid border-[#D3D3D3] dark:border-white/80', className)}>
-            
-          <Link href="/" className='logo-mob hidden items-center w-fit text-[#848484] dark:text-[#e3e3e3] text-5xl font-medium font-["Protest_Guerrilla"]'>K <span className='text-[#7391d5] font-["Protest_Guerrilla"]'>B</span></Link>
+      fetchUserData();
+    }
+  }, [session?.user?.id]);
 
-          <Search setSearchMobOpen={setSearchMobOpen} searchMobOpen={searchMobOpen} />
+  return (
+    <header
+      className={cn(
+        "flex items-center justify-between gap-[20px] py-[clamp(0.938rem,0.599rem+0.83vw,1.25rem)] px-[clamp(0.938rem,-1.432rem+5.83vw,3.125rem)] border-b border-solid border-[#D3D3D3] dark:border-white/80",
+        className
+      )}
+    >
+      <Link
+        href="/"
+        className='logo-mob hidden items-center w-fit text-[#848484] dark:text-[#e3e3e3] text-5xl font-medium font-["Protest_Guerrilla"]'
+      >
+        K <span className='text-[#7391d5] font-["Protest_Guerrilla"]'>B</span>
+      </Link>
 
-          <AutchModalBlock session={session} status={status} user={user} setSearchMobOpen={setSearchMobOpen} />
-        </header>
-    );
+      <Search
+        setSearchMobOpen={setSearchMobOpen}
+        searchMobOpen={searchMobOpen}
+      />
+
+      <AutchModalBlock
+        session={session}
+        status={status}
+        user={user}
+        setSearchMobOpen={setSearchMobOpen}
+      />
+    </header>
+  );
 };

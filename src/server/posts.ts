@@ -1,8 +1,15 @@
 "use server";
 
+import { getUserSession } from "@/lib/get-user-session";
 import { prisma } from "@/prisma/prisma-client";
 
-export async function getInitialPosts(page: number = 1, limit: number = 10, userId?: string) {
+export async function getInitialPosts(
+  page: number = 1,
+  limit: number = 10,
+  userId?: string
+) {
+  const user = await getUserSession();
+
   const offset = (page - 1) * limit;
 
   try {
@@ -17,15 +24,40 @@ export async function getInitialPosts(page: number = 1, limit: number = 10, user
             id: true,
             content: true,
             createdAt: true,
-            author: { select: { id: true, username: true, profileImage: true, isverified: true } },
+            author: {
+              select: {
+                id: true,
+                username: true,
+                profileImage: true,
+                isverified: true,
+              },
+            },
           },
         },
-        author: { select: { id: true, username: true, profileImage: true, isverified: true } },
+        likes: {
+          where: { authorId: user?.id },
+          select: {
+            id: true,
+          },
+        },
+        author: {
+          select: {
+            id: true,
+            username: true,
+            profileImage: true,
+            isverified: true,
+          },
+        },
         _count: { select: { comments: true, likes: true } },
       },
     });
 
-    return posts;
+    const postsWithHasLiked = posts.map(post => ({
+      ...post,
+      isLiked: user && Boolean(post.likes[0])
+    }));
+
+    return postsWithHasLiked;
   } catch (error) {
     console.error("Error fetching posts:", error);
     return [];

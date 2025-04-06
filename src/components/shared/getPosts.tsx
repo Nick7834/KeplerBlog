@@ -12,6 +12,7 @@ const fetchPosts = async ({ pageParam = 1 }) => {
 };
 
 export const GetPosts = () => {
+
   const {
     data,
     fetchNextPage,
@@ -42,15 +43,20 @@ export const GetPosts = () => {
         </div>
       ) : (
         <Virtuoso
+          key="posts-list"
+          style={{ height: "100vh", width: "100%" }}
           data={posts}
+          initialTopMostItemIndex={0}
+          initialItemCount={posts.length - 1}
+          increaseViewportBy={600}
           useWindowScroll
-          overscan={5}
+          overscan={10}
           endReached={() => {
             if (hasNextPage && !isFetchingNextPage) fetchNextPage();
           }}
           itemContent={(index, post) => (
-            <div className={index > 0 ? "pt-5" : ""}>
-              <Post key={post.id} post={post} />
+            <div key={post.id} className={index > 0 ? "pt-5" : ""}>
+              <Post post={post} />
             </div>
           )}
           components={{

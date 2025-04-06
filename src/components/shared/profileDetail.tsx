@@ -102,6 +102,9 @@ export const ProfileDetail: React.FC<Props> = ({ className, idUser }) => {
                   data={posts}
                   useWindowScroll
                   overscan={5}
+                  initialTopMostItemIndex={0}
+                  initialItemCount={posts.length - 1}
+                  increaseViewportBy={600}
                   endReached={() => {
                     if (hasNextPage && !isFetchingNextPage) fetchNextPage();
                   }}
