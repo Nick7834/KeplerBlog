@@ -99,6 +99,7 @@ export const ProfileDetail: React.FC<Props> = ({ className, idUser }) => {
                 </div>
               ) : (
                 <Virtuoso
+                  style={{ width: "100%", height: posts.length > 0 ? "100vh" : "auto" }}
                   data={posts}
                   useWindowScroll
                   overscan={5}
