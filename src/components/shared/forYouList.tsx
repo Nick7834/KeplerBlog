@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import { Post } from "./post";
 import axios from "axios";
 import { SkeletonPost } from "./skeletonPost";
@@ -42,6 +42,10 @@ export const ForYouList: React.FC<Props> = ({ className }) => {
 
   const posts = data?.pages.flat() || [];
 
+  useEffect(() => {
+      window.scrollTo({ top: 0, behavior: "instant" });
+  }, []);
+
   return (
     <div className={cn("mt-[clamp(1.25rem,0.82rem+2.15vw,2.5rem)]", className)}>
       {!session && !isLoading ? (
@@ -69,13 +73,14 @@ export const ForYouList: React.FC<Props> = ({ className }) => {
         </div>
       ) : (
         <Virtuoso
+          key="for-you"
+          initialTopMostItemIndex={0}
+          restoreStateFrom={undefined} 
           style={{ height: "100vh", width: "100%" }}
           data={posts}
           useWindowScroll
-          overscan={10}
-          initialTopMostItemIndex={0}
+          overscan={5}
           initialItemCount={posts.length - 1}
-          increaseViewportBy={600}
           endReached={() => {
             if (hasNextPage && !isFetchingNextPage) fetchNextPage();
           }}

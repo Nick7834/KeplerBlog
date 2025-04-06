@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import { SkeletonPost } from "./skeletonPost";
 import { Post } from "./post";
 import axios from "axios";
@@ -33,6 +33,10 @@ export const GetPosts = () => {
 
   const posts = data?.pages.flat() || [];
 
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "instant" });
+  }, []);
+
   return (
     <div className="mt-[clamp(1.25rem,0.82rem+2.15vw,2.5rem)]">
       {isError && <p className="text-red-500">Something went wrong</p>}
@@ -43,14 +47,14 @@ export const GetPosts = () => {
         </div>
       ) : (
         <Virtuoso
-          key="posts-list"
+          key="main"
+          initialTopMostItemIndex={0}
+          restoreStateFrom={undefined} 
           style={{ height: "100vh", width: "100%" }}
           data={posts}
-          initialTopMostItemIndex={0}
           initialItemCount={posts.length - 1}
-          increaseViewportBy={600}
           useWindowScroll
-          overscan={10}
+          overscan={5}
           endReached={() => {
             if (hasNextPage && !isFetchingNextPage) fetchNextPage();
           }}

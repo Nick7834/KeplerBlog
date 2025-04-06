@@ -24,7 +24,6 @@ ol {
 html,
 body {
   min-height: 100%;
-  scroll-behavior: smooth;
   color-scheme: dark;
 }
 
@@ -85,9 +84,9 @@ h1, h2, h3, h4, h5, h6, p {
   background-color: #1d7593;
 }
 
-:root {
+/* :root {
   scroll-behavior: smooth;
-}
+} */
 
 
 @layer base {

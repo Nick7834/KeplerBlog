@@ -1,6 +1,6 @@
 "use client";
 import { cn } from "@/lib/utils";
-import React from "react";
+import React, { useEffect } from "react";
 import { ProfileBlock } from "./profileBlock";
 import axios from "axios";
 import { ProfileTop } from "./profileTop";
@@ -49,6 +49,10 @@ export const ProfileDetail: React.FC<Props> = ({ className, idUser }) => {
     });
 
   const posts = data?.pages.flat() || [];
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "instant" });
+  }, []);
 
   if (!loaderProfile && !user) {
     redirect("/");
@@ -99,13 +103,14 @@ export const ProfileDetail: React.FC<Props> = ({ className, idUser }) => {
                 </div>
               ) : (
                 <Virtuoso
-                  style={{ width: "100%", height: posts.length > 0 ? "100vh" : "auto" }}
+                  style={{
+                    width: "100%",
+                    height: posts.length > 0 ? "100vh" : "auto",
+                  }}
                   data={posts}
                   useWindowScroll
                   overscan={5}
-                  initialTopMostItemIndex={0}
                   initialItemCount={posts.length - 1}
-                  increaseViewportBy={600}
                   endReached={() => {
                     if (hasNextPage && !isFetchingNextPage) fetchNextPage();
                   }}
