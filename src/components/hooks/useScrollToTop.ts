@@ -1,14 +1,17 @@
 import { IPost } from "@/@types/post";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 const useScrollToTop = (isLoading: boolean, posts: IPost[]) => {
-  useEffect(() => {
-    if (isLoading) return;
-   
-    setTimeout(() => {
-      window.scrollTo({ top: 0, behavior: "instant" });
-    }, 100); 
-  }, [isLoading, posts]); 
+    const hasScrolled = useRef(false); 
+    
+    useEffect(() => {
+        if (isLoading || hasScrolled.current) return;
+ 
+        setTimeout(() => {
+          window.scrollTo({ top: 0, behavior: "instant" });
+          hasScrolled.current = true; 
+        }, 100); 
+      }, [isLoading, posts]);  
 };
 
 export default useScrollToTop;
