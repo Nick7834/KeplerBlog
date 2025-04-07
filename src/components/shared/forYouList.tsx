@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useMemo } from "react";
 import { Post } from "./post";
 import axios from "axios";
 import { SkeletonPost } from "./skeletonPost";
@@ -12,6 +12,7 @@ import { useLogInStore } from "@/store/logIn";
 import { BsPostcard } from "react-icons/bs";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { Virtuoso } from "react-virtuoso";
+import useScrollToTop from "../hooks/useScrollToTop";
 
 interface Props {
   className?: string;
@@ -40,7 +41,9 @@ export const ForYouList: React.FC<Props> = ({ className }) => {
       refetchOnMount: false,
     });
 
-  const posts = data?.pages.flat() || [];
+   const posts = useMemo(() => data?.pages.flat() || [], [data]);
+
+  useScrollToTop(isLoading, posts);
 
   return (
     <div className={cn("mt-[clamp(1.25rem,0.82rem+2.15vw,2.5rem)]", className)}>

@@ -1,10 +1,11 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useMemo } from "react";
 import { SkeletonPost } from "./skeletonPost";
 import { Post } from "./post";
 import axios from "axios";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { Virtuoso } from "react-virtuoso";
+import useScrollToTop from "../hooks/useScrollToTop";
 
 const fetchPosts = async ({ pageParam = 1 }) => {
   const response = await axios.get(`/api/posts?page=${pageParam}&limit=10`);
@@ -31,15 +32,9 @@ export const GetPosts = () => {
     refetchOnMount: false,
   });
 
-  const posts = data?.pages.flat() || [];
+  const posts = useMemo(() => data?.pages.flat() || [], [data]);
 
-  useEffect(() => {
-    if (isLoading) return;
-    // Добавим задержку для плавного перехода
-    setTimeout(() => {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }, 100); // можно настроить время
-  }, [isLoading, posts]);
+  useScrollToTop(isLoading, posts);
 
   return (
     <div className="mt-[clamp(1.25rem,0.82rem+2.15vw,2.5rem)]">
