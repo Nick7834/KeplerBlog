@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect } from "react";
+import React from "react";
 import { Post } from "./post";
 import axios from "axios";
 import { SkeletonPost } from "./skeletonPost";
@@ -41,10 +41,6 @@ export const ForYouList: React.FC<Props> = ({ className }) => {
     });
 
   const posts = data?.pages.flat() || [];
-
-  useEffect(() => {
-      window.scrollTo({ top: 0, behavior: "instant" });
-  }, []);
 
   return (
     <div className={cn("mt-[clamp(1.25rem,0.82rem+2.15vw,2.5rem)]", className)}>

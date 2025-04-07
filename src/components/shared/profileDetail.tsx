@@ -1,6 +1,6 @@
 "use client";
 import { cn } from "@/lib/utils";
-import React, { useEffect } from "react";
+import React from "react";
 import { ProfileBlock } from "./profileBlock";
 import axios from "axios";
 import { ProfileTop } from "./profileTop";
@@ -49,10 +49,6 @@ export const ProfileDetail: React.FC<Props> = ({ className, idUser }) => {
     });
 
   const posts = data?.pages.flat() || [];
-
-  useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "instant" });
-  }, []);
 
   if (!loaderProfile && !user) {
     redirect("/");
