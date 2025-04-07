@@ -1,11 +1,10 @@
 "use client";
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import { SkeletonPost } from "./skeletonPost";
 import { Post } from "./post";
 import axios from "axios";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { Virtuoso } from "react-virtuoso";
-import useScrollToTop from "../hooks/useScrollToTop";
 
 const fetchPosts = async ({ pageParam = 1 }) => {
   const response = await axios.get(`/api/posts?page=${pageParam}&limit=10`);
@@ -34,21 +33,24 @@ export const GetPosts = () => {
 
   const posts = useMemo(() => data?.pages.flat() || [], [data]);
 
-  useScrollToTop(isLoading, posts);
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, []);
 
   return (
     <div className="mt-[clamp(1.25rem,0.82rem+2.15vw,2.5rem)]">
       {isError && <p className="text-red-500">Something went wrong</p>}
       {isLoading ? (
         <div className="flex flex-col gap-5">
-          <SkeletonPost />
-          <SkeletonPost />
+          {[...Array(5)].map((_, index) => (
+            <SkeletonPost key={index} />
+          ))}
         </div>
       ) : (
         <Virtuoso
           style={{ height: "100vh", width: "100%" }}
           data={posts}
-          initialItemCount={posts.length - 1}
+          initialItemCount={posts.length > 5 ? 5 : posts.length}
           useWindowScroll
           overscan={5}
           endReached={() => {

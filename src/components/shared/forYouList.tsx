@@ -12,7 +12,6 @@ import { useLogInStore } from "@/store/logIn";
 import { BsPostcard } from "react-icons/bs";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { Virtuoso } from "react-virtuoso";
-import useScrollToTop from "../hooks/useScrollToTop";
 
 interface Props {
   className?: string;
@@ -42,8 +41,6 @@ export const ForYouList: React.FC<Props> = ({ className }) => {
     });
 
    const posts = useMemo(() => data?.pages.flat() || [], [data]);
-
-  useScrollToTop(isLoading, posts);
 
   return (
     <div className={cn("mt-[clamp(1.25rem,0.82rem+2.15vw,2.5rem)]", className)}>
