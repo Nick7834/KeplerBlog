@@ -48,8 +48,6 @@ export const GetPosts = () => {
       ) : (
         <Virtuoso
           key="main"
-          initialTopMostItemIndex={0}
-          restoreStateFrom={undefined} 
           style={{ height: "100vh", width: "100%" }}
           data={posts}
           initialItemCount={posts.length - 1}

@@ -74,8 +74,6 @@ export const ForYouList: React.FC<Props> = ({ className }) => {
       ) : (
         <Virtuoso
           key="for-you"
-          initialTopMostItemIndex={0}
-          restoreStateFrom={undefined} 
           style={{ height: "100vh", width: "100%" }}
           data={posts}
           useWindowScroll
