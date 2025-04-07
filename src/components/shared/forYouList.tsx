@@ -69,7 +69,6 @@ export const ForYouList: React.FC<Props> = ({ className }) => {
         </div>
       ) : (
         <Virtuoso
-          key="for-you"
           style={{ height: "100vh", width: "100%" }}
           data={posts}
           useWindowScroll

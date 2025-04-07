@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import { SkeletonPost } from "./skeletonPost";
 import { Post } from "./post";
 import axios from "axios";
@@ -33,6 +33,14 @@ export const GetPosts = () => {
 
   const posts = data?.pages.flat() || [];
 
+  useEffect(() => {
+    if (isLoading) return;
+    // Добавим задержку для плавного перехода
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }, 100); // можно настроить время
+  }, [isLoading, posts]);
+
   return (
     <div className="mt-[clamp(1.25rem,0.82rem+2.15vw,2.5rem)]">
       {isError && <p className="text-red-500">Something went wrong</p>}
@@ -43,7 +51,6 @@ export const GetPosts = () => {
         </div>
       ) : (
         <Virtuoso
-          key="main"
           style={{ height: "100vh", width: "100%" }}
           data={posts}
           initialItemCount={posts.length - 1}
