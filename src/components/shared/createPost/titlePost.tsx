@@ -5,7 +5,7 @@ import React from 'react';
 interface Props {
     className?: string;
     title: string;
-    setTitle: React.Dispatch<React.SetStateAction<string>>
+    setTitle: (title: string) => void;
 } 
 
 export const TitlePost: React.FC<Props> = ({ className, setTitle, title }) => {

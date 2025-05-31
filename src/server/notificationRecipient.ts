@@ -17,6 +17,7 @@ export const getNotificationRecipients = async (
         const notification = await prisma.notification.create({
             data: {
                 userId: notificationRecipientId,
+                senderId: authorId,
                 type: "comment_reply",
                 message: `The user "${userName.charAt(0).toUpperCase() + userName.slice(1)}" replied to your comment on the post "${postTitle}" with the comment "${shortenedComment}"`,
                 postId: postId,
@@ -30,6 +31,12 @@ export const getNotificationRecipients = async (
             message: `The user "${userName.charAt(0).toUpperCase() + userName.slice(1)}" replied to your comment on the post "${postTitle}" with the comment "${shortenedComment}"`,
             postId,
             commentId:commentId,
+            sender:  {
+                id: notification.senderId,
+                userName: userName,
+                profileImage: avatar,
+            },
+            senderId: notification.senderId,
             avatar: avatar,
             isRead: false,
         });

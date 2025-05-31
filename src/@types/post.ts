@@ -24,8 +24,8 @@ export interface IPost {
             isverified: boolean;
         }
     }[]; 
-    isLiked: boolean;
-    isFollowing: boolean;
+    isLiked: boolean ;
+    isFollowing?: boolean;
     likes: {
         id: string;
     }[];

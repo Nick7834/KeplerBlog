@@ -1,18 +1,12 @@
 "use client";
-import React, { useEffect, useMemo } from "react";
+import React, { useMemo } from "react";
 import { SkeletonPost } from "./skeletonPost";
 import { Post } from "./post";
-import axios from "axios";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { Virtuoso } from "react-virtuoso";
-
-const fetchPosts = async ({ pageParam = 1 }) => {
-  const response = await axios.get(`/api/posts?page=${pageParam}&limit=10`);
-  return response.data.posts;
-};
+import { getInitialPosts } from "@/server/posts";
 
 export const GetPosts = () => {
-
   const {
     data,
     fetchNextPage,
@@ -22,7 +16,7 @@ export const GetPosts = () => {
     isError,
   } = useInfiniteQuery({
     queryKey: ["posts"],
-    queryFn: fetchPosts,
+    queryFn: ({ pageParam = 1 }) => getInitialPosts(pageParam, 10),
     getNextPageParam: (lastPage, allPages) =>
       lastPage.length < 10 ? undefined : allPages.length + 1,
     initialPageParam: 1,
@@ -32,10 +26,6 @@ export const GetPosts = () => {
   });
 
   const posts = useMemo(() => data?.pages.flat() || [], [data]);
-
-  useEffect(() => {
-    window.scrollTo(0, 0)
-  }, []);
 
   return (
     <div className="mt-[clamp(1.25rem,0.82rem+2.15vw,2.5rem)]">

@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import React, { useState } from "react";
 import { SettingsEdit } from "..";
-import { User } from "@prisma/client";
+import { MessagesPrivacy, User } from "@prisma/client";
 import { useForm } from "react-hook-form";
 import { FormUpdate, formUpdateSchema } from "../modals/shema";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -18,6 +18,18 @@ import { cn } from "@/lib/utils";
 import { ModalVerification } from "../modalVerification/modalVerification";
 import { ModalReset } from "./modalReset";
 import { usePasswordReset } from "@/store/usePasswordReset";
+import { CgProfile } from "react-icons/cg";
+import { GrShieldSecurity } from "react-icons/gr";
+import { SiPrivateinternetaccess } from "react-icons/si";
+import { HiLightBulb } from "react-icons/hi";
+import { TbMessageCog } from "react-icons/tb";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface Props {
   className?: string;
@@ -58,24 +70,29 @@ export const SettingsList: React.FC<Props> = ({ className, user }) => {
 
   const { handleSubmit, control } = formUpdate;
 
-  const onSubmit = async (data: FormUpdate) => {
+  const onSubmit = async (data: FormUpdate & { messagePrivate?: MessagesPrivacy }) => {
     try {
       if (
         data.email === user?.email &&
         data.username === user?.username &&
-        data.bio === user?.bio
+        data.bio === user?.bio &&
+        data.messagePrivate === user?.messagePrivate
       ) {
         toast.error("No changes detected.");
         return;
       }
 
-      await updateUserProfile(data);
+      await updateUserProfile({
+        ...data,
+        messagePrivate: data?.messagePrivate,
+      });
 
       setUserData({
         ...userData,
         bio: data.bio ?? "",
         email: data.email,
         username: data.username,
+        messagePrivate: data.messagePrivate ?? user?.messagePrivate,
       });
 
       if (data.email !== user?.email) {
@@ -174,110 +191,198 @@ export const SettingsList: React.FC<Props> = ({ className, user }) => {
     }
   };
 
-  return (
-    <div className={className}>
-      <ul className="ul-settings flex flex-col gap-4 mt-12">
-        <li className="settings-grid grid grid-cols-[200px_1fr] items-center">
-          <span className=" text-[#333333] dark:text-[#d9d9d9] text-lg font-medium">
-            Description
-          </span>
-          <SettingsEdit
-            nameProfile={userData?.bio ?? ""}
-            name="bio"
-            control={control}
-            onSubmit={handleSubmit(onSubmit)}
-          />
-        </li>
-        <li
-          className={cn(
-            "flex items-center gap-2",
-            !isverifiedEmailState &&
-              "max-[600px]:flex-col max-[600px]:items-start"
-          )}
-        >
-          <div className="settings-grid grid grid-cols-[200px_1fr] items-center">
-            <span className="text-[#333333] dark:text-[#d9d9d9] text-lg font-medium">
-              Email
-            </span>
+  const settingsSections = [
+    {
+      title: "Profile",
+      icon: <CgProfile />,
+      items: [
+        {
+          label: "Description",
+          component: (
             <SettingsEdit
-              nameProfile={userData!.email}
-              name="email"
+              nameProfile={userData?.bio ?? ""}
+              name="bio"
               control={control}
               onSubmit={handleSubmit(onSubmit)}
             />
-          </div>
-
-          {!isverifiedEmailState ? (
-            <Button
-              onClick={handleOpen}
-              variant="outline"
-              loading={loaderCode}
-              className="px-4 w-fit min-w-[120px] border-0 text-[#d9d9d9] dark:text-[#d9d9d9] font-medium transition-all ease-in-out duration-[.3s] hover:text-[#d9d9d9] hover:dark:text-[#d9d9d9] hover:bg-[#7391d5] bg-[#7391d5] dark:bg-[#7391d5] hover:bg-[#7391d5]/85 dark:hover:bg-[#7391d5]/85"
-            >
-              Confirm Email
-            </Button>
-          ) : (
-            <span>
-              <IoMdCheckmarkCircle
-                size={22}
-                className="text-[#7391d5] bg-white rounded-full"
+          ),
+        },
+        {
+          label: "Email",
+          component: (
+            <>
+              <SettingsEdit
+                nameProfile={userData!.email}
+                name="email"
+                control={control}
+                onSubmit={handleSubmit(onSubmit)}
               />
-            </span>
-          )}
-        </li>
-        <li className="settings-grid grid grid-cols-[200px_1fr] items-center">
-          <span className=" text-[#333333] dark:text-[#d9d9d9] text-lg font-medium">
-            Name
-          </span>
-          <SettingsEdit
-            nameProfile={userData!.username}
-            name="username"
-            control={control}
-            onSubmit={handleSubmit(onSubmit)}
-          />
-        </li>
-        <li className="settings-grid grid grid-cols-[200px_1fr] items-center">
-          <span className=" text-[#333333] dark:text-[#d9d9d9] text-lg font-medium">
-            Thema
-          </span>
-          <Switch checked={theme === "dark"} onCheckedChange={handleToggle} />
-        </li>
-        <li className="settings-grid grid grid-cols-[200px_1fr] items-center">
-          <span className="text-[#333333] dark:text-[#d9d9d9] text-lg font-medium">
-            Verification
-          </span>
-          <Button
-            onClick={() => setOpenVerificationModal(!openVerificationModal)}
-            className="min-w-[100px] max-w-[100px] px-[30px]"
-          >
-            Learn More
-          </Button>
-        </li>
-        <li className="settings-grid grid grid-cols-[200px_1fr] items-center">
-          <span className=" text-[#333333] dark:text-[#d9d9d9] text-lg font-medium">
-            Password
-          </span>
-          <Button
-            loading={loaderReset}
-            onClick={handleReset}
-            className="min-w-[150px] max-w-[100px] px-[30px]"
-          >
-            Reset Password
-          </Button>
-        </li>
-        <li className="settings-grid grid grid-cols-[200px_1fr] items-center">
-          <span className=" text-[#333333] dark:text-[#d9d9d9] text-lg font-medium">
-            Delete account
-          </span>
-          <Button
-            loading={isLoading}
-            onClick={handleDelete}
-            className="min-w-[100px] max-w-[100px] px-[30px] bg-[#F03535] text-[#d9d9d9] hover:bg-[#F03535]/70"
-          >
-            Delete
-          </Button>
-        </li>
-      </ul>
+              {!isverifiedEmailState ? (
+                <Button
+                  onClick={handleOpen}
+                  variant="outline"
+                  loading={loaderCode}
+                  className="px-4 w-fit min-w-[120px] border-0 text-[#d9d9d9] dark:text-[#d9d9d9] font-medium transition-all ease-in-out duration-[.3s] hover:text-[#d9d9d9] hover:dark:text-[#d9d9d9] hover:bg-[#7391d5] bg-[#7391d5] dark:bg-[#7391d5] hover:bg-[#7391d5]/85 dark:hover:bg-[#7391d5]/85"
+                >
+                  Confirm Email
+                </Button>
+              ) : (
+                <IoMdCheckmarkCircle
+                  size={22}
+                  className="text-[#7391d5] bg-white rounded-full max-[750px]:absolute max-[750px]:-right-[30px] max-[750px]:top-0"
+                />
+              )}
+            </>
+          ),
+        },
+        {
+          label: "Name",
+          component: (
+            <SettingsEdit
+              nameProfile={userData!.username}
+              name="username"
+              control={control}
+              onSubmit={handleSubmit(onSubmit)}
+            />
+          ),
+        },
+      ],
+    },
+    {
+      title: "Safety",
+      icon: <GrShieldSecurity />,
+      items: [
+        {
+          label: "Verification",
+          component: (
+            <Button
+              onClick={() => setOpenVerificationModal(!openVerificationModal)}
+              className="min-w-[100px] max-w-[100px] px-[30px]"
+            >
+              Learn More
+            </Button>
+          ),
+        },
+        {
+          label: "Password",
+          component: (
+            <Button
+              loading={loaderReset}
+              onClick={handleReset}
+              className="min-w-[150px] max-w-[100px] px-[30px]"
+            >
+              Reset Password
+            </Button>
+          ),
+        },
+      ],
+    },
+    {
+      title: "Messages",
+      icon: <TbMessageCog />,
+      items: [
+        {
+          label: "Who can message me",
+          component: (
+            <div className="block">
+              <Select
+                onValueChange={(value: MessagesPrivacy) => {
+                  onSubmit({
+                    ...formUpdate.getValues(),
+                    messagePrivate: value,
+                  });
+                }}
+              >
+                <SelectTrigger className="w-[180px] text-base font-medium">
+                  <SelectValue
+                    placeholder={
+                      user.messagePrivate !== "All" ? "On request" : "All users"
+                    }
+                  />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem
+                    value="All"
+                    className="cursor-pointer"
+                  >
+                    All users
+                  </SelectItem>
+                  <SelectItem
+                    value="Request"
+                    className="cursor-pointer"
+                  >
+                    On request
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          ),
+        },
+      ],
+    },
+    {
+      title: "Theme",
+      icon: <HiLightBulb />,
+      items: [
+        {
+          label: "Theme",
+          component: (
+            <Switch
+              checked={theme === "dark"}
+              onCheckedChange={handleToggle}
+            />
+          ),
+        },
+      ],
+    },
+    {
+      title: "Privacy",
+      icon: <SiPrivateinternetaccess />,
+      items: [
+        {
+          label: "Delete account",
+          component: (
+            <Button
+              loading={isLoading}
+              onClick={handleDelete}
+              className="min-w-[100px] max-w-[100px] px-[30px] bg-[#F03535] text-[#d9d9d9] hover:bg-[#F03535]/70"
+            >
+              Delete
+            </Button>
+          ),
+        },
+      ],
+    },
+  ];
+
+  return (
+    <div className={cn("mt-10", className)}>
+      {settingsSections.map(({ title, icon, items }) => (
+        <section
+          key={title}
+          className="mb-5"
+        >
+          <h2 className="flex items-center gap-2 text-[22px] font-bold mb-4 capitalize text-[#37383b] dark:text-[#dde3ef]">
+            {icon}
+            {title}
+          </h2>
+          <ul className="ul-settings flex flex-col gap-3">
+            {items.map(({ label, component }) => (
+              <li
+                key={label}
+                className="settings-grid grid grid-cols-[200px_1fr] items-center"
+              >
+                <span className="text-[#333333] dark:text-[#d9d9d9] text-lg font-medium">
+                  {label}
+                </span>
+                <div className="relative w-fit flex items-center gap-3 max-[750px]:flex-col max-[750px]:items-start">
+                  {component}
+                </div>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
 
       <ModalCheck
         open={openCheckModal}

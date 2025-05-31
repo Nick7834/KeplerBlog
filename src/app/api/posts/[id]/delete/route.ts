@@ -1,4 +1,5 @@
 import { getUserSession } from "@/lib/get-user-session";
+import { notificationQueue } from "@/lib/queue";
 import { prisma } from "@/prisma/prisma-client";
 import { NextResponse } from "next/server";
 
@@ -23,6 +24,13 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ i
 
     if (post?.authorId !== userId.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const jobs = await notificationQueue.getJobs(["waiting", "active"]); 
+    const jobToRemove = jobs.find((job) => job.data.newPostId === postId);
+
+    if (jobToRemove) {
+      await notificationQueue.remove(jobToRemove.id);
     }
 
     await prisma.$transaction(async (tx) => {

@@ -31,7 +31,21 @@ model User {
   followers    Follower[] @relation("UserFollowers")
   following    Follower[] @relation("UserFollowing")
 
-  Notification Notification[]
+  Notification      Notification[]
+  sentNotifications Notification[] @relation("NotificationSender")
+
+  messages Message[] @relation("MessageSender")
+
+  chats1 Chat[] @relation("User1Chats")
+  chats2 Chat[] @relation("User2Chats")
+
+  chatTo      ChatRequest[] @relation("ChatRequestTo")
+  chatFrom    ChatRequest[] @relation("ChatRequestFrom")
+
+  messagePrivate MessagesPrivacy @default(All)
+
+  isOnline     Boolean? @default(false)
+  typingInChat String?  @db.ObjectId
 
   verified  DateTime?
   createdAt DateTime  @default(now())
@@ -94,6 +108,8 @@ model Notification {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String   @db.ObjectId
+  sender    User?     @relation("NotificationSender", fields: [senderId], references: [id], onDelete: Cascade)
+  senderId  String?  @db.ObjectId
   type      String
   message   String
   post      Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
@@ -121,7 +137,73 @@ model VerificationCode {
   @@unique([userId, code])
 }
 
+// message
+
+model Chat {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  user1   User   @relation("User1Chats", fields: [user1Id], references: [id], onDelete: Cascade)
+  user1Id String @db.ObjectId
+
+  user2   User   @relation("User2Chats", fields: [user2Id], references: [id], onDelete: Cascade)
+  user2Id String @db.ObjectId
+
+  messages Message[]
+  unreadBy String? @db.ObjectId 
+
+  lastActivityAt DateTime? @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([user1Id, user2Id])
+}
+
+model ChatRequest {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  from   User   @relation("ChatRequestFrom", fields: [fromId], references: [id])
+  fromId String @db.ObjectId
+
+  to     User   @relation("ChatRequestTo", fields: [toId], references: [id])
+  toId   String @db.ObjectId
+
+  status ChatRequestStatus @default(PENDING)
+
+  createdAt DateTime @default(now())
+}
+
+model Message {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  content  String?
+  image    String?
+  sender   User    @relation("MessageSender", fields: [senderId], references: [id], onDelete: Cascade)
+  senderId String  @db.ObjectId
+  isRead   Boolean @default(false)
+
+  chat   Chat   @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  chatId String @db.ObjectId
+
+  replies   Message[] @relation("ReplyTo")
+  replyTo   Message?  @relation("ReplyTo", fields: [replyToId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  replyToId String?   @db.ObjectId
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 enum Role {
   user
   admin
+}
+
+enum ChatRequestStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
+enum MessagesPrivacy {
+  All
+  Request
 }

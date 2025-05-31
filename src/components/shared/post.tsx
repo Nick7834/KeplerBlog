@@ -54,7 +54,7 @@ export const Post: React.FC<Props> = memo(({ className, onClick, post }) => {
   const [showModalShare, setShowModalShare] = useState(false);
   const [idPostShare, setIdPostShare] = useState("");
 
-  const [widthMob, setWidthMob] = useState(window.innerWidth);
+  const [widthMob, setWidthMob] = useState(0);
 
   const router = useRouter();
   const pathname = usePathname();
@@ -71,6 +71,7 @@ export const Post: React.FC<Props> = memo(({ className, onClick, post }) => {
   };
 
   useEffect(() => {
+    setWidthMob(window.innerWidth);
     const handleResize = () => setWidthMob(window.innerWidth);
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
@@ -167,7 +168,7 @@ export const Post: React.FC<Props> = memo(({ className, onClick, post }) => {
               <div onClick={(e) => e.stopPropagation()}>
                 <FollowButton
                   idUser={post?.author?.id}
-                  isFollowUser={post?.isFollowing}
+                  isFollowUser={post?.isFollowing || false}
                 />
               </div>
             )

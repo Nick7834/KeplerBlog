@@ -25,6 +25,7 @@ export async function updateUserProfile(body: Prisma.UserUpdateInput) {
                 email: body.email,
                 username: body.username,
                 bio: body.bio,
+                messagePrivate: body.messagePrivate,
                 ...(emailChanged && { isverifiedEmail: false }) 
             }
         });

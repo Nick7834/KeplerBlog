@@ -31,6 +31,7 @@ const fetchPosts = async ({ pageParam = 1 }, idUser: string) => {
 };
 
 export const ProfileDetail: React.FC<Props> = ({ className, idUser }) => {
+
   const { data: user, isLoading: loaderProfile } = useQuery({
     queryKey: ["user", idUser],
     queryFn: () => fetchUser(idUser),

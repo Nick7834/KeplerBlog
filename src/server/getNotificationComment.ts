@@ -3,7 +3,6 @@
 import { pusher } from "@/lib/pusher";
 import { prisma } from "@/prisma/prisma-client";
 
-
 export const getNotificationComment = async (
     authorId: string,
     authorPostId: string,
@@ -11,13 +10,15 @@ export const getNotificationComment = async (
     userName: string,
     titlePost: string, 
     shortenedComment: string, 
-    avatar: string | null
+    avatar: string | null,
 ) => {
+
     if(authorPostId && authorPostId !== authorId){
 
         const notificationComment = await prisma.notification.create({
             data: {
                 userId: authorPostId,
+                senderId: authorId, 
                 type: "comment",
                 message: `The user "${userName.charAt(0).toUpperCase() + userName.slice(1)}" commented on your post "${titlePost}" with the comment "${shortenedComment}"`,
                 postId: postId,
@@ -29,6 +30,11 @@ export const getNotificationComment = async (
             id: notificationComment.id,
             type: "comment",
             message: `The user "${userName.charAt(0).toUpperCase() + userName.slice(1)}" commented on your post "${titlePost}" with the comment "${shortenedComment}"`,
+            sender:  {
+                id: authorId,
+                userName: userName,
+                profileImage: avatar,
+            },
             postId,
             avatar: avatar,
             isRead: false

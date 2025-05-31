@@ -23,6 +23,7 @@ new Worker('notification', async (job) => {
           prisma.notification.create({
             data: {
               userId: id,
+              senderId: userId,
               type: 'post',
               postId: newPostId,
               message: `User "${userName.charAt(0).toUpperCase() + userName.slice(1)}"

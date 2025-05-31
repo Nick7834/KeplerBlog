@@ -54,7 +54,7 @@ export async function getInitialPosts(
 
     const postsWithHasLiked = posts.map(post => ({
       ...post,
-      isLiked: user && Boolean(post.likes[0])
+      isLiked: user ? Boolean(post.likes[0]) : false
     }));
 
     return postsWithHasLiked;

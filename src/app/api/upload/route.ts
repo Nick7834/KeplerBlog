@@ -3,6 +3,7 @@ import { getUserSession } from '@/lib/get-user-session';
 import cloudinary from '@/lib/cloudinary';
 import { prisma } from '@/prisma/prisma-client';
 import sharp from 'sharp';
+import { getPublicIdFromUrl } from '@/lib/getPublicIdFromUrl';
 
 export async function PUT(request: Request) {
   const formData = await request.formData();
@@ -16,7 +17,6 @@ export async function PUT(request: Request) {
 
   try {
     const user = await prisma.user.findUnique({ where: { id: userId.id } });
-
 
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
@@ -95,11 +95,4 @@ export async function PUT(request: Request) {
     console.error('Error uploading file or updating user:', err);
     return NextResponse.json({ error: 'File upload or database update failed' }, { status: 500 });
   }
-}
-
-function getPublicIdFromUrl(url: string): string {
-  const urlParts = url.split('/');
-  const publicIdWithExtension = urlParts[urlParts.length - 1];
-  const publicId = publicIdWithExtension.split('.')[0];
-  return publicId;
 }

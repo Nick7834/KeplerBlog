@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect } from 'react';
+import React from 'react';
 
 import { EditorState, RichUtils  } from 'draft-js';
 import dynamic from 'next/dynamic';
@@ -9,7 +9,7 @@ interface Props {
     className?: string;
     handlePgoto: (e: React.ChangeEvent<HTMLInputElement>) => void
     editorState: EditorState;
-    setEditorState: React.Dispatch<React.SetStateAction<EditorState>>
+    setEditorState: (state: EditorState) => void
 } 
 
 const EditorWithNoSSR = dynamic(() =>
@@ -24,10 +24,6 @@ const EditorWithNoSSR = dynamic(() =>
 export const Editor: React.FC<Props> = ({ className, handlePgoto, editorState, setEditorState  }) => {
    
     const hasContent = editorState.getCurrentContent().hasText();
-
-    useEffect(() => {
-        setEditorState(EditorState.createEmpty());
-    }, [setEditorState]);
 
     const handleEditorChange = (state: EditorState) => {
       setEditorState(state);

@@ -61,7 +61,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
         newComment.id, 
         content,
         parentComment.post.title,
-        avatar
+        avatar,
       ); 
     
     } else {

@@ -207,7 +207,7 @@ h1, h2, h3, h4, h5, h6, p {
 }
 
 .link-text {
-  @apply inline-block w-fit text-[#3b89ff] dark:text-[#3b89ff] text-sm font-normal leading-6 break-all underline;
+  @apply inline-block w-fit text-[#2b2b2b] dark:text-[#ebebeb] text-sm font-normal leading-6 break-all underline;
 }
 
 /* Responsive */
@@ -444,7 +444,7 @@ h1, h2, h3, h4, h5, h6, p {
     gap: 10px;
   }
 
-  .settings-grid span {
+  .settings-grid > span {
     font-size: 20px;
     font-weight: 700;
   }
