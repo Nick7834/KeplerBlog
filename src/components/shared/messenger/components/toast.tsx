@@ -41,7 +41,7 @@ export const showToast = (
   };
 
   toast.custom((id) => (
-    <div className="flex cursor-pointer max-w-[400px] min-w-[400px] w-full bg-[#e5e5e5]/80 dark:bg-[#19191b]/80 backdrop-blur-[20px] shadow-lg border-[2px] border-[#b0b0b0]/70 dark:border-neutral-300/75 rounded-lg transition-transform hover:scale-[1.02]">
+    <div className="flex cursor-pointer max-w-[400px] max-[450px]:max-w-[300px] min-w-[400px] max-[450px]:min-w-[300px] w-full bg-[#e5e5e5]/80 dark:bg-[#19191b]/80 backdrop-blur-[20px] shadow-lg border-[2px] border-[#b0b0b0]/70 dark:border-neutral-300/75 rounded-lg transition-transform hover:scale-[1.02]">
       <div
         onClick={() => (toast.dismiss(id), handleIsRead(chatId))}
         className="flex flex-1 items-start gap-2 p-4 pr-0"

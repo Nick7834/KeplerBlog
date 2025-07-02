@@ -17,8 +17,6 @@ import {
 } from "@/components/ui/context-menu";
 import { processContent } from "@/lib/processContent";
 import { TbCheck, TbChecks } from "react-icons/tb";
-import DOMPurify from "dompurify";
-import { useMemo } from "react";
 
 interface Props {
   message: MessageProps;
@@ -100,15 +98,7 @@ export const MessageBubble: React.FC<Props> = ({
     return true;
   });
 
-  const commentContentRaw = processContent(message?.content || "", false);
-
-  const commentContentText =
-    typeof commentContentRaw === "string" ? commentContentRaw : "";
-
-  const cleanHTML = useMemo(
-    () => DOMPurify.sanitize(commentContentText),
-    [commentContentText]
-  );
+  const commentContentText = processContent(message?.content || "", false);
 
   return (
     <motion.div
@@ -199,7 +189,7 @@ export const MessageBubble: React.FC<Props> = ({
                   <p
                     className="whitespace-pre-wrap break-words px-1 max-[750px]:text-[14px] max-[750px]:select-none"
                     dangerouslySetInnerHTML={{
-                      __html: cleanHTML,
+                      __html: String(commentContentText),
                     }}
                   ></p>
                 </div>

@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { IComment } from "./comments";
 import Image from "next/image";
 import { ReplyComment } from "./replyComment";
@@ -21,7 +21,6 @@ import { useLogInStore } from "@/store/logIn";
 import { getShortTimeAgo } from "@/components/hooks/useDate";
 import { processContent } from "@/lib/processContent";
 import { CheckProfile } from "../checkProfile";
-import DOMPurify from "dompurify";
 
 interface Props {
   className?: string;
@@ -74,15 +73,7 @@ export const Comment: React.FC<Props> = ({
     setTime,
   } = useCommentState(contetnComment);
 
-  const commentContentTextRaw = processContent(commentContentMain, false);
-
-  const commentContentText =
-    typeof commentContentTextRaw === "string" ? commentContentTextRaw : "";
-
-  const cleanHTML = useMemo(
-    () => DOMPurify.sanitize(commentContentText),
-    [commentContentText]
-  );
+  const commentContentText = processContent(commentContentMain, false);
 
   const { deleteComment, addReply, editComment } = useCommentStore();
 
@@ -206,7 +197,7 @@ export const Comment: React.FC<Props> = ({
 
       <p
         className="text-[#333333] dark:text-[#d9d9d9] text-base font-normal mt-2 ml-1 whitespace-pre-wrap"
-        dangerouslySetInnerHTML={{ __html: cleanHTML }}
+        dangerouslySetInnerHTML={{ __html: String(commentContentText) }}
       />
 
       <div className="flex items-center gap-5 mt-2 ml-5">
