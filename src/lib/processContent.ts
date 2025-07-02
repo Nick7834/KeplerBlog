@@ -1,4 +1,3 @@
-import parse from "html-react-parser";
 import DOMPurify from "dompurify";
 
 function escapeHTML(html: string) {
@@ -11,18 +10,18 @@ function escapeHTML(html: string) {
 }
 
 export function processContent(content: string, shouldParseLinks: boolean) {
-  const urlRegex = /(https?:\/\/[^\s]+)/g;
+  const safeText = escapeHTML(content);
 
   if (!shouldParseLinks) {
-    return escapeHTML(content);
+    return safeText;
   }
 
-  const processedContent = content.replace(urlRegex, (url) => {
-    const cleanUrl = url.replace(/<[^>]*>/g, "");
-    return `<a href="${cleanUrl}" target="_blank" class="link-text">${cleanUrl}</a>`;
+  const urlRegex = /(https?:\/\/[^\s<>"']+)/g;
+
+  const withLinks = safeText.replace(urlRegex, (url) => {
+    return `<a href="${url}" target="_blank" rel="noopener noreferrer" class="link-text">${url}</a>`;
   });
 
-  const cleanHTML = DOMPurify.sanitize(processedContent);
-
-  return parse(cleanHTML);
+  const cleanHTML = DOMPurify.sanitize(withLinks);
+  return cleanHTML;
 }

@@ -98,7 +98,7 @@ export const MessageBubble: React.FC<Props> = ({
     return true;
   });
 
-  const commentContentText = processContent(message?.content || "", false);
+ const commentContentHTML = processContent(message?.content || "", true);
 
   return (
     <motion.div
@@ -188,9 +188,7 @@ export const MessageBubble: React.FC<Props> = ({
                 >
                   <p
                     className="whitespace-pre-wrap break-words px-1 max-[750px]:text-[14px] max-[750px]:select-none"
-                    dangerouslySetInnerHTML={{
-                      __html: String(commentContentText),
-                    }}
+                    dangerouslySetInnerHTML={{ __html: commentContentHTML }}
                   ></p>
                 </div>
               )}

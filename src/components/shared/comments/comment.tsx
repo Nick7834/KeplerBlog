@@ -73,7 +73,7 @@ export const Comment: React.FC<Props> = ({
     setTime,
   } = useCommentState(contetnComment);
 
-  const commentContentText = processContent(commentContentMain, false);
+  const commentContentText = processContent(commentContentMain, true);
 
   const { deleteComment, addReply, editComment } = useCommentStore();
 
@@ -197,8 +197,8 @@ export const Comment: React.FC<Props> = ({
 
       <p
         className="text-[#333333] dark:text-[#d9d9d9] text-base font-normal mt-2 ml-1 whitespace-pre-wrap"
-        dangerouslySetInnerHTML={{ __html: String(commentContentText) }}
-      />
+        dangerouslySetInnerHTML={{ __html: commentContentText }}
+      ></p>
 
       <div className="flex items-center gap-5 mt-2 ml-5">
         {comment?.replies?.length > 0 && (
