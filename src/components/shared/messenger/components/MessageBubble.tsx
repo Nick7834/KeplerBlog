@@ -145,7 +145,7 @@ export const MessageBubble: React.FC<Props> = ({
                     {message?.replyTo?.sender?.username}
                   </span>
                   {message?.replyTo?.content && (
-                    <p className="block text-[12px] leading-3 max-[750px]:text-[14px]">
+                    <p className="block text-[12px] leading-3">
                       {message?.replyTo?.content.length > 20
                         ? `${message?.replyTo?.content
                             ?.substring(0, 20)
@@ -187,7 +187,7 @@ export const MessageBubble: React.FC<Props> = ({
                   )}
                 >
                   <p
-                    className="whitespace-pre-wrap break-words px-1 max-[750px]:text-base"
+                    className="whitespace-pre-wrap break-words px-1 max-[750px]:text-[14px] max-[750px]:select-none"
                     dangerouslySetInnerHTML={{
                       __html: String(commentContentText),
                     }}

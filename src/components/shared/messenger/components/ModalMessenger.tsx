@@ -130,7 +130,7 @@ export const ModalMessenger: React.FC<Props> = ({
           <X className="h-4 w-4" />
         </DialogClose>
         <div className="h-full grid grid-cols-[320px_1fr] max-[640px]:grid-cols-[1fr] max-[750px]:grid-cols-[1fr]">
-          <div className="flex flex-col gap-1 border-r border-[#b0b0b0]/70 dark:border-neutral-300/75">
+          <div className="flex flex-col gap-1 border-r border-[#b0b0b0]/70 dark:border-neutral-300/75 max-[750px]:border-r-0">
             <DialogTitle className="relative flex items-center justify-between gap-2 p-4 pb-0">
               <div className="flex items-center gap-2">
                 <Button

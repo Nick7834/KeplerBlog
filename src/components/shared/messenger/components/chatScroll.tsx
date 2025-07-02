@@ -102,7 +102,7 @@ export const ChatScroll: React.FC<Props> = ({
         if (item.type === "date") {
           return (
             <div className={cn("text-center py-4", isFirst && "pt-[67px]")}>
-              <span className="text-[#333333] dark:text-[#d9d9d9] text-sm bg-[#d9d9d9]/70 dark:bg-gray-600/70  backdrop-blur-[12px] p-1 rounded-xl">
+              <span className="text-[#333333] dark:text-[#d9d9d9] text-sm bg-[#d9d9d9]/70 dark:bg-gray-600/70 backdrop-blur-[12px] p-1 rounded-xl">
                 {format(new Date(item.date), "d MMMM yyyy")}
               </span>
             </div>

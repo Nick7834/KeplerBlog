@@ -83,21 +83,23 @@ export const ChatHeader: React.FC<Props> = ({
                     isverified={currentChat?.interlocutor?.isverified || false}
                     styleCheck="group-hover:top-[-14px]"
                   />
+                  {mutedBy && (
+                    <span title="Muted">
+                      <FaVolumeMute />
+                    </span>
+                  )}
                 </span>
                 {onlineUsers[currentChat?.interlocutor?.id || ""] ? (
                   <span className="text-[#7391d5] dark:text-[#7391d5] text-xs font-medium">
                     Online
                   </span>
                 ) : (
-                  <span className="text-[#333333] dark:text-[#d9d9d9] text-xs font-medium">{formatLastSeen(lastSeenTimestamp)}</span>
+                  <span className="text-[#333333] dark:text-[#d9d9d9] text-xs font-medium">
+                    {formatLastSeen(lastSeenTimestamp)}
+                  </span>
                 )}
               </div>
             </Link>
-            {mutedBy && (
-              <span title="Muted">
-                <FaVolumeMute />
-              </span>
-            )}
           </div>
 
           <CustomPopover
