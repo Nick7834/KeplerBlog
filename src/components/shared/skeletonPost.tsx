@@ -7,7 +7,7 @@ interface Props {
 
 export const SkeletonPost = (className: Props) => {
     return (
-        <div className={cn("max-w-[750px] w-full flex-1 p-3 bg-[#e0e0e0]/95 dark:bg-[#2a2a2a] rounded-[10px] border border-[#b0b0b0]/70 dark:bg-[#1d1d1d]/95 cursor-pointer", className)}>
+        <div className={cn("max-w-[750px] w-full flex-1 p-3 rounded-[10px] cursor-pointer", className)}>
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3 w-fit">
                     <Skeleton className="w-[40px] h-[40px] rounded-full bg-[#c1c1c1] dark:bg-[#676767]" />

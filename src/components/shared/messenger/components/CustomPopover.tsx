@@ -3,13 +3,21 @@ import { cn } from "@/lib/utils";
 import { useState, useRef, useEffect } from "react";
 import { GoKebabHorizontal } from "react-icons/go";
 import { MdDelete } from "react-icons/md";
+import { MdNotificationsOff } from "react-icons/md";
 
 interface Props {
   currentChatId: string;
+  mutedBy: boolean;
   handleDeleteChat: (id: string) => void;
+  handleMuteChat: (id: string) => void;
 }
 
-export function CustomPopover({ currentChatId, handleDeleteChat }: Props) {
+export function CustomPopover({
+  currentChatId,
+  mutedBy,
+  handleDeleteChat,
+  handleMuteChat,
+}: Props) {
   const [isOpen, setIsOpen] = useState(false);
   const ref = useRef<HTMLDivElement | null>(null);
 
@@ -38,13 +46,34 @@ export function CustomPopover({ currentChatId, handleDeleteChat }: Props) {
 
       <div
         className={cn(
-          "max-w-[215px] min-w-[215px] w-full isvisible opacity-0 scale-[.9] transition-all ease-in-out duration-[.3s] absolute right-1 z-[9999] mt-[40px] flex flex-col gap-2 border border-[#b0b0b0]/70 dark:border-neutral-300/75 bg-[#e5e5e5] dark:bg-[#1e1e1e] p-1 rounded shadow-lg",
+          "max-w-[215px] min-w-[215px] w-full invisible opacity-0 scale-[.9] transition-all ease-in-out duration-[.3s] absolute right-1 z-[9999] mt-[40px] flex flex-col border border-[#b0b0b0]/70 dark:border-neutral-300/75 bg-[#e5e5e5]/85 dark:bg-[#141414]/85 backdrop-blur-[50px] rounded shadow-lg overflow-hidden",
           isOpen && "visible opacity-100 scale-100"
         )}
       >
         <Button
-          variant="outline"
-          className="[&_svg]:size-[16px] border-0 bg-0 p-1 cursor-pointer flex items-center justify-start gap-[5px] w-full text-[#F03535] hover:text-[#F03535] dark:text-[#F03535] text-base font-bold"
+          variant="secondary"
+          className="[&_svg]:size-[16px] text-base font-bold border-0 backdrop-blur-3xl
+           bg-transparent rounded-none p-2 cursor-pointer flex items-center justify-start gap-[5px] w-full text-[#1d1d1d] dark:text-[#fdfdfd]"
+          onClick={() => {
+            handleMuteChat(currentChatId);
+            setIsOpen(false);
+          }}
+        >
+          {!mutedBy ? (
+            <>
+              <MdNotificationsOff className="translate-y-[-1px]" />
+              Mute
+            </>
+          ) : (
+            <>
+              <MdNotificationsOff className="translate-y-[-1px]" />
+              Unmute
+            </>
+          )}
+        </Button>
+        <Button
+          variant="secondary"
+          className="[&_svg]:size-[16px] text-base font-bold border-0 backdrop-blur-3xl bg-transparent rounded-none p-2 cursor-pointer flex items-center justify-start gap-[5px] w-full text-[#F03535] dark:text-[#F03535]"
           onClick={() => {
             handleDeleteChat(currentChatId);
             setIsOpen(false);

@@ -31,7 +31,7 @@ export const GetPosts = () => {
     <div className="mt-[clamp(1.25rem,0.82rem+2.15vw,2.5rem)]">
       {isError && <p className="text-red-500">Something went wrong</p>}
       {isLoading ? (
-        <div className="flex flex-col gap-5">
+        <div className="flex flex-col">
           {[...Array(5)].map((_, index) => (
             <SkeletonPost key={index} />
           ))}
@@ -47,14 +47,14 @@ export const GetPosts = () => {
             if (hasNextPage && !isFetchingNextPage) fetchNextPage();
           }}
           itemContent={(index, post) => (
-            <div key={post.id} className={index > 0 ? "pt-5" : ""}>
+            <div key={post.id}>
               <Post post={post} />
             </div>
           )}
           components={{
             Footer: () =>
               isFetchingNextPage ? (
-                <div className="flex flex-col gap-5 pt-5">
+                <div className="flex flex-col pt-5">
                   <SkeletonPost />
                   <SkeletonPost />
                 </div>

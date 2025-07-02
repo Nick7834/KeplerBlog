@@ -63,7 +63,7 @@ export const ForYouList: React.FC<Props> = ({ className }) => {
           </Button>
         </div>
       ) : isLoading ? (
-        <div className="flex flex-col gap-5">
+        <div className="flex flex-col">
           <SkeletonPost />
           <SkeletonPost />
         </div>
@@ -80,7 +80,7 @@ export const ForYouList: React.FC<Props> = ({ className }) => {
           components={{
             Footer: () =>
               isFetchingNextPage ? (
-                <div className="flex flex-col gap-5 pt-5">
+                <div className="flex flex-col pt-5">
                   <SkeletonPost />
                   <SkeletonPost />
                 </div>
@@ -99,7 +99,7 @@ export const ForYouList: React.FC<Props> = ({ className }) => {
               ) : null,
           }}
           itemContent={(index, post) => (
-            <div className={index > 0 ? "pt-5" : ""}>
+            <div>
               <Post key={post.id} post={post} />
             </div>
           )}

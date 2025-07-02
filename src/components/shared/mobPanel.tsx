@@ -49,7 +49,7 @@ export const MobPanel: React.FC<Props> = ({ className }) => {
     ]
 
     return (
-        <div className={cn('mob-panel hidden fixed bottom-0 left-0 w-full py-2 px-1 bg-[#E0E0E0] dark:bg-[#2a2a2a] border-t-[1px] border-solid border-[#b0b0b0]/70 dark:border-[#d9d9d9]/70 z-[500] ', className)}>
+        <div className={cn('mob-panel hidden fixed bottom-0 left-0 w-full py-2 px-1 bg-[#E0E0E0]/80 dark:bg-[#2a2a2a]/80 backdrop-blur-3xl border-t-[1px] border-solid border-[#b0b0b0]/70 dark:border-[#d9d9d9]/70 z-[500] ', className)}>
             <nav>
                 <ul className={cn('grid grid-cols-5 items-center justify-center h-full gap-1', !session && 'grid-cols-4')}>
                     {navMenuMob.map((item, index) => ( 

@@ -43,6 +43,9 @@ model User {
   chatFrom    ChatRequest[] @relation("ChatRequestFrom")
 
   messagePrivate MessagesPrivacy @default(All)
+  
+  backgroundChat String?
+  customBackgroundChat String?
 
   isOnline     Boolean? @default(false)
   typingInChat String?  @db.ObjectId
@@ -151,6 +154,8 @@ model Chat {
   messages Message[]
   unreadBy String? @db.ObjectId 
 
+  mutedBy String[] @db.ObjectId @default([])
+
   lastActivityAt DateTime? @default(now())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -161,10 +166,10 @@ model Chat {
 model ChatRequest {
   id String @id @default(auto()) @map("_id") @db.ObjectId
 
-  from   User   @relation("ChatRequestFrom", fields: [fromId], references: [id])
+  from   User   @relation("ChatRequestFrom", fields: [fromId], references: [id], onDelete: Cascade)
   fromId String @db.ObjectId
 
-  to     User   @relation("ChatRequestTo", fields: [toId], references: [id])
+  to     User   @relation("ChatRequestTo", fields: [toId], references: [id], onDelete: Cascade)
   toId   String @db.ObjectId
 
   status ChatRequestStatus @default(PENDING)

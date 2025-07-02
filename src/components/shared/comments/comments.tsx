@@ -61,7 +61,7 @@ export const Comments: React.FC<Props> = ({ className, ref, post }) => {
   }
 
     return (
-        <div ref={ref} className={cn('mt-[clamp(2.5rem,1.984rem+2.58vw,4rem)] max-w-[750px]', className)}>
+        <div ref={ref} className={cn('mt-[40px] max-w-[750px]', className)}>
 
             <h1 className='text-[#333333] dark:text-[#d9d9d9] text-2xl font-bold'>Comments</h1>
 

@@ -1,5 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Protest+Guerrilla&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Protest+Guerrilla&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -12,7 +12,7 @@
 }
 
 * {
-  font-family: 'Roboto';
+  font-family: "Roboto";
 }
 
 ul,
@@ -69,7 +69,13 @@ button {
   background: 0;
 }
 
-h1, h2, h3, h4, h5, h6, p {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
   margin: 0;
   font-size: inherit;
   font-weight: inherit;
@@ -79,7 +85,7 @@ h1, h2, h3, h4, h5, h6, p {
   -webkit-tap-highlight-color: transparent;
 }
 
-::selection { 
+::selection {
   color: #ffffff;
   background-color: #1d7593;
 }
@@ -88,8 +94,20 @@ h1, h2, h3, h4, h5, h6, p {
   scroll-behavior: smooth;
 } */
 
-
 @layer base {
+  [data-sonner-toaster] {
+    z-index: 99999 !important;
+    pointer-events: none;
+  }
+
+  [data-sonner-toast] {
+    pointer-events: auto !important;
+  }
+
+  [data-sonner-toaster] > * {
+    pointer-events: auto !important;
+  }
+
   :root {
     --background: 0 0% 100%;
     --foreground: 240 10% 3.9%;
@@ -146,7 +164,6 @@ h1, h2, h3, h4, h5, h6, p {
   }
 }
 
-
 @layer base {
   * {
     @apply border-border;
@@ -174,6 +191,34 @@ h1, h2, h3, h4, h5, h6, p {
   @apply bg-neutral-800/75 dark:bg-[#ffffff];
 }
 
+.scrollbarMessage::-webkit-scrollbar {
+  width: 7px;
+}
+
+@media screen and (max-width: 650px) {
+  .scrollbarMessage::-webkit-scrollbar {
+    width: 0px;
+  }
+
+  body::-webkit-scrollbar {
+    width: 0;
+  }
+}
+
+.scrollbarMessage::-webkit-scrollbar-track {
+  border-radius: 6px;
+  @apply dark:bg-[#333333] bg-white;
+}
+
+.scrollbarMessage::-webkit-scrollbar-thumb {
+  @apply bg-neutral-800/75 dark:bg-[#ffffff];
+  border-radius: 6px;
+}
+
+.scrollbarMessage::-webkit-scrollbar-thumb:hover {
+  @apply bg-neutral-800/75 dark:bg-[#ffffff];
+}
+
 .custom-draft .DraftEditor-root {
   height: 100%;
 }
@@ -187,7 +232,6 @@ h1, h2, h3, h4, h5, h6, p {
 .custom-draft .public-DraftStyleDefault-ltr {
   line-height: 1.6;
 }
-
 
 .infinite-scroll-component__outerdiv {
   display: flex;
@@ -214,7 +258,7 @@ h1, h2, h3, h4, h5, h6, p {
 
 @media (max-width: 1000px) {
   .title-posts {
-    margin-top: 20px;  
+    margin-top: 20px;
   }
 
   .profile-detail {
@@ -253,7 +297,7 @@ h1, h2, h3, h4, h5, h6, p {
   }
 }
 
-@media(max-width: 1100px) {
+@media (max-width: 1100px) {
   .mob-panel {
     display: block;
   }
@@ -274,7 +318,7 @@ h1, h2, h3, h4, h5, h6, p {
   .search-button-mob {
     display: block;
   }
-  
+
   .search-block {
     visibility: hidden;
     opacity: 0;
@@ -283,7 +327,7 @@ h1, h2, h3, h4, h5, h6, p {
     left: 0;
     max-width: 100%;
     height: 100%;
-    transition: all .2s ease-in-out;
+    transition: all 0.2s ease-in-out;
     z-index: 1000;
   }
 
@@ -308,11 +352,12 @@ h1, h2, h3, h4, h5, h6, p {
     border-radius: 0;
     opacity: 1;
     transform: translateX(100%);
-    transition: all .4s ease-in-out;
+    transition: all 0.4s ease-in-out;
     border: 0;
 
     display: flex;
     flex-direction: column;
+    z-index: 2;
   }
 
   .active-profile {
@@ -326,11 +371,11 @@ h1, h2, h3, h4, h5, h6, p {
     left: 0;
     width: 100%;
     height: 100%;
-    @apply bg-[#333333]/40 dark:bg-[#333333]/40;
-    z-index: -1;
+    @apply bg-[#333333]/10 dark:bg-[#333333]/40;
+    z-index: 1;
     opacity: 0;
     visibility: hidden;
-    transition: all .3s ease-in-out;
+    transition: all 0.3s ease-in-out;
   }
 
   .active-back {
@@ -339,7 +384,7 @@ h1, h2, h3, h4, h5, h6, p {
   }
 
   .ul-profile {
-    flex-grow: 1; 
+    flex-grow: 1;
   }
 
   .ul-profile li:last-child {
@@ -374,19 +419,17 @@ h1, h2, h3, h4, h5, h6, p {
   .kepler {
     display: block;
   }
-
 }
 
-@media(max-width: 600px) {
-
+@media (max-width: 600px) {
   .slide-h {
     height: 300px;
   }
-  
+
   .s {
     height: 100vh;
   }
- 
+
   .skeleton-posts {
     display: none;
   }
@@ -431,7 +474,6 @@ h1, h2, h3, h4, h5, h6, p {
   .text-res {
     font-size: 14px;
   }
-
 }
 
 @media (max-width: 500px) {

@@ -1,5 +1,5 @@
 import { getUserSession } from "@/lib/get-user-session";
-import { redis } from "@/lib/queue";
+import { redisRest } from "@/lib/redisRest";
 import { NextResponse } from "next/server";
 
 export async function POST(
@@ -21,17 +21,12 @@ export async function POST(
     return NextResponse.json({ error: "Chat not found" }, { status: 404 });
   }
 
-
   try {
-    
-    await redis.set(`chat:online:${chatId}:${userId.id}`, "1", "EX", 15);
+  
+    await redisRest.set(`chat:online:${chatId}:${userId.id}`, "1", { ex: 60 });
 
     return NextResponse.json({ ok: true });
   } catch (error) {
     console.warn(error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
   }
 }

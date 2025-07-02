@@ -153,7 +153,15 @@ export async function PUT(req: Request) {
       },
     });
 
-    await pusher.trigger(`chat-requests-${reqChat.fromId}`, "request-deleted", {});
+    await pusher.trigger(
+      `chat-requests-${reqChat.fromId}`,
+      "request-deleted",
+      {}
+    );
+
+    await pusher.trigger(`user-notifications-${reqChat.toId}`, "chat-unread", {
+      chatId: reqChat.id,
+    });
 
     return NextResponse.json({ status: "success" });
   } catch (error) {

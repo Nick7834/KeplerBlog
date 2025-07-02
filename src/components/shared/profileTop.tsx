@@ -51,7 +51,7 @@ export const ProfileTop: React.FC<ProfileInterface> = ({ className, user }) => {
     }, [user?._count.following]);
 
     return (
-        <div className={cn('w-full max-w-[clamp(65.625rem,22.569rem+44.44vw,78.125rem)]', className)}>
+        <div className={cn('w-full max-w-[clamp(65.625rem,22.569rem+44.44vw,78.125rem)] px-[15px]', className)}>
             {user?.poster && 
                 <div
                     className='back-profile w-full max-w-[clamp(65.625rem,22.569rem+44.44vw,78.125rem)] h-[clamp(8.125rem,6.066rem+8.24vw,12.5rem)] bg-cover bg-center bg-no-repeat rounded-[20px]'
@@ -64,7 +64,7 @@ export const ProfileTop: React.FC<ProfileInterface> = ({ className, user }) => {
              <span className={cn('avatar-profile flex flex-col items-center justify-center z-[1] mt-[-50px] overflow-hidden rounded-full min-w-[clamp(4.375rem,3.493rem+3.53vw,6.25rem)] h-[clamp(4.375rem,3.493rem+3.53vw,6.25rem)] bg-[#c7c7c7]', !user?.poster && 'mt-0')} ><FaRegUser size={50} className='text-[#333333]' /></span>}
                 <div className='mt-[7px] flex items-center justify-between gap-5 w-full'>
                     <div className="flex flex-col">
-                            <h2 className={cn('flex items-center gap-[2px] text-[#333333] dark:text-[#d9d9d9] text-[clamp(1rem,0.882rem+0.47vw,1.25rem)] font-medium leading-5 break-all', user?.username.length > 15 ? 'text-res' : '')}>
+                            <h2 className={cn('flex items-center gap-[2px] text-[#333333] dark:text-[#d9d9d9] text-[clamp(1rem,0.882rem+0.47vw,1.25rem)] font-medium leading-5 whitespace-pre-wrap max-[330px]:break-all', user?.username.length > 14 ? 'max-[450px]:text-[12px]' : '')}>
                               {user?.username} <CheckProfile isverified={user?.isverified} />
                             </h2>
                             <span className='flex items-center gap-1 text-[#333333] dark:text-[#d9d9d9] text-sm font-medium mt-1'>

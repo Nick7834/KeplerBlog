@@ -45,7 +45,7 @@ export const ModalCheck: React.FC<Props> = ({ className, open, setOpen, email, s
 
     return (
         <Dialog open={open} onOpenChange={() => (setOpen(false), setOtp(''))}>
-            <DialogContent className={cn('flex flex-col w-full max-w-[95%] sm:max-w-md p-4 mx-auto bg-[#bababa] dark:bg-[#19191b] rounded-md max-h-[90vh] overflow-y-auto', className)}>
+            <DialogContent className={cn('flex flex-col w-full max-w-[95%] sm:max-w-md p-4 mx-auto backdrop-blur-[12px] bg-[#e6e6e6]/80 dark:bg-[#19191b]/60 rounded-md max-h-[90vh] overflow-y-auto', className)}>
 
                 <DialogTitle className='text-center text-[#333333] dark:text-[#d9d9d9] text-xl font-bold'>
                     A code has been sent to your email

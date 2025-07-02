@@ -111,7 +111,7 @@ export const ModalVerification: React.FC<Props> = ({
     <Dialog open={open} onOpenChange={() => setOpen(false)}>
       <DialogContent
         className={cn(
-          "flex flex-col w-full max-w-[95%] sm:max-w-xl p-4 mx-auto bg-[#e8e8e8] dark:bg-[#19191b] rounded-md max-h-[90vh] overflow-y-auto",
+          "flex flex-col w-full max-w-[95%] sm:max-w-xl p-4 mx-auto backdrop-blur-[12px] bg-[#e6e6e6]/80 dark:bg-[#19191b]/60 rounded-md max-h-[90vh] overflow-y-auto",
           className
         )}
       >

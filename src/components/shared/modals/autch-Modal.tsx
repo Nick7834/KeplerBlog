@@ -42,7 +42,7 @@ export const AutchModal: React.FC<Props> = ({ open, onClose }) => {
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent
         className="w-full max-w-[95%] sm:max-w-md p-4 mx-auto 
-            bg-[#bababa] dark:bg-[#19191b] rounded-md max-h-[90vh] overflow-y-auto"
+            bg-[#e7e7e7]/80 dark:bg-[#19191b]/80 backdrop-blur-[12px] rounded-md max-h-[90vh] overflow-y-auto"
       >
         {forgotPassword && (
           <>

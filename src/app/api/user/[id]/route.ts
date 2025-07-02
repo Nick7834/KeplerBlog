@@ -23,6 +23,8 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
         createdAt: true,
         isverified: true,
         verified: true,
+        backgroundChat: true,
+        customBackgroundChat: true,
         followers: {
           select: {
             id: true,

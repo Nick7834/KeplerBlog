@@ -51,7 +51,7 @@ export const NotificationComponent: React.FC<Props> = ({ session }) => {
         variant="secondary"
         ref={buttonRef}
         onClick={() => (handleClick(), setIsOpen(!isOpen))}
-        className="w-fit bg-0 hover:bg-0 relative p-1 [&_svg]:size-[25px]"
+        className="w-fit bg-0 hover:bg-0 relative p-0 [&_svg]:size-[25px]"
       >
         {notificationCount > 0 ? (
           <IoMdNotifications className="text-[#333333] dark:text-[#d9d9d9]" />
@@ -68,7 +68,7 @@ export const NotificationComponent: React.FC<Props> = ({ session }) => {
       <div
         ref={refNotification}
         className={cn(
-          "invisible opacity-0 scale-[.9] transition-all ease-out duration-[.3s] z-[2000] fixed top-[70px] right-0 p-0 min-w-[500px] max-w-[500px] w-full mt-3 mx-5 bg-[#E0E0E0] dark:bg-[#2a2a2a] rounded-[10px] border-[1px] border-[#b0b0b0]/70 dark:border-[#d9d9d9]/70 overflow-hidden max-[1100px]:min-w-full max-[1100px]:m-0 max-[1100px]:max-w-full max-[1100px]:rounded-none max-[1100px]:top-0 max-[1100px]:right-0 max-[1100px]:h-full max-[1100px]:border-0",
+          "invisible opacity-0 scale-[.9] transition-all ease-out duration-[.3s] z-[2000] fixed top-[70px] right-0 p-0 min-w-[500px] max-w-[500px] w-full mt-3 mx-5 backdrop-blur-3xl bg-[#E0E0E0]/80 dark:bg-[#2a2a2a]/80 rounded-[10px] border-[1px] border-[#b0b0b0]/70 dark:border-[#d9d9d9]/70 overflow-hidden max-[1100px]:min-w-full max-[1100px]:m-0 max-[1100px]:max-w-full max-[1100px]:rounded-none max-[1100px]:top-0 max-[1100px]:right-0 max-[1100px]:h-full max-[1100px]:border-0",
           isOpen ? "visible opacity-100 scale-100" : ""
         )}
       >

@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "../..";
 import { cn } from "@/lib/utils";
 import { BiSolidSend } from "react-icons/bi";
@@ -9,9 +9,13 @@ import { FaCheck } from "react-icons/fa6";
 import { RiImageEditLine } from "react-icons/ri";
 import { useResize } from "@/components/hooks/useResize";
 import toast from "react-hot-toast";
+import EmojiPicker from "emoji-picker-react";
+import { HiOutlineEmojiHappy } from "react-icons/hi";
+import { EmojiClickData } from "emoji-picker-react";
 
 interface Props {
   className?: string;
+  formRef: React.RefObject<HTMLFormElement>;
   messageValue: string;
   setMessageValue: React.Dispatch<React.SetStateAction<string>>;
   handleMessagePost: (
@@ -35,6 +39,7 @@ interface Props {
 
 export const InputMessage: React.FC<Props> = ({
   className,
+  formRef,
   messageValue,
   loaderButtonSend,
   senderId,
@@ -50,7 +55,8 @@ export const InputMessage: React.FC<Props> = ({
   handleMessagePost,
   textareaRef,
 }) => {
-  const {width} = useResize()
+  const { width } = useResize();
+  const [showPicker, setShowPicker] = useState(false);
 
   const adjustHeight = () => {
     const textarea = textareaRef.current;
@@ -66,11 +72,13 @@ export const InputMessage: React.FC<Props> = ({
 
     const file = files[0];
 
+    event.target.value = "";
+
     if (!file.type.startsWith("image/")) {
       toast.error("Please select an image file.");
       return;
     }
-    
+
     if (file.size > 15 * 1024 * 1024) {
       toast.error("File size exceeds the 15MB limit.");
       return;
@@ -83,7 +91,7 @@ export const InputMessage: React.FC<Props> = ({
   const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key === "Enter" && !event.shiftKey) {
       event.preventDefault();
-      
+      setShowPicker(false);
       if (edit) {
         editFunc(chatId, messageId, messageValue);
       } else {
@@ -98,27 +106,40 @@ export const InputMessage: React.FC<Props> = ({
   };
 
   const handlePost = () => {
-    handleMessagePost(chatId, senderId, messageValue)
+    setShowPicker(false);
+
+    if (edit) {
+      editFunc(chatId, messageId, messageValue);
+    } else {
+      handleMessagePost(chatId, senderId, messageValue);
+    }
+
+    if (messageValue.length > 4096) return;
 
     const ss = textareaRef.current;
     if (ss) {
       ss.style.height = width > 768 ? "20px" : "24px";
     }
-  }
+  };
+
+  const onEmojiClick = (emojiData: EmojiClickData) => {
+    setMessageValue((prev) => prev + emojiData.emoji);
+  };
 
   return (
     <form
       className={cn(
-        "flex items-center justify-center gap-4 p-2 bg-[#e5e5e5] dark:bg-[#141414] rounded-b-[10px] mt-2",
+        "absolute left-0 bottom-0 w-full z-20 flex items-center justify-center gap-4 p-2 backdrop-blur-3xl bg-[#e5e5e5]/80 dark:bg-[#141414]/85 mt-2",
         className
       )}
       onSubmit={(e) => e.preventDefault()}
+      ref={formRef}
     >
-      <label className="w-full p-[14px] border border-solid border-[#b0b0b0]/70 dark:border-neutral-300/75 rounded-[10px]">
+      <label className="w-full p-[14px] border border-solid border-[#ffffff]/70 dark:border-neutral-300/75 rounded-[10px]">
         <Textarea
           ref={textareaRef}
           placeholder="Write a message..."
-          className="scrollbar rounded-0 p-0 h-[20px] max-[750px]:h-[24px] border-0 resize-none max-h-[300px] text-[16px] border-solid border-[#b0b0b0]/70 dark:border-neutral-300/75 bg-transparent dark:bg-transparent"
+          className="scrollbar rounded-0 p-0 h-[20px] max-[750px]:min-h-[24px] border-0 resize-none max-h-[300px] text-[16px] border-solid border-[#b0b0b0]/70 dark:border-neutral-300/75 bg-transparent dark:bg-transparent"
           value={messageValue}
           onChange={(e) => setMessageValue(e.target.value)}
           onInput={adjustHeight}
@@ -147,15 +168,30 @@ export const InputMessage: React.FC<Props> = ({
         )}
       </label>
 
+      <div className="relative">
+        <Button
+          type="submit"
+          onClick={() => setShowPicker(!showPicker)}
+          className={cn(
+            "bg-0 p-0 hover:bg-0 [&_svg]:size-[25px] text-[#333333] dark:text-[#d9d9d9]",
+            showPicker ? "text-[#7391d5] dark:text-[#7391d5]" : ""
+          )}
+        >
+          <HiOutlineEmojiHappy />
+        </Button>
+
+        {showPicker && (
+          <div className="mt-2 absolute bottom-[50px] right-[-50px]">
+            <EmojiPicker onEmojiClick={onEmojiClick} />
+          </div>
+        )}
+      </div>
+
       <Button
         type="submit"
         loading={loaderButtonSend}
         disabled={messageValue.trim() === "" && !prewiewFile && !editImage}
-        onClick={() =>
-          edit
-            ? editFunc(chatId, messageId, messageValue)
-            : handlePost()
-        }
+        onClick={() => handlePost()}
         className="min-w-[50px] max-w-[50px] w-[50px] h-[50px] ml-auto flex items-center 
         justify-center rounded-full bg-[#7391d5]
          dark:bg-[#7391d5] hover:bg-[#7391d5]/85 dark:hover:bg-[#7391d5]/85

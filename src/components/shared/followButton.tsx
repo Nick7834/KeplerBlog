@@ -63,7 +63,7 @@ export const FollowButton: React.FC<Props> = ({ className, idUser, setFollow, fo
 
         getFollow();
 
-    }, [statusFollow, setStatusFollow]);
+    }, [statusFollow, setStatusFollow, idUser]);
 
     const handleFollow = async () => {
 

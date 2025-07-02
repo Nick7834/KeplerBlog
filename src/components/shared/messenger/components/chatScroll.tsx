@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
-import React, {  useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Virtuoso, VirtuosoHandle } from "react-virtuoso";
 import { Oval } from "react-loader-spinner";
 import { MessageProps } from "@/@types/message";
@@ -38,11 +38,12 @@ export const ChatScroll: React.FC<Props> = ({
   handleReply,
   handleEditPanel,
   handleDelete,
-  setFirstItemIndex
+  setFirstItemIndex,
 }) => {
   const chatItems = groupMessagesByDate(messagersData);
 
   const initialIndexRef = useRef<number | null>(null);
+  const bottomAnchorRef = useRef<HTMLDivElement | null>(null);
 
   if (chatItems.length > 0 && initialIndexRef.current === null) {
     initialIndexRef.current = chatItems.length - 1;
@@ -51,8 +52,31 @@ export const ChatScroll: React.FC<Props> = ({
   useEffect(() => {
     initialIndexRef.current = null;
   }, [currentChatId]);
-  
+
+  // const prevChatIdRef = useRef<string | null>(null);
+  // const prevMessagesLengthRef = useRef<number>(messagersData.length);
   const [isAtBottom, setIsAtBottom] = useState(true);
+
+  useEffect(() => {
+    if (!isAtBottom) return;
+
+    bottomAnchorRef.current?.scrollIntoView({ behavior: "auto" });
+
+    const timeout = setTimeout(() => {
+      bottomAnchorRef.current?.scrollIntoView({ behavior: "auto" });
+    }, 300);
+
+    return () => clearTimeout(timeout);
+  }, [chatItems.length, isAtBottom]);
+
+  useEffect(() => {
+    bottomAnchorRef.current?.scrollIntoView({ behavior: "auto" });
+    const timeout = setTimeout(() => {
+      bottomAnchorRef.current?.scrollIntoView({ behavior: "auto" });
+    }, 300);
+
+    return () => clearTimeout(timeout);
+  }, [currentChatId]);
 
   return (
     <Virtuoso
@@ -61,10 +85,11 @@ export const ChatScroll: React.FC<Props> = ({
       style={{ height: "100%", width: "100%" }}
       data={chatItems}
       firstItemIndex={firstItemIndex}
-      overscan={6000}
+      increaseViewportBy={1000}
+      overscan={100}
       initialTopMostItemIndex={initialIndexRef.current ?? undefined}
       alignToBottom={true}
-      followOutput={!isFetchingNextPageMessages && isAtBottom}
+      followOutput={isAtBottom}
       atBottomStateChange={setIsAtBottom}
       startReached={async () => {
         if (hasNextPageMessages && !isFetchingNextPageMessages) {
@@ -72,17 +97,20 @@ export const ChatScroll: React.FC<Props> = ({
           setFirstItemIndex((prev: number) => Math.max(prev - 50, 0));
         }
       }}
-      itemContent={(_, item) => {
+      itemContent={(_, item, index) => {
+        const isFirst = index === 0;
         if (item.type === "date") {
           return (
-            <div className="text-center py-4 text-[#848484] dark:text-[#d9d9d9] text-sm">
-              {format(new Date(item.date), "d MMMM yyyy")}
+            <div className={cn("text-center py-4", isFirst && "pt-[67px]")}>
+              <span className="text-[#333333] dark:text-[#d9d9d9] text-sm bg-[#d9d9d9]/70 dark:bg-gray-600/70  backdrop-blur-[12px] p-1 rounded-xl">
+                {format(new Date(item.date), "d MMMM yyyy")}
+              </span>
             </div>
           );
         }
 
         return (
-          <div className={cn("px-10 max-[750px]:px-5 py-[7px] min-h-[44px]")}>
+          <div className={cn("px-10 max-[750px]:px-5 pt-1 min-h-[44px]")}>
             <MessageBubble
               message={item.message}
               isNew={isNew}
@@ -94,28 +122,40 @@ export const ChatScroll: React.FC<Props> = ({
         );
       }}
       components={{
-        Header: () =>
-          isFetchingNextPageMessages ? (
-            <div className="flex flex-col justify-center items-center gap-2 pt-2">
-              <Oval
-                visible={true}
-                height="40"
-                width="40"
-                color="#7391d5"
-                secondaryColor="#7391d5"
-                ariaLabel="oval-loading"
-                strokeWidth={4}
-              />
-            </div>
-          ) : null,
+        Header: () => (
+          <div className="flex flex-col">
+            <div className="max-[650px]:h-[67px] max-[650px]:shrink-0" />
+            {isFetchingNextPageMessages && (
+              <div className="flex flex-col justify-center items-center gap-2 pt-2">
+                <Oval
+                  visible={true}
+                  height="40"
+                  width="40"
+                  color="#7391d5"
+                  secondaryColor="#7391d5"
+                  ariaLabel="oval-loading"
+                  strokeWidth={4}
+                />
+              </div>
+            )}
+          </div>
+        ),
+        Footer: () => (
+          <>
+            <div ref={bottomAnchorRef} />
+            <div className="min-h-[10px] max-[650px]:min-h-[80px] max-[650px]:shrink-0" />
+          </>
+        ),
         EmptyPlaceholder: () =>
           !isLoadingMessages && messagersData.length === 0 ? (
-            <p className="flex flex-col text-center justify-center h-full flex-1 text-gray-500 dark:text-[#d9d9d9]">
-              No messages
+            <p className="flex flex-col text-center justify-center h-full flex-1 text-gray-700 dark:text-[#d9d9d9]">
+              <span className="w-fit bg-[#e5e5e5]/50 dark:bg-[#141414]/80 backdrop-blur-3xl rounded-full p-1 mx-auto">
+                No messages
+              </span>
             </p>
           ) : null,
       }}
-      className="scrollbar overflow-x-hidden"
+      className="scrollbarMessage overflow-x-hidden"
     />
   );
 };

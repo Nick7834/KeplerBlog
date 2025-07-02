@@ -1,4 +1,4 @@
-import { IchatsData } from "@/@types/message";
+import { ChatProps, IchatsData } from "@/@types/message";
 import { Message } from "@prisma/client";
 import { useQueryClient } from "@tanstack/react-query";
 import Pusher from "pusher-js";
@@ -26,56 +26,68 @@ export const useChatsPusher = (userId: string) => {
 
     channel.bind(
       "chat-top",
-      (data: { chatId: string; newMessage: Message }) => {
+      (data: {
+        chatId: string;
+        newMessage: Message & { sender: { username: string, profileImage: string } };
+        isReceiverInChat: boolean;
+      }) => {
         try {
-          const { chatId, newMessage } = data;
-          queryClient.setQueryData(["chats", userId], (oldData: IchatsData) => {
-            if (!oldData) return oldData;
+          const { chatId, newMessage, isReceiverInChat } = data;
 
-            const allChats = oldData.pages.flatMap((page) => page.chats) || [];
+          queryClient.setQueryData(
+            ["chats", userId],
+            (oldData: IchatsData | undefined) => {
+              if (!oldData) return oldData;
 
-            const existingCompanion = allChats.find(
-              (chat) => chat.chatId === chatId
-            );
+              let chatToMove: ChatProps | null = null;
 
-            if (!existingCompanion) {
-              queryClient.invalidateQueries({ queryKey: ["chats", userId] });
-              return oldData;
+              const updatedPages = oldData.pages.map((page) => {
+                const filteredChats = page.chats
+                  .map((chat) => {
+                    if (chat.chatId === chatId) {
+                      chatToMove = {
+                        ...chat,
+                        unreadCount:
+                          newMessage.senderId === userId || isReceiverInChat
+                            ? chat.unreadCount
+                            : chat.unreadCount + 1,
+                        lastMessage: {
+                          ...chat.lastMessage,
+                          id: newMessage.id,
+                          isRead: isReceiverInChat ? true : false,
+                          createMessageAt: newMessage.createdAt,
+                          senderId: newMessage.senderId,
+                          content: {
+                            text: newMessage.content,
+                            image: newMessage.image,
+                          },
+                        },
+                      };
+                      return null;
+                    }
+                    return chat;
+                  })
+                  .filter(Boolean) as ChatProps[];
+
+                return {
+                  ...page,
+                  chats: filteredChats,
+                };
+              });
+
+              if (!chatToMove) {
+                queryClient.invalidateQueries({ queryKey: ["chats", userId] });
+                return oldData;
+              }
+
+              updatedPages[0].chats = [chatToMove, ...updatedPages[0].chats];
+
+              return {
+                ...oldData,
+                pages: updatedPages,
+              };
             }
-
-            const newMessageIsSender = newMessage.senderId === userId 
-
-            const chat = {
-              ...existingCompanion,
-              unreadCount:
-                newMessage.senderId === userId
-                  ? existingCompanion.unreadCount
-                  : existingCompanion.unreadCount + 1,
-              lastMessage: {
-                id: newMessage.id,
-                content: {
-                  text: newMessage.content,
-                  image: newMessage.image,
-                },
-              },
-            };
-
-            const filter = allChats.filter((chat) => chat.chatId !== chatId);
-
-            const updatedChats = [chat, ...filter];
-
-            const updatedTotalChats = oldData.pages[0].totalChats || 0;
-
-            return {
-              ...oldData,
-              pages: [
-                {
-                  chats: updatedChats,
-                  totalChats: updatedTotalChats,
-                },
-              ],
-            };
-          });
+          );
         } catch (error) {
           console.warn(error);
         }
@@ -98,6 +110,7 @@ export const useChatsPusher = (userId: string) => {
                   return {
                     ...chat,
                     lastMessage: {
+                      ...chat.lastMessage,
                       content: {
                         text: content,
                         image: image,
@@ -145,11 +158,12 @@ export const useChatsPusher = (userId: string) => {
                   ? {
                       ...chat,
                       lastActivityAt,
-                       unreadCount:
+                      unreadCount:
                         senderId === userId
                           ? chat.unreadCount
                           : chat.unreadCount - 1,
                       lastMessage: {
+                        createMessageAt: new Date(lastActivityAt),
                         content: {
                           text: content,
                           image: image,
@@ -179,6 +193,14 @@ export const useChatsPusher = (userId: string) => {
         );
       }
     );
+
+    channel.bind("chat-check", ({ senderId }: { senderId: string }) => {
+      try {
+        queryClient.invalidateQueries({ queryKey: ["chats", senderId] });
+      } catch (error) {
+        console.warn(error);
+      }
+    });
 
     return () => {
       pusher.unsubscribe(`chats-${userId}`);

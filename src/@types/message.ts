@@ -20,12 +20,26 @@ export interface ImessageData {
 }
 
 export interface ChatProps extends Chat {
+  mutedBy: string[];
+  lastMessage: {
+    id: string;
+    isRead: boolean;
+    createMessageAt: Date;
+    content: {
+      text: string | null,
+      image: string | null
+    }
+    image: string;
+    senderId: string
+  },
+  createdAt: Date;
   unreadCount: number;
   chatId: string;
   chats: MessageProps[];
   lastActivityAt: Date;
   isRead: boolean;
   companion: {
+      isverified: boolean;
       id: string,
       profileImage: string,
       username: string
@@ -67,6 +81,16 @@ export interface Chat {
     isverified: true
   };
   id: string;
+  user1: {
+    id: string;
+    username: string;
+    profileImage: string;
+  }, 
+  user2: {
+    id: string;
+    username: string;
+    profileImage: string;
+  };
 }
 
 export interface RequestChat {

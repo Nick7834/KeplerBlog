@@ -8,35 +8,47 @@ import { Chat } from "@/@types/message";
 import { IoIosArrowBack } from "react-icons/io";
 import { Button } from "@/components/ui/button";
 import { CheckProfile } from "../../checkProfile";
+import { FaVolumeMute } from "react-icons/fa";
+import { useOnlineStore } from "@/store/useOnlineStore";
+import { formatLastSeen } from "../lib/formatLastSeen";
 
 interface Props {
   className?: string;
   isLoadingCurrentChat: boolean;
   currentChat: Chat | undefined;
+  mutedBy: boolean;
   setCurrentChatId: (chatId: string) => void;
   handleDeleteChat: (id: string) => void;
-  handleClose: () => void
+  handleMuteChat: (id: string) => void;
+  handleClose: () => void;
 }
 
 export const ChatHeader: React.FC<Props> = ({
   className,
   isLoadingCurrentChat,
   currentChat,
+  mutedBy,
   setCurrentChatId,
   handleDeleteChat,
-  handleClose
+  handleMuteChat,
+  handleClose,
 }) => {
+  const onlineUsers = useOnlineStore((state) => state.onlineUsers);
+  const lastActiveMap = useOnlineStore((state) => state.lastActiveMap);
+
+  const lastSeenTimestamp = lastActiveMap[currentChat?.interlocutor?.id || ""];
+
   return (
     <div
       className={cn(
-        "flex items-center gap-4 p-2 shadow-lg border-b border-solid bg-[#e5e5e5] dark:bg-[#141414] border-[#b0b0b0]/70 dark:border-neutral-300/75",
+        "absolute top-0 left-0 w-full z-20 flex items-center gap-4 p-2 shadow-lg border-b border-solid backdrop-blur-3xl bg-[#e5e5e5]/50 dark:bg-[#141414]/85 border-[#b0b0b0]/70 dark:border-neutral-300/75",
         className
       )}
     >
       {isLoadingCurrentChat ? (
         <div className="flex items-center gap-4">
-          <Skeleton className="min-w-[50px] w-[50px] h-[50px] rounded-full bg-[#c1c1c1] dark:bg-[#2a2a2a]" />
-          <Skeleton className="w-[100px] h-[20px] rounded-[10px] bg-[#c1c1c1] dark:bg-[#2a2a2a]" />
+          <Skeleton className="min-w-[50px] w-[50px] h-[50px] rounded-full bg-[#c1c1c1] dark:bg-[#545454]" />
+          <Skeleton className="w-[100px] h-[20px] rounded-[10px] bg-[#c1c1c1] dark:bg-[#545454]" />
         </div>
       ) : (
         <div className="flex w-full items-center gap-4 justify-between">
@@ -64,15 +76,35 @@ export const ChatHeader: React.FC<Props> = ({
                   <FaRegUser className="text-[#333333]" />
                 </span>
               )}
-              <span className="text-[#333333] dark:text-[#d9d9d9] text-lg font-bold flex items-center gap-1">
-                {currentChat?.interlocutor?.username} <CheckProfile isverified={currentChat?.interlocutor?.isverified || false} />
-              </span>
+              <div className="flex flex-col">
+                <span className="text-[#333333] dark:text-[#d9d9d9] text-lg font-bold flex items-center gap-1">
+                  {currentChat?.interlocutor?.username}{" "}
+                  <CheckProfile
+                    isverified={currentChat?.interlocutor?.isverified || false}
+                    styleCheck="group-hover:top-[-14px]"
+                  />
+                </span>
+                {onlineUsers[currentChat?.interlocutor?.id || ""] ? (
+                  <span className="text-[#7391d5] dark:text-[#7391d5] text-xs font-medium">
+                    Online
+                  </span>
+                ) : (
+                  <span className="text-[#333333] dark:text-[#d9d9d9] text-xs font-medium">{formatLastSeen(lastSeenTimestamp)}</span>
+                )}
+              </div>
             </Link>
+            {mutedBy && (
+              <span title="Muted">
+                <FaVolumeMute />
+              </span>
+            )}
           </div>
 
           <CustomPopover
             currentChatId={currentChat?.id || ""}
             handleDeleteChat={handleDeleteChat}
+            handleMuteChat={handleMuteChat}
+            mutedBy={mutedBy}
           />
         </div>
       )}

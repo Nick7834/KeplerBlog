@@ -7,12 +7,14 @@ export async function DELETE() {
   const user = await getUserSession();
 
   if (!user) {
-    return NextResponse.json({ error: "User not authenticated" }, { status: 401 });
+    return NextResponse.json(
+      { error: "User not authenticated" },
+      { status: 401 }
+    );
   }
 
   try {
     await prisma.$transaction(async (tx) => {
- 
       const userPosts = await tx.post.findMany({
         where: { authorId: user.id },
         select: { id: true },
@@ -25,7 +27,10 @@ export async function DELETE() {
         });
 
         if (rootComments.length > 0) {
-          await deleteCommentsRecursively(rootComments.map((comment) => comment.id), tx);
+          await deleteCommentsRecursively(
+            rootComments.map((comment) => comment.id),
+            tx
+          );
         }
 
         await tx.post.delete({
@@ -39,8 +44,27 @@ export async function DELETE() {
       });
 
       if (userComments.length > 0) {
-        await deleteCommentsRecursively(userComments.map((comment) => comment.id), tx);
+        await deleteCommentsRecursively(
+          userComments.map((comment) => comment.id),
+          tx
+        );
       }
+
+      const userMessages = await tx.message.findMany({
+        where: { senderId: user.id },
+        select: { id: true },
+      });
+
+      const userMessageIds = userMessages.map((msg) => msg.id);
+
+      await tx.message.updateMany({
+        where: { replyToId: { in: userMessageIds } },
+        data: { replyToId: null },
+      });
+
+      await tx.message.deleteMany({
+        where: { senderId: user.id },
+      });
 
       await tx.like.deleteMany({
         where: { authorId: user.id },
@@ -55,16 +79,24 @@ export async function DELETE() {
       });
     });
 
-    const response = NextResponse.json({ message: "User account deleted successfully" }, { status: 201 })
+    const response = NextResponse.json(
+      { message: "User account deleted successfully" },
+      { status: 201 }
+    );
     return response;
   } catch (error) {
     console.error("Error deleting user account and related data:", error);
-    return NextResponse.json({ error: "Failed to delete user account" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to delete user account" },
+      { status: 500 }
+    );
   }
 }
 
-
-async function deleteCommentsRecursively(commentIds: string[], tx: Prisma.TransactionClient) {
+async function deleteCommentsRecursively(
+  commentIds: string[],
+  tx: Prisma.TransactionClient
+) {
   if (commentIds.length === 0) return;
 
   const replies = await tx.comment.findMany({
@@ -74,7 +106,7 @@ async function deleteCommentsRecursively(commentIds: string[], tx: Prisma.Transa
 
   if (replies.length > 0) {
     const replyIds = replies.map((reply) => reply.id);
-    await deleteCommentsRecursively(replyIds, tx); 
+    await deleteCommentsRecursively(replyIds, tx);
   }
 
   await tx.comment.deleteMany({

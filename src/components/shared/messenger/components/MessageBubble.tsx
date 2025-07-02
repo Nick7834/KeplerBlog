@@ -5,7 +5,7 @@ import { MdDelete } from "react-icons/md";
 import { cn } from "@/lib/utils";
 import { useSession } from "next-auth/react";
 import { motion } from "framer-motion";
-import { format } from "date-fns";
+import { differenceInHours, format } from "date-fns";
 import { MessageProps } from "@/@types/message";
 import toast from "react-hot-toast";
 import Image from "next/image";
@@ -16,6 +16,7 @@ import {
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
 import { processContent } from "@/lib/processContent";
+import { TbCheck, TbChecks } from "react-icons/tb";
 
 interface Props {
   message: MessageProps;
@@ -30,7 +31,7 @@ export const MessageBubble: React.FC<Props> = ({
   isNew,
   onReply,
   onEdit,
-  onDelete
+  onDelete,
 }) => {
   const { data: session } = useSession();
 
@@ -82,12 +83,18 @@ export const MessageBubble: React.FC<Props> = ({
   ];
 
   const filteredButtons = menuButton.filter((item) => {
-    if (
-      session?.user.id !== message.senderId &&
-      (item.value === "edit" || item.value === "delete")
-    ) {
+    const isOwner = session?.user.id === message.senderId;
+
+    const diffHours = differenceInHours(
+      new Date(),
+      new Date(message.createdAt)
+    );
+
+    if (!isOwner && (item.value === "edit" || item.value === "delete"))
       return false;
-    }
+
+    if (item.value === "edit" && diffHours > 48) return false;
+
     return true;
   });
 
@@ -112,8 +119,8 @@ export const MessageBubble: React.FC<Props> = ({
             className={`w-fit max-w-xs sm:max-w-md rounded-xl text-sm shadow overflow-hidden
             ${
               message.senderId === session?.user.id
-                ? "bg-[#7391d5] text-[#ebebeb] rounded-br-none"
-                : "bg-[#ebebeb] dark:bg-[#2b2b2b] text-[#2b2b2b] dark:text-[#ebebeb] rounded-bl-none"
+                ? "bg-[#7391d5]/90 backdrop-blur-[12px] text-[#ebebeb] rounded-br-none"
+                : "bg-[#ebebeb]/90 backdrop-blur-[12px] dark:bg-[#2b2b2b] text-[#2b2b2b] dark:text-[#ebebeb] rounded-bl-none"
             }
           `}
           >
@@ -138,7 +145,7 @@ export const MessageBubble: React.FC<Props> = ({
                     {message?.replyTo?.sender?.username}
                   </span>
                   {message?.replyTo?.content && (
-                    <p className="block text-[12px] leading-3">
+                    <p className="block text-[12px] leading-3 max-[750px]:text-[14px]">
                       {message?.replyTo?.content.length > 20
                         ? `${message?.replyTo?.content
                             ?.substring(0, 20)
@@ -149,26 +156,68 @@ export const MessageBubble: React.FC<Props> = ({
                 </div>
               </div>
             )}
-            {message.image && (
-              <img
-                src={message.image}
-                alt="basic"
-                width={500}
-                height={400}
-                className={`block h-fit object-cover rounded-t-xl w-full max-h-[400px] ${
-                  message?.replyTo ? "mt-2" : ""
-                }`}
-                loading="lazy"
-              />
+            {message?.image && (
+              <div className="relative rounded-[7px] overflow-hidden">
+                <div
+                  style={{ backgroundImage: `url(${message?.image})` }}
+                  className="absolute top-0 left-0 bg-cover bg-center blur-md z-[1] w-full h-full"
+                ></div>
+                <div className="relative z-[2] flex items-center justify-center h-full">
+                  <img
+                    src={message?.image}
+                    alt="basic"
+                    width={500}
+                    height={400}
+                    className={`block h-fit object-contain rounded-t-xl w-full max-h-[400px] ${
+                      message?.replyTo ? "mt-2" : ""
+                    }`}
+                    loading="lazy"
+                  />
+                </div>
+              </div>
             )}
-            {message.content && (
-              <p className="whitespace-pre-wrap break-words px-2 pt-1" dangerouslySetInnerHTML={{ __html: String(commentContentText) }}>
-              </p>
-            )}
-            <span className="relative flex px-1 py-[2px] text-xs font-medium justify-end items-end w-full">
-              {message.createdAt &&
-                format(new Date(message.createdAt), "HH:mm")}
-            </span>
+            <div className={cn("p-2 relative", !message?.content && "p-0")}>
+              {message?.content && (
+                <div
+                  className={cn(
+                    "block",
+                    message?.content?.length > 60
+                      ? "pr-7 max-[650px]:pr-[35px]"
+                      : "pr-14 max-[650px]:pr-12"
+                  )}
+                >
+                  <p
+                    className="whitespace-pre-wrap break-words px-1 max-[750px]:text-base"
+                    dangerouslySetInnerHTML={{
+                      __html: String(commentContentText),
+                    }}
+                  ></p>
+                </div>
+              )}
+              <div
+                className={cn(
+                  "absolute bottom-1 right-2 z-[5] flex gap-1 text-xs font-medium items-center opacity-70 max-[650px]:bottom-[2px] max-[650px]:right-[5px] max-[650px]:justify-end",
+                  !message.content &&
+                    "absolute bottom-[5px] right-[5px] bg-gray-900/50 text-white dark:text-white rounded-[12px] px-2 py-[3px]",
+                  message?.content && message?.content?.length > 50
+                    ? "relative mb-[-8px] justify-end"
+                    : "absolute"
+                )}
+              >
+                {message.createdAt &&
+                  format(new Date(message.createdAt), "HH:mm")}
+
+                {message.isRead ? (
+                  <span title="read">
+                    <TbChecks size={16} />
+                  </span>
+                ) : (
+                  <span title="not read">
+                    <TbCheck size={16} />
+                  </span>
+                )}
+              </div>
+            </div>
           </div>
         </ContextMenuTrigger>
         <ContextMenuContent

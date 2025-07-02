@@ -2,8 +2,9 @@ import cloudinary from "@/lib/cloudinary";
 import { getUserSession } from "@/lib/get-user-session";
 import { getPublicIdFromUrl } from "@/lib/getPublicIdFromUrl";
 import { pusher } from "@/lib/pusher";
-import { redis } from "@/lib/queue";
+import { redisRest } from "@/lib/redisRest";
 import { prisma } from "@/prisma/prisma-client";
+import { differenceInHours } from "date-fns";
 import { NextResponse } from "next/server";
 import sharp from "sharp";
 
@@ -28,10 +29,10 @@ export async function GET(
 
   try {
     const infoChat = await prisma.chat.findUnique({
-      where: {
-        id: chatId,
-      },
-      include: {
+      where: { id: chatId },
+      select: {
+        id: true,
+        mutedBy: true,
         user1: {
           select: {
             id: true,
@@ -53,42 +54,22 @@ export async function GET(
 
     if (
       !infoChat ||
-      (infoChat.user1Id !== userId.id && infoChat.user2Id !== userId.id)
+      (infoChat.user1.id !== userId.id && infoChat.user2.id !== userId.id)
     ) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
     let interlocutor;
-    if (infoChat.user1Id === userId.id) {
+    if (infoChat.user1.id === userId.id) {
       interlocutor = infoChat.user2;
     } else {
       interlocutor = infoChat.user1;
     }
 
-    await prisma.message.updateMany({
-      where: {
-        chatId: chatId,
-        senderId: {
-          not: userId.id,
-        },
-      },
-      data: {
-        isRead: true,
-      },
-    });
-
-    await prisma.chat.update({
-      where: {
-        id: chatId,
-      },
-      data: {
-        unreadBy: null,
-      },
-    });
-
     return NextResponse.json({
       ...infoChat,
       interlocutor,
+      mutedBy: infoChat.mutedBy.includes(userId.id),
     });
   } catch (error) {
     console.error(error);
@@ -171,7 +152,7 @@ export async function POST(req: Request) {
       imageMessage = image;
     }
 
-    if (content.length > 1000) {
+    if (content.length > 4096) {
       return NextResponse.json(
         { error: "Message must be less than 1000 characters" },
         { status: 400 }
@@ -209,15 +190,12 @@ export async function POST(req: Request) {
         user1: { select: { id: true } },
         user2: { select: { id: true } },
         unreadBy: true,
+        mutedBy: true,
       },
     });
 
     const recipientId =
       chat.user1.id === senderId ? chat.user2.id : chat.user1.id;
-
-    for (const id of [senderId, recipientId]) {
-      await pusher.trigger(`chats-${id}`, "chat-top", { chatId, newMessage });
-    }
 
     const existingRequest = await prisma.chatRequest.findFirst({
       where: {
@@ -241,11 +219,22 @@ export async function POST(req: Request) {
       );
     }
 
-    const isReceiverInChat = await redis.exists(
+    const isReceiverInChat = await redisRest.exists(
       `chat:online:${chatId}:${recipientId}`
     );
 
-    await pusher.trigger(`chat-${chatId}`, "new-message", newMessage);
+    await pusher.trigger(`chat-${chatId}`, "new-message", {
+      newMessage,
+      isReceiverInChat,
+    });
+
+    for (const id of [senderId, recipientId]) {
+      await pusher.trigger(`chats-${id}`, "chat-top", {
+        chatId,
+        newMessage,
+        isReceiverInChat,
+      });
+    }
 
     if (isReceiverInChat) {
       await prisma.message.update({
@@ -268,6 +257,16 @@ export async function POST(req: Request) {
         );
       }
     }
+
+    await pusher.trigger(
+      `user-notifications-${recipientId}`,
+      "chat-unread-notification",
+      {
+        newMessage,
+        isReceiverInChat,
+        mutedBy: chat.mutedBy.includes(recipientId),
+      }
+    );
 
     return NextResponse.json(newMessage);
   } catch (error) {
@@ -303,6 +302,13 @@ export async function PATCH(req: Request) {
     );
   }
 
+  if (content.length > 4096) {
+    return NextResponse.json(
+      { error: "Message must be less than 1000 characters" },
+      { status: 400 }
+    );
+  }
+
   try {
     let messagePhotoNew = null;
 
@@ -310,11 +316,24 @@ export async function PATCH(req: Request) {
       where: { id: messageId },
       select: {
         senderId: true,
+        createdAt: true,
       },
     });
 
     if (!message) {
       return NextResponse.json({ error: "Message not found" }, { status: 404 });
+    }
+
+    const diffHours = differenceInHours(
+      new Date(),
+      new Date(message.createdAt)
+    );
+
+    if (diffHours > 48) {
+      return NextResponse.json(
+        { error: "You cannot edit this message" },
+        { status: 403 }
+      );
     }
 
     if (message.senderId !== userId.id) {
@@ -407,12 +426,26 @@ export async function PATCH(req: Request) {
       select: { id: true },
     });
 
+    const chatRep = await prisma.chat.findUnique({
+      where: { id: chatId },
+      select: {
+        user1: { select: { id: true } },
+        user2: { select: { id: true } },
+        unreadBy: true,
+      },
+    });
+
+    const recipientId =
+      chatRep?.user1.id === userId.id ? chatRep?.user2.id : chatRep?.user1.id;
+
     if (lastMessage?.id === messageId) {
-      pusher.trigger(`chats-${userId.id}`, "update-chat-message", {
-        chatId: chatId,
-        content: content,
-        image: messagePhotoNew || oldPhoto || null,
-      });
+      for (const id of [userId.id, recipientId]) {
+        pusher.trigger(`chats-${id}`, "update-chat-message", {
+          chatId: chatId,
+          content: content,
+          image: messagePhotoNew || oldPhoto || null,
+        });
+      }
     }
 
     return NextResponse.json(updatedMessage);
@@ -451,6 +484,7 @@ export async function DELETE(req: Request) {
       where: { id: messageId },
       select: {
         senderId: true,
+        replyToId: true,
       },
     });
 
@@ -462,10 +496,30 @@ export async function DELETE(req: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    await prisma.message.delete({
-      where: {
-        id: messageId,
-      },
+    await prisma.$transaction(async (tx) => {
+      await tx.message.findMany({
+        where: {
+          replyToId: messageId,
+        },
+        select: {
+          id: true,
+        },
+      });
+
+      await tx.message.updateMany({
+        where: {
+          replyToId: messageId,
+        },
+        data: {
+          replyToId: null,
+        },
+      });
+
+      await tx.message.delete({
+        where: {
+          id: messageId,
+        },
+      });
     });
 
     pusher.trigger(`chat-${chatId}`, "delete-message", messageId);
@@ -517,6 +571,25 @@ export async function DELETE(req: Request) {
         content: lastMessageContent.text,
         image: lastMessageContent.image,
         senderId: message.senderId,
+      });
+    }
+
+    const unreadMessagesCount = await prisma.message.count({
+      where: {
+        chatId,
+        isRead: false,
+        senderId: { not: userId.id },
+      },
+    });
+
+    if (unreadMessagesCount === 0) {
+      await prisma.chat.update({
+        where: { id: chatId },
+        data: { unreadBy: null },
+      });
+
+      await pusher.trigger(`user-notifications-${recipientId}`, "chat-unread", {
+        chatId,
       });
     }
 

@@ -91,7 +91,7 @@ export const Requests: React.FC<Props> = ({ className, userId, count, setMenu })
               {[...Array(5)].map((_, index) => (
                 <Skeleton
                   key={index}
-                  className="h-[76px] w-full bg-[#c1c1c1] dark:bg-[#2a2a2a]"
+                  className="h-[76px] w-full bg-[#d7d7d7] dark:bg-[#2a2a2a]"
                 />
               ))}
             </div>
@@ -148,7 +148,7 @@ export const Requests: React.FC<Props> = ({ className, userId, count, setMenu })
               {[...Array(5)].map((_, index) => (
                 <Skeleton
                   key={index}
-                  className="h-[76px] w-full bg-[#c1c1c1] dark:bg-[#2a2a2a]"
+                  className="h-[76px] w-full bg-[#d7d7d7] dark:bg-[#2a2a2a]"
                 />
               ))}
             </div>

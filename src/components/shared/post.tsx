@@ -94,17 +94,21 @@ export const Post: React.FC<Props> = memo(({ className, onClick, post }) => {
           pathname.startsWith("/post") ? null : router.push(`/post/${post?.id}`)
         }
         className={cn(
-          `max-w-[750px] w-full flex-1 p-3 bg-[#e0e0e0]/95 dark:bg-[#2a2a2a] rounded-[10px] border border-[#b0b0b0]/70 transition-all ease-in-out duration-300 cursor-pointer dark:bg-[#1d1d1d]/95 hover:bg-[#d1d1d1]/60 hover:dark:bg-[#333333]/60`,
+          `relative max-w-[750px] w-full flex-1 p-3 cursor-pointer rounded-[12px] transition-all ease-in-out duration-300 hover:bg-[#d1d1d1]/60 hover:dark:bg-[#333333]/60`,
           className
         )}
-        onMouseEnter={() => getDominantColor(post?.image?.[0] || "")}
-        onMouseLeave={() => setBackground("")}
-        style={{
-          background: background
-            ? `rgba(${hexToRgb(background)}, ${theme === "dark" ? 0.4 : 0.25})`
-            : "",
-        }}
+         onMouseEnter={() => getDominantColor(post?.image?.[0] || "")}
+          onMouseLeave={() => setBackground("")}
+          style={{
+            background: background
+              ? `rgba(${hexToRgb(background)}, ${
+                  theme === "dark" ? 0.4 : 0.25
+                })`
+              : "",
+          }}
       >
+        <span className={cn("absolute bottom-0 left-0 w-full mx-auto max-[650px]:w-[98%] max-[650px]:left-[1%] border-b-[1px] border-[#b0b0b0]/60 dark:border-[#333333]", pathname.startsWith("/post") ? "hidden" : "")}></span>
+
         <div className="flex gap-1 items-center justify-between">
           <Link
             onClick={(e) => e.stopPropagation()}
@@ -122,17 +126,20 @@ export const Post: React.FC<Props> = memo(({ className, onClick, post }) => {
                 />
               ) : (
                 <span className="flex flex-col items-center justify-center z-[1] overflow-hidden rounded-full min-w-[40px] h-[40px] bg-[#c7c7c7]">
-                  <FaRegUser size={20} className="text-[#333333]" />
+                  <FaRegUser
+                    size={20}
+                    className="text-[#333333]"
+                  />
                 </span>
               )}
             </div>
             <div
               className={cn(
-                "flex items-center text-[#333333] dark:text-[#d9d9d9] text-base font-semibold break-all",
+                "flex items-center text-[#333333] dark:text-[#d9d9d9] text-base font-semibold whitespace-pre-wrap",
                 pathname.startsWith("/post") &&
-                  post?.author?.username.length >= 10 &&
+                  post?.author?.username.length >= 14 &&
                   widthMob <= 450
-                  ? "block"
+                  ? "block text-[12px]"
                   : "flex"
               )}
             >
@@ -175,12 +182,12 @@ export const Post: React.FC<Props> = memo(({ className, onClick, post }) => {
           )}
         </div>
 
-        <h2 className="mt-4 text-[#333333] dark:text-[#d9d9d9] text-lg font-bold break-all">
+        <h2 className="mt-4 text-[#333333] dark:text-[#d9d9d9] text-lg font-bold whitespace-pre-wrap">
           {post?.title}
         </h2>
 
         {text !== "" && (
-          <div className="mt-2 text-[#333333] dark:text-[#d9d9d9] text-sm font-normal leading-6 break-all">
+          <div className="mt-2 text-[#333333] dark:text-[#d9d9d9] text-sm font-normal leading-6">
             {!pathname.startsWith("/post")
               ? text.length > 200
                 ? text.substring(0, 200).trim() + "..."

@@ -1,7 +1,7 @@
 import axios from "axios";
 import { Session } from "next-auth";
 import Pusher from "pusher-js";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { Notification } from "@prisma/client";
 
@@ -17,7 +17,9 @@ export interface NotificationDataType extends Notification {
 export const useNotifications = (session: Session | null, width: number) => {
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(1);
-  const [notificationsData, setNotifications] = useState<NotificationDataType[]>([]);
+  const [notificationsData, setNotifications] = useState<
+    NotificationDataType[]
+  >([]);
   const [notificationCount, setNotificationCount] = useState(0);
   const [countFlag, setCountFlag] = useState(false);
   const [notificationFlag, setNotificationFlag] = useState(true);
@@ -25,12 +27,12 @@ export const useNotifications = (session: Session | null, width: number) => {
 
   // fetch
 
-  const fetchNotifications = async () => {
+  const fetchNotifications = useCallback(async () => {
     try {
       const response = await axios.get(
         `/api/user/notification?page=${page}&limit=${width < 1100 ? 20 : 10}`
       );
-      const data = await response.data.notifications;
+      const data = response.data.notifications;
 
       if (!data || data.length === 0) {
         setHasMore(false);
@@ -49,13 +51,13 @@ export const useNotifications = (session: Session | null, width: number) => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [page, width, setHasMore, setNotifications, setIsLoading]);
 
   useEffect(() => {
     if (page === 1) return;
 
     fetchNotifications();
-  }, [page]);
+  }, [fetchNotifications, page]);
 
   const loadMoreNotifications = () => {
     setPage((prev) => prev + 1);
@@ -100,18 +102,21 @@ export const useNotifications = (session: Session | null, width: number) => {
 
     const channel = pusher.subscribe(`user-${session.user.id}`);
 
-    channel.bind("new_notification", (newNotification: NotificationDataType) => {
-      setNotifications((prevNotifications) => {
-        const exists = prevNotifications.some(
-          (n) => n.id === newNotification.id
-        );
-        if (exists) return prevNotifications;
-        return [newNotification, ...prevNotifications];
-      });
+    channel.bind(
+      "new_notification",
+      (newNotification: NotificationDataType) => {
+        setNotifications((prevNotifications) => {
+          const exists = prevNotifications.some(
+            (n) => n.id === newNotification.id
+          );
+          if (exists) return prevNotifications;
+          return [newNotification, ...prevNotifications];
+        });
 
-      setNotificationCount((prevCount) => prevCount + 1);
-      setNotificationFlag(true);
-    });
+        setNotificationCount((prevCount) => prevCount + 1);
+        setNotificationFlag(true);
+      }
+    );
 
     return () => {
       pusher.unsubscribe(`user-${session.user.id}`);

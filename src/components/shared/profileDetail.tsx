@@ -58,7 +58,7 @@ export const ProfileDetail: React.FC<Props> = ({ className, idUser }) => {
   return (
     <div
       className={cn(
-        "flex flex-col items-center justify-center mt-[50px] mx-[15px] pb-[30px]",
+        "flex flex-col items-center justify-center mt-[50px] pb-[30px]",
         className
       )}
     >
@@ -89,12 +89,12 @@ export const ProfileDetail: React.FC<Props> = ({ className, idUser }) => {
       <div className="profile-detail max-w-[clamp(65.625rem,22.569rem+44.44vw,78.125rem)] mt-[clamp(1.875rem,1.287rem+2.35vw,3.125rem)] grid grid-cols-[2fr_1fr] gap-5 w-full">
         <div className="posts-profile">
           <div className="w-full">
-            <h2 className="title-posts text-[#333333] dark:text-[#d9d9d9] text-2xl font-bold">
+            <h2 className="title-posts text-[#333333] dark:text-[#d9d9d9] text-2xl font-bold mx-[15px]">
               Publications
             </h2>
-            <div className="mt-[20px] w-full">
+            <div className="mt-[20px] w-full px-[15px] pr-0 max-[650px]:px-0">
               {isLoading ? (
-                <div className="flex flex-col gap-5 mt-5">
+                <div className="flex flex-col mt-5">
                   <SkeletonPost />
                   <SkeletonPost />
                 </div>
@@ -114,7 +114,7 @@ export const ProfileDetail: React.FC<Props> = ({ className, idUser }) => {
                   components={{
                     Footer: () =>
                       isFetchingNextPage ? (
-                        <div className="flex flex-col gap-5 pt-5">
+                        <div className="flex flex-col pt-5">
                           <SkeletonPost />
                           <SkeletonPost />
                         </div>
@@ -128,7 +128,7 @@ export const ProfileDetail: React.FC<Props> = ({ className, idUser }) => {
                       ) : null,
                   }}
                   itemContent={(index, post) => (
-                    <div className={index > 0 ? "pt-5" : ""}>
+                    <div>
                       <Post key={post.id} post={post} />
                     </div>
                   )}
@@ -138,7 +138,7 @@ export const ProfileDetail: React.FC<Props> = ({ className, idUser }) => {
           </div>
         </div>
 
-        <ProfileBlock user={user} loader={loaderProfile} />
+        <ProfileBlock user={user} loader={loaderProfile} className="mx-[10px] ml-0 max-[1000px]:mx-[15px]" />
       </div>
     </div>
   );

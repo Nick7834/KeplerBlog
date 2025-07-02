@@ -42,7 +42,6 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ i
         return NextResponse.json({ error: 'Notification ID is required' }, { status: 400 });
     }
 
-
     try {
 
         const deletedNotification = await prisma.notification.delete({

@@ -30,7 +30,7 @@ export const getNotificationRecipients = async (
             type: "comment_reply",
             message: `The user "${userName.charAt(0).toUpperCase() + userName.slice(1)}" replied to your comment on the post "${postTitle}" with the comment "${shortenedComment}"`,
             postId,
-            commentId:commentId,
+            commentId: commentId,
             sender:  {
                 id: notification.senderId,
                 userName: userName,

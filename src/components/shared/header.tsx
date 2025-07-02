@@ -17,17 +17,17 @@ export const Header: React.FC<Props> = ({ className }) => {
   const { data: session, status } = useSession();
   const [user, setUser] = useState<User | null>(null);
   const [searchMobOpen, setSearchMobOpen] = useState(false);
-  const { setAvatarUser, setUserName } = useUserAvatar();
+  const { setAvatarUser, setUserName, setBackgroundChat } = useUserAvatar();
 
   useEffect(() => {
     if (session?.user?.id) {
       const fetchUserData = async () => {
         try {
           const { data } = await axios.get(`/api/user/${session.user.id}`);
-
           setUser(data);
           setAvatarUser(data.profileImage);
           setUserName(data.username);
+          setBackgroundChat(data.backgroundChat);
         } catch (error) {
           console.error("Request failed:", error);
         }
@@ -35,7 +35,7 @@ export const Header: React.FC<Props> = ({ className }) => {
 
       fetchUserData();
     }
-  }, [session?.user?.id]);
+  }, [session?.user?.id, setAvatarUser, setBackgroundChat, setUserName]);
 
   return (
     <header
@@ -44,6 +44,7 @@ export const Header: React.FC<Props> = ({ className }) => {
         className
       )}
     >
+      <div className="absolute top-0 left-0 bg-[#EAEAEA]/80 dark:bg-[#171717]/90 backdrop-blur-3xl w-full h-full z-[-1]"></div>
       <Link
         href="/"
         className='logo-mob hidden items-center w-fit text-[#848484] dark:text-[#e3e3e3] text-5xl font-medium font-["Protest_Guerrilla"]'

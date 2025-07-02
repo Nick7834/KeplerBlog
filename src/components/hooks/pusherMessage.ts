@@ -1,7 +1,7 @@
 import { ImessageData } from "@/@types/message";
+import { pusherClient } from "@/lib/pusherClient";
 import { Message } from "@prisma/client";
 import { useQueryClient } from "@tanstack/react-query";
-import Pusher from "pusher-js";
 import { useEffect } from "react";
 
 interface messageNew extends Message {
@@ -14,13 +14,13 @@ export const useChatPusher = (chatId?: string) => {
   useEffect(() => {
     if (!chatId) return;
 
-    const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_KEY!, {
-      cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER!,
-    });
+    const channel = pusherClient.subscribe(`chat-${chatId}`);
 
-    const channel = pusher.subscribe(`chat-${chatId}`);
-
-    channel.bind("new-message", (newMessage: messageNew) => {
+    const handleNewMessage = (data: {
+      newMessage: messageNew;
+      isReceiverInChat: number;
+    }) => {
+      const { newMessage, isReceiverInChat } = data;
       queryClient.setQueryData(
         ["chat-message", chatId],
         (oldData: ImessageData) => {
@@ -32,7 +32,13 @@ export const useChatPusher = (chatId?: string) => {
 
           const updatedPages = [
             {
-              messages: [newMessage, ...filteredFirstPage],
+              messages: [
+                {
+                  ...newMessage,
+                  isRead: isReceiverInChat ? true : false,
+                },
+                ...filteredFirstPage,
+              ],
             },
             ...oldData.pages.slice(1),
           ];
@@ -43,30 +49,27 @@ export const useChatPusher = (chatId?: string) => {
           };
         }
       );
-    });
+    };
 
-    channel.bind("update-message", (message: Message) => {
+    const handleUpdateMessage = (message: Message) => {
       queryClient.setQueryData(
         ["chat-message", chatId],
         (oldData: ImessageData) => {
           if (!oldData) return oldData;
 
-          const updatedPages = oldData.pages.map((page) => {
-            return {
-              ...page,
-              messages: page.messages.map((msg) => {
-                if (msg.id === message.id) {
-                  return {
+          const updatedPages = oldData.pages.map((page) => ({
+            ...page,
+            messages: page.messages.map((msg) =>
+              msg.id === message.id
+                ? {
                     ...msg,
                     content: message.content,
                     image: message.image,
                     updatedAt: message.updatedAt,
-                  };
-                }
-                return msg;
-              }),
-            };
-          });
+                  }
+                : msg
+            ),
+          }));
 
           return {
             ...oldData,
@@ -74,20 +77,22 @@ export const useChatPusher = (chatId?: string) => {
           };
         }
       );
-    });
+    };
 
-    channel.bind("delete-message", (messageId: string) => {
+    const handleUpdateMessageCheck = (userId: string) => {
       queryClient.setQueryData(
         ["chat-message", chatId],
         (oldData: ImessageData) => {
           if (!oldData) return oldData;
 
-          const updatedPages = oldData.pages.map((page) => {
-            return {
-              ...page,
-              messages: page.messages.filter((msg) => msg.id !== messageId),
-            };
-          });
+          const updatedPages = oldData.pages.map((page) => ({
+            ...page,
+            messages: page.messages.map((msg) =>
+              !msg.isRead && msg.senderId !== userId
+                ? { ...msg, isRead: true }
+                : msg
+            ),
+          }));
 
           return {
             ...oldData,
@@ -95,10 +100,48 @@ export const useChatPusher = (chatId?: string) => {
           };
         }
       );
-    });
+    };
+
+    const handleDeleteMessage = (messageId: string) => {
+      queryClient.setQueryData(
+        ["chat-message", chatId],
+        (oldData: ImessageData) => {
+          if (!oldData) return oldData;
+
+          const updatedPages = oldData.pages.map((page) => ({
+            ...page,
+            messages: page.messages
+              .map((msg) => {
+                if (msg.replyToId === messageId) {
+                  return {
+                    ...msg,
+                    replyToId: null,
+                    replyTo: null,
+                  };
+                }
+                return msg;
+              })
+              .filter((msg) => msg.id !== messageId),
+          }));
+
+          return {
+            ...oldData,
+            pages: updatedPages,
+          };
+        }
+      );
+    };
+
+    channel.bind("new-message", handleNewMessage);
+    channel.bind("update-message", handleUpdateMessage);
+    channel.bind("update-message-check", handleUpdateMessageCheck);
+    channel.bind("delete-message", handleDeleteMessage);
 
     return () => {
-      pusher.unsubscribe(`chat-${chatId}`);
+      channel.unbind("new-message", handleNewMessage);
+      channel.unbind("update-message", handleUpdateMessage);
+      channel.unbind("update-message-check", handleUpdateMessageCheck);
+      channel.unbind("delete-message", handleDeleteMessage);
     };
   }, [chatId, queryClient]);
 };

@@ -84,7 +84,7 @@ export const ActionPanel: React.FC<Props> = memo(
       };
   
       likeStatus();
-    }, [setStatusLike, statusLike]);
+    }, [idPost, setStatusLike, statusLike]);
 
     const likeMutation = useMutation({
       mutationFn: async () => {

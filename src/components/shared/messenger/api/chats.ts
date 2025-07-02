@@ -38,6 +38,7 @@ export const postChat = async (
   setCurrentChatId: (chatId: string) => void,
   setOpenMessager: (open: boolean) => void,
   setMenu: (menu: boolean) => void,
+  setSettings: (settings: boolean) => void,
   setLoaderButton: (loader: boolean) => void,
   queryClient: QueryClient
 ) => {
@@ -50,6 +51,7 @@ export const postChat = async (
       setCurrentChatId(resp.data.chat);
       setOpenMessager(true);
       setMenu(false);
+      setSettings(false);
       setLoaderButton(false);
     }
 

@@ -43,23 +43,32 @@ export const PostDetails: React.FC<Props> = ({ className, idPost }) => {
   return (
     <div
       className={cn(
-        "mt-[clamp(1.875rem,1.445rem+2.15vw,3.125rem)] pb-[30px] mx-[clamp(0.938rem,calc(-15.104rem+23.33vw),3.125rem)] flex flex-col justify-center items-center",
+        "mt-[clamp(1.875rem,1.445rem+2.15vw,3.125rem)] pb-[30px] mx-auto flex flex-col justify-center items-center",
         className
       )}
     >
-      {isLoading && <SkeletonPost />}
-      {!isLoading && data && (
-        <Post onClick={scrollToSection} className="cursor-auto" post={data} />
-      )}
+      <div className="w-full flex flex-col justify-center items-center mx-[clamp(0.938rem,calc(-15.104rem+23.33vw),3.125rem)] max-[650px]:mx-0">
+        {isLoading && <SkeletonPost />}
+        {!isLoading && data && (
+          <Post
+            onClick={scrollToSection}
+            className="cursor-auto"
+            post={data}
+          />
+        )}
+      </div>
 
       {isLoading ? (
-        <SkeletonComment className="mt-10" />
+        <SkeletonComment className="w-full mt-[40px] mx-[clamp(0.938rem,calc(-15.104rem+23.33vw),3.125rem)] 
+        max-[1000px]:px-[clamp(0.938rem,calc(-15.104rem+23.33vw),3.125rem)] max-[1000px]:mx-0" />
       ) : (
-        <Comments
-          ref={commetsRef}
-          post={data}
-          className="scroll-mt-[100px] w-full"
-        />
+        <div className="block w-full mx-auto px-[clamp(0.938rem,calc(-15.104rem+23.33vw),3.125rem)]">
+          <Comments
+            ref={commetsRef}
+            post={data}
+            className="scroll-mt-[100px] w-full mx-auto"
+          />
+        </div>
       )}
     </div>
   );

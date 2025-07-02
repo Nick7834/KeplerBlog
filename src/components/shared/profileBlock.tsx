@@ -13,7 +13,7 @@ import { IoChatboxEllipsesOutline } from "react-icons/io5";
 import { usePathname } from "next/navigation";
 import { postChat } from "./messenger/api/chats";
 import { useSession } from "next-auth/react";
-import { useMessangerIdChat, useMessangerMenu, useMessangerStore } from "@/store/messanger";
+import { useMessangerIdChat, useMessangerMenu, useMessangerSettings, useMessangerStore } from "@/store/messanger";
 import { useQueryClient } from "@tanstack/react-query";
 
 interface Props {
@@ -53,6 +53,7 @@ export const ProfileBlock: React.FC<Props> = ({ className, user, loader }) => {
   const { setOpenMessager } = useMessangerStore();
   const { setCurrentChatId } = useMessangerIdChat();
   const { setMenu } = useMessangerMenu();
+  const { setSettings } = useMessangerSettings();
 
   const [loaderButton, setLoaderButton] = useState(false);
 
@@ -140,7 +141,7 @@ export const ProfileBlock: React.FC<Props> = ({ className, user, loader }) => {
       {session && session?.user.id !== idUserChat && (
         <Button
           loading={loaderButton}
-          onClick={() => (postChat(session?.user.id, idUserChat, setCurrentChatId, setOpenMessager, setMenu, setLoaderButton, queryClient))}
+          onClick={() => (postChat(session?.user.id, idUserChat, setCurrentChatId, setOpenMessager, setMenu, setSettings, setLoaderButton, queryClient))}
           variant="outline"
           className="bg-0 border-[#333333] dark:border-[#d9d9d9] hover:bg-[#333333] hover:dark:bg-[#d9d9d9] hover:text-[#e0e0e0] dark:hover:text-[#2a2a2a]"
         >

@@ -24,7 +24,7 @@ export const ModalReset: React.FC<Props> = ({ open, onClose, user }) => {
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent
         className="w-full max-w-[95%] sm:max-w-md p-4 mx-auto 
-              bg-[#bababa] dark:bg-[#19191b] rounded-md max-h-[90vh] overflow-y-auto"
+              backdrop-blur-[12px] bg-[#e6e6e6]/80 dark:bg-[#19191b]/60 rounded-md max-h-[90vh] overflow-y-auto"
       >
         <div className="flex items-center justify-center">
           <DialogTitle className="text-center text-[#333333] dark:text-[#d9d9d9] text-xl font-bold">
