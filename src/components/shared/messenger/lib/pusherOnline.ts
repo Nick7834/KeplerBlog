@@ -40,7 +40,6 @@ export const usePusherOnline = (setOnlineUsers: SetOnlineUsers) => {
     return () => {
       pusher.unsubscribe(`online-status`);
       channel.unsubscribe();
-      pusher.disconnect();
     };
   }, [setOnlineUsers]);
 };
