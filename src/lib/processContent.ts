@@ -9,19 +9,84 @@ function escapeHTML(html: string) {
     .replace(/'/g, "&#039;");
 }
 
-export function processContent(content: string, shouldParseLinks: boolean) {
-  const safeText = escapeHTML(content);
+function containsDangerousTagsOrAttrs(html: string) {
+  const dangerousTags =
+    /<(script|iframe|object|embed|style|img|video|audio|form|input|button)[\s>]/i;
+  if (dangerousTags.test(html)) return true;
 
-  if (!shouldParseLinks) {
-    return safeText;
+  const dangerousAttrs = /on\w+="[^"]*"/i;
+  if (dangerousAttrs.test(html)) return true;
+
+  return false;
+}
+
+export function processContent(content: string, shouldParseLinks: boolean) {
+  if (containsDangerousTagsOrAttrs(content)) {
+    let escaped = escapeHTML(content);
+
+    if (shouldParseLinks) {
+      const urlRegex = /(https?:\/\/[^\s]+)/g;
+      escaped = escaped.replace(urlRegex, (url) => {
+        return `<a href="${url}" target="_blank" rel="noopener noreferrer" class="link-text">${url}</a>`;
+      });
+    }
+
+    return escaped;
   }
 
-  const urlRegex = /(https?:\/\/[^\s<>"']+)/g;
+  let processed = content;
 
-  const withLinks = safeText.replace(urlRegex, (url) => {
-    return `<a href="${url}" target="_blank" rel="noopener noreferrer" class="link-text">${url}</a>`;
+  if (shouldParseLinks) {
+    const urlRegex = /(https?:\/\/[^\s<>"']+)/g;
+    processed = processed.replace(urlRegex, (url) => {
+      return `<a href="${url}" target="_blank" rel="noopener noreferrer" class="link-text">${url}</a>`;
+    });
+  }
+
+  return DOMPurify.sanitize(processed, { ADD_ATTR: ["target"] });
+}
+
+///////////
+
+function escapeAttribute(s: string) {
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
+function escapeHTML2(s: string) {
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
+function isSafeUrl(url: string) {
+  return /^https?:\/\//i.test(url);
+}
+
+export function processContentDraft(content: string, shouldParseLinks: boolean) {
+  if (!shouldParseLinks) return content;
+
+  const urlRegex = /(https?:\/\/[^\s]+)/g;
+
+  const processedContent = content.replace(urlRegex, (rawUrl) => {
+    const cleanUrl = rawUrl.replace(/<[^>]*>/g, "");
+
+    if (!isSafeUrl(cleanUrl)) {
+      return escapeHTML2(cleanUrl);
+    }
+
+    const safeHref = escapeAttribute(cleanUrl);
+    const displayText = escapeHTML2(cleanUrl);
+
+    return `<a href="${safeHref}" target="_blank" rel="noopener noreferrer" class="link-text">${displayText}</a>`;
   });
 
-  const cleanHTML = DOMPurify.sanitize(withLinks);
-  return cleanHTML;
+  const safeHTML = DOMPurify.sanitize(processedContent, { ADD_ATTR: ["target"] });
+
+  return safeHTML;
 }
