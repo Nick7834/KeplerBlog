@@ -182,12 +182,12 @@ export const Post: React.FC<Props> = memo(({ className, onClick, post }) => {
           )}
         </div>
 
-        <h2 className="mt-4 text-[#333333] dark:text-[#d9d9d9] text-lg font-bold whitespace-pre-wrap">
+        <h2 className="mt-4 text-[#333333] dark:text-[#d9d9d9] text-lg font-bold whitespace-pre-wrap break-words">
           {post?.title}
         </h2>
 
         {text !== "" && (
-          <div className="mt-2 text-[#333333] dark:text-[#d9d9d9] text-sm font-normal leading-6">
+          <div className="mt-2 text-[#333333] dark:text-[#d9d9d9] text-sm font-normal leading-6 break-words whitespace-normal">
             {!pathname.startsWith("/post")
               ? text.length > 200
                 ? text.substring(0, 200).trim() + "..."
