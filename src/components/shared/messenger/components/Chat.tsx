@@ -145,6 +145,7 @@ export const Chat: React.FC<Props> = ({
         index: messagersData.length - 1,
         behavior: "auto",
       });
+      textareaRef.current?.focus();
     }, 300);
   };
 
@@ -188,6 +189,10 @@ export const Chat: React.FC<Props> = ({
       isEdit,
       file
     );
+
+    setTimeout(() => {
+      textareaRef.current?.focus();
+    }, 300);
   };
 
   const handleReply = (messageId: string) => {

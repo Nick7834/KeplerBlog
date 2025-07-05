@@ -346,9 +346,9 @@ export async function PATCH(req: Request) {
     });
 
     if (!lastMessage) {
-      return NextResponse.json({ error: "Message not found" }, { status: 404 });
+      return NextResponse.json({ hasMessages: false });
     }
-
+    
     if (lastMessage.senderId !== userId.id && !lastMessage.isRead) {
       const chat = await prisma.chat.update({
         where: {

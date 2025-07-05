@@ -66,7 +66,7 @@ export const ModalMessenger: React.FC<Props> = ({
     if (!currentChatId) return;
 
     const fetchIsRead = async () => {
-      if (openMessager) {
+      if (openMessager && currentChatId) {
         await axios.patch(`/api/messenger/chats?chatId=${currentChatId}`);
       }
       await axios.put(`/api/messenger/isRead/${currentChatId}`);

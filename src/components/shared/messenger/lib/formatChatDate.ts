@@ -16,5 +16,5 @@ export const formatChatDate = (dateString: string) => {
     return format(date, 'd MMM');
   }
 
-   return format(date, 'd MMM, yyyy');
+  return format(date, 'd MMM, yyyy');
 };
