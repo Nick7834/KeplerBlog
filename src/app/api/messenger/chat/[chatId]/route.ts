@@ -96,6 +96,7 @@ export async function POST(req: Request) {
   const content = formData.get("content") as string;
   const replyToId = formData.get("replyToId") as string;
   const file = formData.get("file") as File;
+  const tempId = formData.get("tempId") as string;
 
   if (!senderId || !chatId || (!content && !file)) {
     return NextResponse.json(
@@ -225,6 +226,7 @@ export async function POST(req: Request) {
 
     await pusher.trigger(`chat-${chatId}`, "new-message", {
       newMessage,
+      tempId,
       isReceiverInChat,
     });
 

@@ -6,13 +6,21 @@ export async function checkAndVerifyActiveUsers() {
 
   const activeUsers = await prisma.user.findMany({
     where: {
-      role: { in: ["admin", "user"] },
       OR: [
-        { isverified: true },
-        { posts: { some: { createdAt: { gte: oneMonthAgo } } } },
-        { likes: { some: { createdAt: { gte: oneMonthAgo } } } },
-        { followers: { some: { createdAt: { gte: oneMonthAgo } } } },
-        { comments: { some: { createdAt: { gte: oneMonthAgo } } } },
+        // 1. Активные юзеры с подходящей ролью
+        {
+          role: { in: ["admin", "user"] },
+          OR: [
+            { posts: { some: { createdAt: { gte: oneMonthAgo } } } },
+            { likes: { some: { createdAt: { gte: oneMonthAgo } } } },
+            { followers: { some: { createdAt: { gte: oneMonthAgo } } } },
+            { comments: { some: { createdAt: { gte: oneMonthAgo } } } },
+          ],
+        },
+        // 2. Все с галочкой, независимо от активности и роли
+        {
+          isverified: true,
+        },
       ],
     },
     select: {
@@ -36,6 +44,8 @@ export async function checkAndVerifyActiveUsers() {
       },
     },
   });
+
+  console.log("Active users:", activeUsers);
 
   const userUpdates = activeUsers
     .map((user) => {

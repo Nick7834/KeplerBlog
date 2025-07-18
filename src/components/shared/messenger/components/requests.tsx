@@ -102,7 +102,7 @@ export const Requests: React.FC<Props> = ({ className, userId, count, setMenu })
           ) : (
             <div
               id="scrollable-chatReq-container"
-              className="overflow-y-auto scrollbar h-[calc(85vh-140px)] max-[750px]:max-h-[calc(100vh-75px)]"
+              className="scrollbarMessage overflow-x-hidden overflow-y-auto scrollbar h-[calc(85vh-140px)] max-[750px]:max-h-[calc(100vh-75px)]"
             >
               <InfiniteScroll
                 dataLength={massReq.length}
@@ -159,7 +159,7 @@ export const Requests: React.FC<Props> = ({ className, userId, count, setMenu })
           ) : (
             <div
               id="scrollable-chat-container-sent"
-              className="overflow-y-auto scrollbar h-[calc(85vh-140px)] max-[750px]:h-[calc(88vh-75px)]"
+              className="scrollbarMessage overflow-x-hidden overflow-y-auto scrollbar h-[calc(85vh-140px)] max-[750px]:h-[calc(88vh-75px)]"
             >
               <InfiniteScroll
                 dataLength={massSent.length}

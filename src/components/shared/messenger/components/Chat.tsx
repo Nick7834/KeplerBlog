@@ -113,6 +113,8 @@ export const Chat: React.FC<Props> = ({
       return;
     }
 
+    const tempId = crypto.randomUUID();
+
     const formData = new FormData();
     if (file) {
       formData.append("file", file);
@@ -121,6 +123,7 @@ export const Chat: React.FC<Props> = ({
     formData.append("senderId", senderId);
     formData.append("replyToId", reply?.id || "");
     formData.append("content", content.trim());
+    formData.append("tempId", tempId);
 
     setMessageValue("");
     setFile(null);
@@ -130,6 +133,7 @@ export const Chat: React.FC<Props> = ({
     setIsNew(true);
 
     handleMessagePost(
+      tempId,
       chatId,
       content,
       queryClient,
@@ -285,7 +289,7 @@ export const Chat: React.FC<Props> = ({
       />
 
       <div
-        className="flex-1 bg-cover bg-center bg-no-repeat overflow-hidden pt-[67px] pb-[68px] max-[650px]:pb-1  max-[650px]:pt-1"
+        className="flex-1 bg-cover bg-center bg-no-repeat overflow-hidden pt-[67px] pb-[68px] max-[650px]:pb-1 max-[650px]:pt-1"
         style={{
           backgroundImage: `${backgroundChat ? `url(${backgroundChat})` : ""}`,
         }}

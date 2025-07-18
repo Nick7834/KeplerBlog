@@ -6,6 +6,7 @@ import { useEffect } from "react";
 
 interface messageNew extends Message {
   optimistic: boolean;
+  tempId: string;
 }
 
 export const useChatPusher = (chatId?: string) => {
@@ -18,34 +19,50 @@ export const useChatPusher = (chatId?: string) => {
 
     const handleNewMessage = (data: {
       newMessage: messageNew;
+      tempId: string;
       isReceiverInChat: number;
     }) => {
-      const { newMessage, isReceiverInChat } = data;
+      const { newMessage, tempId, isReceiverInChat } = data;
+
+      console.log(tempId);
+
       queryClient.setQueryData(
         ["chat-message", chatId],
         (oldData: ImessageData) => {
           if (!oldData) return oldData;
 
-          const filteredFirstPage = oldData.pages[0].messages.filter(
-            (msg) => !(msg as { optimistic?: boolean }).optimistic
-          );
+          const pages = oldData.pages ?? [];
+          const firstPageMessages = pages[0]?.messages ?? [];
 
-          const updatedPages = [
+          const filteredMessages = firstPageMessages.filter((msg) => {
+            const isOptimistic = (msg as messageNew).optimistic;
+            const sameTempId = (msg as messageNew).tempId === tempId;
+
+            return !(isOptimistic && sameTempId);
+          });
+
+          const updatedMessages = [
             {
-              messages: [
-                {
-                  ...newMessage,
-                  isRead: isReceiverInChat ? true : false,
-                },
-                ...filteredFirstPage,
-              ],
+              ...newMessage,
+              isRead: isReceiverInChat ? true : false,
             },
-            ...oldData.pages.slice(1),
+            ...filteredMessages,
           ];
+
+          const sortedMessages = updatedMessages.sort((a, b) => {
+            const timeA = new Date(a.createdAt).getTime();
+            const timeB = new Date(b.createdAt).getTime();
+            return timeB - timeA;
+          });
 
           return {
             ...oldData,
-            pages: updatedPages,
+            pages: [
+              {
+                messages: sortedMessages,
+              },
+              ...pages.slice(1),
+            ],
           };
         }
       );

@@ -94,7 +94,7 @@ export const SettingsMessenger: React.FC<Props> = ({
                   ))}
                 </div>
               ) : (
-                <div className="overflow-y-auto scrollbar h-[calc(80vh-140px)] max-[750px]:h-[calc(88vh-75px)] max-[400px]:h-[calc(88vh-110px)] grid grid-cols-3 gap-1 max-[1100px]:grid-cols-2 flex-1 max-[400px]:grid-cols-1 scrollbar  max-[750px]:max-h-[calc(100vh-10px)]">
+                <div className="scrollbarMessage overflow-x-hidden scrollbar h-[calc(80vh-140px)] max-[750px]:h-[calc(88vh-75px)] max-[400px]:h-[calc(88vh-110px)] grid grid-cols-3 gap-1 max-[1100px]:grid-cols-2 flex-1 max-[400px]:grid-cols-1 scrollbar  max-[750px]:max-h-[calc(100vh-10px)]">
                   {loading && (
                     <div className="block h-[clamp(6.25rem,-0.521rem+16.67vw,12.5rem)] max-[750px]:h-[170px] max-[400px]:h-[200px] relative bg-0 border-[3px] border-transparent hover:border-white dark:hover:border-white rounded-xl p-0 overflow-hidden transition-all">
                       <Image

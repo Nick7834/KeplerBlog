@@ -59,7 +59,7 @@ export const Chats: React.FC<Props> = ({
   }, [isLoading]);
 
   return (
-    <div className="h-full p-2 pb-1 rounded-t-[10px] backdrop-blur-3xl bg-[#dad9d9]/80 dark:bg-[#1f1f22]/60 flex flex-col">
+    <div className="overflow-x-hidden h-full p-2 pb-1 rounded-t-[10px] backdrop-blur-3xl bg-[#dad9d9]/80 dark:bg-[#1f1f22]/60 flex flex-col">
       {isError && <p className="text-red-500">Something went wrong</p>}
       {isLoading ? (
         <div className="flex flex-col gap-2">
@@ -78,7 +78,7 @@ export const Chats: React.FC<Props> = ({
       ) : (
         <div
           id="scrollable-chat-container"
-          className="overflow-y-auto scrollbar max-h-[calc(100dvh-125px)] max-[750px]:max-h-[calc(100vh-75px)]"
+          className="scrollbarMessage overflow-x-hidden scrollbar max-h-[calc(100dvh-125px)] max-[750px]:max-h-[calc(100vh-75px)]"
         >
           <InfiniteScroll
             dataLength={allChats.length}

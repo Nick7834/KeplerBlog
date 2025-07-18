@@ -10,6 +10,7 @@ import { Session } from "next-auth";
 import toast from "react-hot-toast";
 
 export const handleMessagePost = async (
+  tempId: string,
   chatId: string,
   content: string,
   queryClient: QueryClient,
@@ -25,8 +26,6 @@ export const handleMessagePost = async (
       if (!oldData) return oldData;
 
       const pages = oldData.pages ?? [oldData];
-
-      const tempId = crypto.randomUUID();
 
       const newMessage = {
         id: tempId,
