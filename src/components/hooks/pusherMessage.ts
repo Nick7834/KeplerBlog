@@ -24,8 +24,6 @@ export const useChatPusher = (chatId?: string) => {
     }) => {
       const { newMessage, tempId, isReceiverInChat } = data;
 
-      console.log(tempId);
-
       queryClient.setQueryData(
         ["chat-message", chatId],
         (oldData: ImessageData) => {
@@ -52,7 +50,17 @@ export const useChatPusher = (chatId?: string) => {
           const sortedMessages = updatedMessages.sort((a, b) => {
             const timeA = new Date(a.createdAt).getTime();
             const timeB = new Date(b.createdAt).getTime();
-            return timeB - timeA;
+
+            if (timeB !== timeA) {
+              return timeB - timeA;
+            }
+
+            const idA =
+              ((a as messageNew).id || (a as messageNew).tempId) ?? "";
+            const idB =
+              ((b as messageNew).id || (b as messageNew).tempId) ?? "";
+
+            return idA.localeCompare(idB);
           });
 
           return {
@@ -67,7 +75,6 @@ export const useChatPusher = (chatId?: string) => {
         }
       );
     };
-
     const handleUpdateMessage = (message: Message) => {
       queryClient.setQueryData(
         ["chat-message", chatId],
