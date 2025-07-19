@@ -92,9 +92,9 @@ export const Chat: React.FC<Props> = ({
   const formRef = useRef<HTMLFormElement>(null);
   const [formHeight, setFormHeight] = useState(67);
 
-   useEffect(() => {
-     setFormHeight(formRef.current?.offsetHeight || 67);
-    }, [messageValue]);
+  useEffect(() => {
+    setFormHeight(formRef.current?.offsetHeight || 67);
+  }, [messageValue]);
 
   // post
 
@@ -114,6 +114,7 @@ export const Chat: React.FC<Props> = ({
     }
 
     const tempId = crypto.randomUUID();
+    const sentAt = Date.now().toString();
 
     const formData = new FormData();
     if (file) {
@@ -124,6 +125,7 @@ export const Chat: React.FC<Props> = ({
     formData.append("replyToId", reply?.id || "");
     formData.append("content", content.trim());
     formData.append("tempId", tempId);
+    formData.append("sentAt", sentAt);
 
     setMessageValue("");
     setFile(null);
@@ -258,7 +260,7 @@ export const Chat: React.FC<Props> = ({
     if (!chatId) return;
 
     handleMutesChat(chatId, queryClient, session?.user?.id || "");
-  }
+  };
 
   useEffect(() => {
     setIsFirstLoad(true);
@@ -369,7 +371,7 @@ export const Chat: React.FC<Props> = ({
                 </div>
               </div>
               <button
-                onClick={() => (setReply(null))}
+                onClick={() => setReply(null)}
                 className="text-[#333333] dark:text-[#d9d9d9] text-lg"
               >
                 <IoClose />

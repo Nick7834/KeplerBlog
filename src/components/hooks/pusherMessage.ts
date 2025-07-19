@@ -7,6 +7,7 @@ import { useEffect } from "react";
 interface messageNew extends Message {
   optimistic: boolean;
   tempId: string;
+  sentAt: string;
 }
 
 export const useChatPusher = (chatId?: string) => {
@@ -22,9 +23,10 @@ export const useChatPusher = (chatId?: string) => {
     const handleNewMessage = (data: {
       newMessage: messageNew;
       tempId: string;
+      sentAt: string;
       isReceiverInChat: number;
     }) => {
-      const { newMessage, tempId, isReceiverInChat } = data;
+      const { newMessage, tempId, sentAt, isReceiverInChat } = data;
 
       queryClient.setQueryData(
         ["chat-message", chatId],
@@ -45,6 +47,7 @@ export const useChatPusher = (chatId?: string) => {
             {
               ...newMessage,
               isRead: isReceiverInChat ? true : false,
+              sentAt,
             },
             ...filteredMessages,
           ];
@@ -55,6 +58,13 @@ export const useChatPusher = (chatId?: string) => {
 
             if (timeB !== timeA) {
               return timeB - timeA;
+            }
+
+            const sentAtA = Number((a as messageNew).sentAt ?? 0);
+            const sentAtB = Number((b as messageNew).sentAt ?? 0);
+
+            if (sentAtB !== sentAtA) {
+              return sentAtB - sentAtA;
             }
 
             const idA =
@@ -77,6 +87,7 @@ export const useChatPusher = (chatId?: string) => {
         }
       );
     };
+
     const handleUpdateMessage = (message: Message) => {
       queryClient.setQueryData(
         ["chat-message", chatId],
