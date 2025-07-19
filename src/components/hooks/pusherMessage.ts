@@ -17,6 +17,8 @@ export const useChatPusher = (chatId?: string) => {
 
     const channel = pusherClient.subscribe(`chat-${chatId}`);
 
+    const normalizeDate = (date: string | Date) => new Date(date).toISOString();
+
     const handleNewMessage = (data: {
       newMessage: messageNew;
       tempId: string;
@@ -48,8 +50,8 @@ export const useChatPusher = (chatId?: string) => {
           ];
 
           const sortedMessages = updatedMessages.sort((a, b) => {
-            const timeA = new Date(a.createdAt).getTime();
-            const timeB = new Date(b.createdAt).getTime();
+            const timeA = new Date(normalizeDate(a.createdAt)).getTime();
+            const timeB = new Date(normalizeDate(b.createdAt)).getTime();
 
             if (timeB !== timeA) {
               return timeB - timeA;
