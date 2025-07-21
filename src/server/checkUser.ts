@@ -45,8 +45,6 @@ export async function checkAndVerifyActiveUsers() {
     },
   });
 
-  console.log("Active users:", activeUsers);
-
   const userUpdates = activeUsers
     .map((user) => {
       const hasEnoughPosts = user._count.posts >= 10;

@@ -28,7 +28,7 @@ export default async function Settings() {
         />
 
         <p className="kepler hidden mt-[50px] text-[#797d7e] dark:text-[#e3e3e3] text-sm text-center font-medium">
-          © {new Date().getFullYear()} KeplerMedia, Inc
+          © {new Date().getFullYear()} KeplerMedia
         </p>
       </div>
     </div>

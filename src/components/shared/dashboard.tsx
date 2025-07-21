@@ -15,7 +15,7 @@ export const Dashboard: React.FC<Props> = ({ className }) => {
 
             <Nav className='mt-[60px]' />
 
-            <p className='mt-auto text-[#797d7e] dark:text-[#e3e3e3] text-sm text-center font-medium'>© {new Date().getFullYear()} KeplerMedia, Inc</p>
+            <p className='mt-auto text-[#797d7e] dark:text-[#e3e3e3] text-sm text-center font-medium'>© {new Date().getFullYear()} KeplerMedia</p>
 
         </div>
     );
