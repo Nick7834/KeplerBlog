@@ -226,7 +226,7 @@ export const Chats: React.FC<Props> = ({
                               />
                             )}
                             {chat.lastMessage.content.text &&
-                            chat.lastMessage.content.text.length >= 15
+                            chat.lastMessage.content.text.length > 15
                               ? `${chat.lastMessage.content.text
                                   .slice(0, 15)
                                   .trim()}...`
