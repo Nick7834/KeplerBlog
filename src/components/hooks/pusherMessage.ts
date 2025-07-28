@@ -37,17 +37,17 @@ export const useChatPusher = (chatId?: string) => {
           const firstPageMessages = pages[0]?.messages ?? [];
 
           const filteredMessages = firstPageMessages.filter((msg) => {
-            const isOptimistic = (msg as messageNew).optimistic;
-            const sameTempId = (msg as messageNew).tempId === tempId;
+            const optimistic = (msg as messageNew).optimistic;
+            const tId = (msg as messageNew).tempId;
 
-            return !(isOptimistic && sameTempId);
+            return !(optimistic && tId === tempId);
           });
 
           const updatedMessages = [
             {
               ...newMessage,
               isRead: isReceiverInChat ? true : false,
-              sentAt,
+              createdAt: newMessage.createdAt || sentAt,
             },
             ...filteredMessages,
           ];
@@ -56,31 +56,14 @@ export const useChatPusher = (chatId?: string) => {
             const timeA = new Date(normalizeDate(a.createdAt)).getTime();
             const timeB = new Date(normalizeDate(b.createdAt)).getTime();
 
-            if (timeB !== timeA) return timeB - timeA;
-
-            const sentAtA = Number((a as messageNew).sentAt ?? 0);
-            const sentAtB = Number((b as messageNew).sentAt ?? 0);
-
-            if (sentAtB !== sentAtA) return sentAtB - sentAtA;
-
-            const aIsOptimistic = (a as messageNew).optimistic ? 1 : 0;
-            const bIsOptimistic = (b as messageNew).optimistic ? 1 : 0;
-
-            if (aIsOptimistic !== bIsOptimistic)
-              return bIsOptimistic - aIsOptimistic;
-
-            const idA =
-              ((a as messageNew).id || (a as messageNew).tempId) ?? "";
-            const idB =
-              ((b as messageNew).id || (b as messageNew).tempId) ?? "";
-
-            return idA.localeCompare(idB);
+            return timeB - timeA;
           });
 
           return {
             ...oldData,
             pages: [
               {
+                ...pages[0],
                 messages: sortedMessages,
               },
               ...pages.slice(1),
