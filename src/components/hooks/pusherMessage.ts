@@ -2,6 +2,7 @@ import { ImessageData } from "@/@types/message";
 import { pusherClient } from "@/lib/pusherClient";
 import { Message } from "@prisma/client";
 import { useQueryClient } from "@tanstack/react-query";
+import { compareDesc, parseISO } from "date-fns";
 import { useEffect } from "react";
 
 interface messageNew extends Message {
@@ -17,8 +18,6 @@ export const useChatPusher = (chatId?: string) => {
     if (!chatId) return;
 
     const channel = pusherClient.subscribe(`chat-${chatId}`);
-
-    const normalizeDate = (date: string | Date) => new Date(date).toISOString();
 
     const handleNewMessage = (data: {
       newMessage: messageNew;
@@ -39,24 +38,31 @@ export const useChatPusher = (chatId?: string) => {
           const filteredMessages = firstPageMessages.filter((msg) => {
             const optimistic = (msg as messageNew).optimistic;
             const tId = (msg as messageNew).tempId;
-
             return !(optimistic && tId === tempId);
           });
+
+          const normalizedCreatedAt = newMessage.createdAt || sentAt;
 
           const updatedMessages = [
             {
               ...newMessage,
-              isRead: isReceiverInChat ? true : false,
-              createdAt: newMessage.createdAt || sentAt,
+              isRead: Boolean(isReceiverInChat),
+              createdAt: normalizedCreatedAt,
             },
             ...filteredMessages,
           ];
 
           const sortedMessages = updatedMessages.sort((a, b) => {
-            const timeA = new Date(normalizeDate(a.createdAt)).getTime();
-            const timeB = new Date(normalizeDate(b.createdAt)).getTime();
+            const dateA =
+              typeof a.createdAt === "string"
+                ? parseISO(a.createdAt)
+                : a.createdAt;
+            const dateB =
+              typeof b.createdAt === "string"
+                ? parseISO(b.createdAt)
+                : b.createdAt;
 
-            return timeB - timeA;
+            return compareDesc(dateA, dateB);
           });
 
           return {
