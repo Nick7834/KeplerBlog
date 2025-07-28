@@ -56,16 +56,18 @@ export const useChatPusher = (chatId?: string) => {
             const timeA = new Date(normalizeDate(a.createdAt)).getTime();
             const timeB = new Date(normalizeDate(b.createdAt)).getTime();
 
-            if (timeB !== timeA) {
-              return timeB - timeA;
-            }
+            if (timeB !== timeA) return timeB - timeA;
 
             const sentAtA = Number((a as messageNew).sentAt ?? 0);
             const sentAtB = Number((b as messageNew).sentAt ?? 0);
 
-            if (sentAtB !== sentAtA) {
-              return sentAtB - sentAtA;
-            }
+            if (sentAtB !== sentAtA) return sentAtB - sentAtA;
+
+            const aIsOptimistic = (a as messageNew).optimistic ? 1 : 0;
+            const bIsOptimistic = (b as messageNew).optimistic ? 1 : 0;
+
+            if (aIsOptimistic !== bIsOptimistic)
+              return bIsOptimistic - aIsOptimistic;
 
             const idA =
               ((a as messageNew).id || (a as messageNew).tempId) ?? "";
