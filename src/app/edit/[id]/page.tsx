@@ -1,7 +1,9 @@
 import { EditPostInput } from "@/components/shared/settings/editPostInput";
+import { Loader } from "@/components/ui/loader";
 import { getUserSession } from "@/lib/get-user-session";
 import { prisma } from "@/prisma/prisma-client";
 import { redirect } from "next/navigation";
+import { Suspense } from "react";
 
 export default async function PostDetail({
   params,
@@ -29,7 +31,9 @@ export default async function PostDetail({
 
   return (
     <div className="mt-[clamp(1.875rem,1.445rem+2.15vw,3.125rem)] pb-[30px] mx-[clamp(0.938rem,calc(-15.104rem+23.33vw),3.125rem)]">
-      <EditPostInput post={posts} />
+      <Suspense fallback={<Loader />}>
+        <EditPostInput post={posts} />
+      </Suspense>
     </div>
   );
 }

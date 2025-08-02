@@ -1,8 +1,10 @@
 import { SettingsList } from "@/components/shared/settings/settingsList";
 import { TopBanner } from "@/components/shared/settings/topBanner";
+import { Loader } from "@/components/ui/loader";
 import { getUserSession } from "@/lib/get-user-session";
 import { prisma } from "@/prisma/prisma-client";
 import { redirect } from "next/navigation";
+import { Suspense } from "react";
 
 export default async function Settings() {
   const session = await getUserSession();
@@ -20,12 +22,17 @@ export default async function Settings() {
           Settings
         </h1>
 
-        <TopBanner className="mt-[20px]" user={user} />
+        <Suspense fallback={<Loader />}>
+          <TopBanner
+            className="mt-[20px]"
+            user={user}
+          />
 
-        <SettingsList
-          user={user}
-          className="max-w-[clamp(65.625rem,22.569rem+44.44vw,78.125rem)] w-full"
-        />
+          <SettingsList
+            user={user}
+            className="max-w-[clamp(65.625rem,22.569rem+44.44vw,78.125rem)] w-full"
+          />
+        </Suspense>
 
         <p className="kepler hidden mt-[50px] text-[#797d7e] dark:text-[#e3e3e3] text-sm text-center font-medium">
           © {new Date().getFullYear()} KeplerMedia
