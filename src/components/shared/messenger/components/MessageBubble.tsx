@@ -119,8 +119,8 @@ export const MessageBubble: React.FC<Props> = ({
             className={`w-fit max-w-xs sm:max-w-md rounded-xl text-sm shadow overflow-hidden
             ${
               message.senderId === session?.user.id
-                ? "bg-[#7391d5]/90 backdrop-blur-[12px] text-[#ebebeb] rounded-br-none"
-                : "bg-[#ebebeb]/90 backdrop-blur-[12px] dark:bg-[#2b2b2b] text-[#2b2b2b] dark:text-[#ebebeb] rounded-bl-none"
+                ? "bg-[#7391d5] text-[#ebebeb] rounded-br-none"
+                : "bg-[#ebebeb] dark:bg-[#2b2b2b] text-[#2b2b2b] dark:text-[#ebebeb] rounded-bl-none"
             }
           `}
           >

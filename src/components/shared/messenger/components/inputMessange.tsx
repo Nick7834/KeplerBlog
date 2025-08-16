@@ -129,7 +129,7 @@ export const InputMessage: React.FC<Props> = ({
   return (
     <form
       className={cn(
-        "absolute left-0 bottom-0 w-full z-20 flex items-center justify-center gap-4 p-2 backdrop-blur-3xl bg-[#e5e5e5]/80 dark:bg-[#141414]/85 mt-2",
+        "absolute left-0 bottom-0 w-full z-20 flex items-center justify-center gap-4 p-2 backdrop-blur-3xl bg-[#e5e5e5]/85 dark:bg-[#141414]/85 mt-2",
         className
       )}
       onSubmit={(e) => e.preventDefault()}

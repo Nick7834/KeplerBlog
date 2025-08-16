@@ -81,7 +81,7 @@ export const ProfileDetail: React.FC<Props> = ({ className, idUser }) => {
       </Head>
 
       {loaderProfile ? (
-        <SkeletonProfileTop />
+        <SkeletonProfileTop className="px-[15px]" />
       ) : (
         user && <ProfileTop user={user} />
       )}

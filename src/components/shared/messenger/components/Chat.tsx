@@ -328,7 +328,7 @@ export const Chat: React.FC<Props> = ({
         )}
       </div>
 
-      <div className="relative ">
+      <div className="relative z-10">
         <AnimatePresence mode="wait">
           {reply && (
             <motion.div
@@ -338,7 +338,7 @@ export const Chat: React.FC<Props> = ({
               exit={{ opacity: 0, y: 0, x: 100 }}
               transition={{ duration: 0.15 }}
               className={cn(
-                "absolute w-[95%] left-[2.5%] shadow-[0_-4px_10px_rgba(0,0,0,0.1)] bg-[#e5e5e5]/50 dark:bg-[#141414]/80 backdrop-blur-3xl p-2 mx-auto rounded-t-lg flex justify-between items-center"
+                "absolute w-[95%] left-[2.5%] shadow-[0_-4px_10px_rgba(0,0,0,0.1)] bg-[#e5e5e5]/80 dark:bg-[#141414]/80 backdrop-blur-3xl p-2 mx-auto rounded-t-lg flex justify-between items-center"
               )}
               style={{
                 bottom: filePreview
