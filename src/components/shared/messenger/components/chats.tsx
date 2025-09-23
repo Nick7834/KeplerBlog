@@ -17,6 +17,7 @@ import { FaVolumeMute } from "react-icons/fa";
 import { usePusherOnline } from "../lib/pusherOnline";
 import { useMessangerStore } from "@/store/messanger";
 import { useOnlineStatus } from "../hook/useOnlineStatus";
+import { useSession } from "next-auth/react";
 
 interface Props {
   allChats: ChatProps[];
@@ -37,6 +38,8 @@ export const Chats: React.FC<Props> = ({
   currentChatId,
   handleChatClick,
 }) => {
+  const { data: session } = useSession();
+
   const { openMessager } = useMessangerStore();
   const { onlineUsers, setOnlineUsers } = useOnlineStatus(openMessager);
 
@@ -57,6 +60,8 @@ export const Chats: React.FC<Props> = ({
     return map;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading]);
+
+  console.log(allChats);
 
   return (
     <div className="overflow-x-hidden h-full p-2 pb-1 rounded-t-[10px] backdrop-blur-3xl bg-[#dad9d9]/80 dark:bg-[#1f1f22]/60 flex flex-col">
@@ -109,7 +114,6 @@ export const Chats: React.FC<Props> = ({
                   damping: 20,
                   duration: 0.01,
                 }}
-              
                 style={{
                   zIndex: chat.chatId === currentChatId ? 10 : 1,
                   position: "relative",
@@ -172,29 +176,30 @@ export const Chats: React.FC<Props> = ({
                         </div>
 
                         <div className="flex items-center gap-1">
-                          {chat.lastMessage.isRead ? (
-                            <span
-                              title="read"
-                              className={cn(
-                                "text-[#7391d5]",
-                                currentChatId === chat.chatId &&
-                                  "text-[#f4f4f4]"
-                              )}
-                            >
-                              <TbChecks size={16} />
-                            </span>
-                          ) : (
-                            <span
-                              title="not read"
-                              className={cn(
-                                "text-[#7391d5]",
-                                currentChatId === chat.chatId &&
-                                  "text-[#f4f4f4]"
-                              )}
-                            >
-                              <TbCheck size={16} />
-                            </span>
-                          )}
+                          {chat.lastMessage.senderId === session?.user.id &&
+                            (chat.lastMessage.isRead ? (
+                              <span
+                                title="Read by recipient"
+                                className={cn(
+                                  "text-[#7391d5]",
+                                  currentChatId === chat.chatId &&
+                                    "text-[#f4f4f4]"
+                                )}
+                              >
+                                <TbChecks size={16} />
+                              </span>
+                            ) : (
+                              <span
+                                title="Not read yet"
+                                className={cn(
+                                  "text-[#7391d5]",
+                                  currentChatId === chat.chatId &&
+                                    "text-[#f4f4f4]"
+                                )}
+                              >
+                                <TbCheck size={16} />
+                              </span>
+                            ))}
 
                           <span
                             className={cn(
@@ -202,9 +207,9 @@ export const Chats: React.FC<Props> = ({
                               currentChatId === chat.chatId && "text-[#f4f4f4]"
                             )}
                           >
-                            {chat.lastMessage.createMessageAt &&
+                            {chat.lastMessage?.createdAt &&
                               formatChatDate(
-                                String(chat.lastMessage.createMessageAt)
+                                String(chat.lastMessage.createdAt)
                               )}
                           </span>
                         </div>

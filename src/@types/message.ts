@@ -22,6 +22,7 @@ export interface ImessageData {
 export interface ChatProps extends Chat {
   mutedBy: string[];
   lastMessage: {
+    createdAt: Date;
     id: string;
     isRead: boolean;
     createMessageAt: Date;

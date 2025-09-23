@@ -98,7 +98,7 @@ export const MessageBubble: React.FC<Props> = ({
     return true;
   });
 
- const commentContentHTML = processContent(message?.content || "", true);
+  const commentContentHTML = processContent(message?.content || "", true);
 
   return (
     <motion.div
@@ -205,15 +205,16 @@ export const MessageBubble: React.FC<Props> = ({
                 {message.createdAt &&
                   format(new Date(message.createdAt), "HH:mm")}
 
-                {message.isRead ? (
-                  <span title="read">
-                    <TbChecks size={16} />
-                  </span>
-                ) : (
-                  <span title="not read">
-                    <TbCheck size={16} />
-                  </span>
-                )}
+                {message.senderId === session?.user.id &&
+                  (message.isRead ? (
+                    <span title="Read by recipient">
+                      <TbChecks size={16} />
+                    </span>
+                  ) : (
+                    <span title="Not read yet">
+                      <TbCheck size={16} />
+                    </span>
+                  ))}
               </div>
             </div>
           </div>

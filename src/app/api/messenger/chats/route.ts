@@ -5,7 +5,6 @@ import { NextResponse } from "next/server";
 
 export async function GET(req: Request) {
   const userId = await getUserSession();
-
   if (!userId) {
     return NextResponse.json(
       { error: "User not authenticated" },
@@ -17,23 +16,18 @@ export async function GET(req: Request) {
   const cursor = url.searchParams.get("cursor");
 
   try {
+    // Проверка курсора
     const cursorExists = cursor
       ? await prisma.chat.findUnique({ where: { id: cursor } })
       : null;
-
     const effectiveCursor = cursorExists ? cursor : undefined;
 
+    // Получаем чаты с последним сообщением и количеством непрочитанных за один запрос
     const chatsFetch = await prisma.chat.findMany({
       where: {
         AND: [
-          {
-            OR: [{ user1Id: userId.id }, { user2Id: userId.id }],
-          },
-          {
-            messages: {
-              some: {},
-            },
-          },
+          { OR: [{ user1Id: userId.id }, { user2Id: userId.id }] },
+          { messages: { some: {} } },
         ],
       },
       select: {
@@ -63,7 +57,6 @@ export async function GET(req: Request) {
             content: true,
             image: true,
             createdAt: true,
-            updatedAt: true,
             isRead: true,
             senderId: true,
           },
@@ -71,6 +64,13 @@ export async function GET(req: Request) {
         lastActivityAt: true,
         updatedAt: true,
         createdAt: true,
+        _count: {
+          select: {
+            messages: {
+              where: { isRead: false, senderId: { not: userId.id } },
+            },
+          },
+        },
       },
       take: 20,
       cursor: effectiveCursor ? { id: effectiveCursor } : undefined,
@@ -85,72 +85,51 @@ export async function GET(req: Request) {
     const totalChats = await prisma.chat.count({
       where: {
         AND: [
-          {
-            OR: [{ user1Id: userId.id }, { user2Id: userId.id }],
-          },
-          {
-            messages: {
-              some: {},
-            },
-          },
+          { OR: [{ user1Id: userId.id }, { user2Id: userId.id }] },
+          { messages: { some: {} } },
         ],
       },
     });
 
-    const chats = await Promise.all(
-      chatsFetch.map(async (chat) => {
-        const isUser1 = chat.user1.id === userId.id;
-        const companion = isUser1 ? chat.user2 : chat.user1;
+    // Мапим результат
+    const chats = chatsFetch.map((chat) => {
+      const isUser1 = chat.user1.id === userId.id;
+      const companion = isUser1 ? chat.user2 : chat.user1;
+      const lastMessage = chat.messages[0] || null;
 
-        const lastMessage = chat.messages[0] || null;
-
-        const lastMessageContent = {
-          text: chat.messages[0]?.content || null,
-          image: chat.messages[0]?.image || null,
-          isRead: chat.messages[0]?.isRead || false,
-          senderId: chat.messages[0]?.senderId || null,
-          createMessageAt: chat.messages[0]?.createdAt || null,
-        };
-
-        const unreadCount = await prisma.message.count({
-          where: {
-            chatId: chat.id,
-            isRead: false,
-            senderId: { not: userId.id },
-          },
-        });
-
-        return {
-          chatId: chat.id,
-          mutedBy: chat.mutedBy.includes(userId.id),
-          companion: {
-            id: companion.id,
-            username: companion.username,
-            profileImage: companion.profileImage,
-            isverified: companion.isverified,
-          },
-          lastUpdated: chat.updatedAt,
-          createdAt: chat.createdAt,
-          lastActivityAt: chat.lastActivityAt,
-          unreadCount,
-          lastMessage: lastMessage
-            ? {
-                id: lastMessage.id,
-                content: lastMessageContent,
-                сreatedAt: lastMessage.createdAt,
-                isRead: lastMessage.isRead,
-                senderId: lastMessage.senderId,
+      return {
+        chatId: chat.id,
+        mutedBy: chat.mutedBy.includes(userId.id),
+        companion: {
+          id: companion.id,
+          username: companion.username,
+          profileImage: companion.profileImage,
+          isverified: companion.isverified,
+        },
+        lastUpdated: chat.updatedAt,
+        createdAt: chat.createdAt,
+        lastActivityAt: chat.lastActivityAt,
+        unreadCount: chat._count.messages,
+        lastMessage: lastMessage
+          ? {
+              id: lastMessage.id,
+              content: {
+                text: lastMessage.content || null,
+                image: lastMessage.image || null,
+                isRead: lastMessage.isRead || false,
+                senderId: lastMessage.senderId || null,
                 createMessageAt: lastMessage.createdAt,
-              }
-            : null,
-        };
-      })
-    );
+              },
+              createdAt: lastMessage.createdAt, // убедиться, что фронт использует это поле
+              isRead: lastMessage.isRead,
+              senderId: lastMessage.senderId,
+            }
+          : null,
+        lastMessageAt: lastMessage?.createdAt || null, // новое поле для фронта
+      };
+    });
 
-    return NextResponse.json(
-      { chats, totalChats: totalChats },
-      { status: 200 }
-    );
+    return NextResponse.json({ chats, totalChats }, { status: 200 });
   } catch (error) {
     console.warn(error);
     return NextResponse.json(
@@ -348,7 +327,7 @@ export async function PATCH(req: Request) {
     if (!lastMessage) {
       return NextResponse.json({ hasMessages: false });
     }
-    
+
     if (lastMessage.senderId !== userId.id && !lastMessage.isRead) {
       const chat = await prisma.chat.update({
         where: {
