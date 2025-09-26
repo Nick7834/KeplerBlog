@@ -534,7 +534,13 @@ export async function DELETE(req: Request) {
         messages: {
           orderBy: { createdAt: "desc" },
           take: 1,
-          select: { createdAt: true, content: true, image: true, isRead: true },
+          select: {
+            createdAt: true,
+            content: true,
+            image: true,
+            isRead: true,
+            senderId: true,
+          },
         },
       },
     });
@@ -566,6 +572,7 @@ export async function DELETE(req: Request) {
       text: chat.messages[0]?.content || null,
       image: chat.messages[0]?.image || null,
       isRead: chat.messages[0]?.isRead || false,
+      senderId: chat.messages[0]?.senderId || null,
     };
 
     for (const id of [message.senderId, recipientId]) {
@@ -576,7 +583,7 @@ export async function DELETE(req: Request) {
         content: lastMessageContent.text,
         isRead: lastMessageContent.isRead,
         image: lastMessageContent.image,
-        senderId: message.senderId,
+        senderId: lastMessageContent.senderId,
       });
     }
 
