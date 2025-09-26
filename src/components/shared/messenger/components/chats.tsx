@@ -61,8 +61,6 @@ export const Chats: React.FC<Props> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading]);
 
-  console.log(allChats);
-
   return (
     <div className="overflow-x-hidden h-full p-2 pb-1 rounded-t-[10px] backdrop-blur-3xl bg-[#dad9d9]/80 dark:bg-[#1f1f22]/60 flex flex-col">
       {isError && <p className="text-red-500">Something went wrong</p>}
@@ -207,9 +205,9 @@ export const Chats: React.FC<Props> = ({
                               currentChatId === chat.chatId && "text-[#f4f4f4]"
                             )}
                           >
-                            {chat.lastMessage?.createdAt &&
+                            {chat.lastMessage?.createMessageAt &&
                               formatChatDate(
-                                String(chat.lastMessage.createdAt)
+                                String(chat.lastMessage.createMessageAt)
                               )}
                           </span>
                         </div>

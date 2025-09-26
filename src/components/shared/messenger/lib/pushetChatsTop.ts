@@ -163,6 +163,7 @@ export const useChatsPusher = (userId: string) => {
                           ? chat.unreadCount
                           : chat.unreadCount - 1,
                       lastMessage: {
+                        ...chat.lastMessage,
                         createMessageAt: lastActivityAt && new Date(lastActivityAt) || '',
                         content: {
                           text: content,

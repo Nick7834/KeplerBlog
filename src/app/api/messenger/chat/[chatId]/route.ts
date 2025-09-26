@@ -534,7 +534,7 @@ export async function DELETE(req: Request) {
         messages: {
           orderBy: { createdAt: "desc" },
           take: 1,
-          select: { createdAt: true, content: true, image: true },
+          select: { createdAt: true, content: true, image: true, isRead: true },
         },
       },
     });
@@ -565,6 +565,7 @@ export async function DELETE(req: Request) {
     const lastMessageContent = {
       text: chat.messages[0]?.content || null,
       image: chat.messages[0]?.image || null,
+      isRead: chat.messages[0]?.isRead || false,
     };
 
     for (const id of [message.senderId, recipientId]) {
@@ -573,6 +574,7 @@ export async function DELETE(req: Request) {
         chatId,
         lastActivityAt: chatUpdate.lastActivityAt,
         content: lastMessageContent.text,
+        isRead: lastMessageContent.isRead,
         image: lastMessageContent.image,
         senderId: message.senderId,
       });
