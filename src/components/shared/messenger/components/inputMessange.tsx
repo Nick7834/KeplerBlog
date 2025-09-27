@@ -174,7 +174,7 @@ export const InputMessage: React.FC<Props> = ({
         </label>
       )}
 
-      <div className="relative order-[-1]">
+      <div className="relative z-[900] order-[-1]">
         <Button
           type="submit"
           onClick={() => setShowPicker(!showPicker)}
@@ -187,7 +187,7 @@ export const InputMessage: React.FC<Props> = ({
         </Button>
 
         {showPicker && (
-          <div className="mt-2 absolute bottom-[50px] right-[-50px]">
+          <div className="mt-2 absolute bottom-[50px] left-0">
             <EmojiPicker onEmojiClick={onEmojiClick} />
           </div>
         )}

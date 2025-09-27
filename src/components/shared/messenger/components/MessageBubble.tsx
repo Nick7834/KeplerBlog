@@ -116,7 +116,7 @@ const MessageBubbleComponent: React.FC<Props> = ({
           }  relative`}
         >
           <div
-            className={`w-fit max-w-xs sm:max-w-md rounded-xl text-sm shadow overflow-hidden
+            className={`w-fit max-w-xs sm:max-w-md rounded-xl text-sm shadow overflow-hidden select-none
             ${
               message.senderId === session?.user.id
                 ? "bg-[#7391d5] text-[#ebebeb] rounded-br-none"
