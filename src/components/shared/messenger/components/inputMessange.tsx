@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { FiPaperclip } from "react-icons/fi";
 import { FaCheck } from "react-icons/fa6";
 import { RiImageEditLine } from "react-icons/ri";
-import { useResize } from "@/components/hooks/useResize";
+// import { useResize } from "@/components/hooks/useResize";
 import toast from "react-hot-toast";
 import EmojiPicker from "emoji-picker-react";
 import { HiOutlineEmojiHappy } from "react-icons/hi";
@@ -55,15 +55,14 @@ export const InputMessage: React.FC<Props> = ({
   handleMessagePost,
   textareaRef,
 }) => {
-  const { width } = useResize();
+  // const { width } = useResize();
   const [showPicker, setShowPicker] = useState(false);
 
   const adjustHeight = () => {
     const textarea = textareaRef.current;
     if (!textarea) return;
-    textarea.style.height = width > 768 ? "20px" : "24px";
-    const newHeight = textarea.scrollHeight;
-    textarea.style.height = `${newHeight}px`;
+    textarea.style.height = "20px";
+    textarea.style.height = `${Math.max(textarea.scrollHeight - 2, 20)}px`;
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -100,7 +99,7 @@ export const InputMessage: React.FC<Props> = ({
 
       const ss = textareaRef.current;
       if (ss) {
-        ss.style.height = width > 768 ? "20px" : "24px";
+        ss.style.height = "20px";
       }
     }
   };
@@ -118,7 +117,7 @@ export const InputMessage: React.FC<Props> = ({
 
     const ss = textareaRef.current;
     if (ss) {
-      ss.style.height = width > 768 ? "20px" : "24px";
+      ss.style.height = "20px";
     }
   };
 
@@ -129,17 +128,22 @@ export const InputMessage: React.FC<Props> = ({
   return (
     <form
       className={cn(
-        "absolute left-0 bottom-0 w-full z-20 flex items-center justify-center gap-4 p-2 backdrop-blur-3xl bg-[#e5e5e5]/85 dark:bg-[#141414]/85 mt-2",
+        "absolute left-0 bottom-0 w-full z-20 flex items-center justify-center gap-2 max-[750px]:gap-1 px-3 backdrop-blur-3xl bg-[#e5e5e5]/85 dark:bg-[#141414]/85 mt-2",
         className
       )}
       onSubmit={(e) => e.preventDefault()}
       ref={formRef}
     >
-      <label className="w-full p-[14px] border border-solid border-[#ffffff]/70 dark:border-neutral-300/75 rounded-[10px]">
+      <label className="block w-full rounded-[10px] px-2 py-5 cursor-text">
         <Textarea
           ref={textareaRef}
           placeholder="Write a message..."
-          className="scrollbar rounded-0 p-0 h-[20px] max-[750px]:min-h-[24px] border-0 resize-none max-h-[300px] text-[16px] border-solid border-[#b0b0b0]/70 dark:border-neutral-300/75 bg-transparent dark:bg-transparent"
+          className={cn(
+            "px-0 py-0 placeholder:relative placeholder:top-[2px] leading-[20px] overflow-hidden rounded-0 p-0 h-[20px] max-[750px]:min-h-[24px] border-0 resize-none max-h-[300px] text-[16px] border-solid bg-transparent dark:bg-transparent",
+            textareaRef.current &&
+              textareaRef.current?.scrollHeight >= 300 &&
+              "scrollbar overflow-auto"
+          )}
           value={messageValue}
           onChange={(e) => setMessageValue(e.target.value)}
           onInput={adjustHeight}
@@ -147,28 +151,30 @@ export const InputMessage: React.FC<Props> = ({
         />
       </label>
 
-      <label className="cursor-pointer min-w-[20px] w-[20px] h-[50px] flex items-center justify-center">
-        <input
-          type="file"
-          hidden
-          accept="image/*"
-          multiple
-          onChange={handleFileChange}
-        />
-        {edit ? (
-          <RiImageEditLine
-            size={20}
-            className="text-[#333333] dark:text-[#d9d9d9]"
+      {!messageValue && (
+        <label className="cursor-pointer min-w-[20px] w-[20px] h-[50px] flex items-center justify-center">
+          <input
+            type="file"
+            hidden
+            accept="image/*"
+            multiple
+            onChange={handleFileChange}
           />
-        ) : (
-          <FiPaperclip
-            size={20}
-            className="text-[#333333] dark:text-[#d9d9d9]"
-          />
-        )}
-      </label>
+          {edit ? (
+            <RiImageEditLine
+              size={20}
+              className="text-[#333333] dark:text-[#d9d9d9]"
+            />
+          ) : (
+            <FiPaperclip
+              size={20}
+              className="text-[#333333] dark:text-[#d9d9d9]"
+            />
+          )}
+        </label>
+      )}
 
-      <div className="relative">
+      <div className="relative order-[-1]">
         <Button
           type="submit"
           onClick={() => setShowPicker(!showPicker)}
@@ -192,10 +198,11 @@ export const InputMessage: React.FC<Props> = ({
         loading={loaderButtonSend}
         disabled={messageValue.trim() === "" && !prewiewFile && !editImage}
         onClick={() => handlePost()}
-        className="min-w-[50px] max-w-[50px] w-[50px] h-[50px] ml-auto flex items-center 
+        className="min-w-[40px] max-[750px]:min-w-[25px] max-w-[40px] max-[750px]:max-w-[25px] w-[40px] max-[750px]:w-[25px] h-[40px] ml-auto flex items-center 
         justify-center rounded-full bg-[#7391d5]
-         dark:bg-[#7391d5] hover:bg-[#7391d5]/85 dark:hover:bg-[#7391d5]/85
-         [&_svg]:size-[20px]"
+         dark:bg-[#7391d5] max-[750px]:bg-transparent max-[750px]:dark:bg-transparent
+          hover:bg-[#7391d5]/85 dark:hover:bg-[#7391d5]/85 max-[750px]:hover:bg-transparent max-[750px]:dark:hover:bg-transparent
+         [&_svg]:size-[20px] max-[750px]:[&_svg]:size-[25px] max-[750px]:text-[#7391d5] max-[750px]:dark:text-[#7391d5]"
       >
         {edit ? <FaCheck /> : <BiSolidSend />}
       </Button>

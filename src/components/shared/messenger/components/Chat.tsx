@@ -291,7 +291,7 @@ export const Chat: React.FC<Props> = ({
       />
 
       <div
-        className="flex-1 bg-cover bg-center bg-no-repeat overflow-hidden pt-[67px] pb-[68px] max-[650px]:pb-1 max-[650px]:pt-1"
+        className="flex-1 bg-cover bg-center bg-no-repeat overflow-hidden pt-[67px] pb-[61px] max-[650px]:pb-1 max-[650px]:pt-1"
         style={{
           backgroundImage: `${backgroundChat ? `url(${backgroundChat})` : ""}`,
         }}

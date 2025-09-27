@@ -4,6 +4,7 @@ import {
   DialogContent,
   DialogClose,
   DialogTitle,
+  DialogOverlay,
 } from "@/components/ui/dialog";
 import React, { useEffect } from "react";
 import { Chat } from "./Chat";
@@ -33,6 +34,7 @@ import { SettingsMessenger } from "./settingsMessenger";
 import { Chats } from "./chats";
 import { useChatsQuery } from "../api/chats";
 import { handleChatClick } from "../api/chat/handleChatClick";
+import { ModalImg } from "./modalImg";
 
 interface Props {
   openMessager: boolean;
@@ -111,6 +113,7 @@ export const ModalMessenger: React.FC<Props> = ({
       open={openMessager}
       onOpenChange={handleClose}
     >
+      <DialogOverlay className="fixed inset-0 bg-black/15 z-[1000] transition-none" />
       <DialogContent
         ref={modalRef}
         showCloseButton={false}
@@ -123,8 +126,8 @@ export const ModalMessenger: React.FC<Props> = ({
             e.preventDefault();
           }
         }}
-        className="w-[calc(100%-30px)] max-w-[95%] sm:max-w-[1400px] max-[750px]:w-full max-[750px]:max-w-full p-0 mx-auto
-            bg-[#e5e5e5]/80 dark:bg-[#19191b]/60 backdrop-blur-3xl rounded-md max-h-[100vh] h-[95vh] max-[750px]:h-[100vh] max-[750px]:max-h-full max-[750px]:rounded-none overflow-hidden"
+        className="z-[1001] w-[calc(100%-30px)] max-w-[95%] sm:max-w-[1400px] max-[750px]:w-full max-[750px]:max-w-full p-0 mx-auto
+            bg-[#e5e5e5]/80 dark:bg-[#19191b]/60 backdrop-blur-3xl rounded-md max-h-[100vh] h-[95vh] max-[750px]:h-[100vh] max-[750px]:max-h-full max-[750px]:rounded-none overflow-hidden border-0"
       >
         <DialogClose className="cursor-pointer absolute z-[50] right-1 top-1 max-[750px]:right-1 max-[750px]:top-1 rounded-sm opacity-70 transition-opacity hover:opacity-100 disabled:pointer-events-none select-none">
           <X className="h-4 w-4" />
@@ -258,6 +261,8 @@ export const ModalMessenger: React.FC<Props> = ({
             )}
           </AnimatePresence>
         </div>
+
+        <ModalImg />
       </DialogContent>
     </Dialog>
   );

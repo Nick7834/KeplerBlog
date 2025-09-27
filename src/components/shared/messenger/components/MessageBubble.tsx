@@ -17,6 +17,8 @@ import {
 } from "@/components/ui/context-menu";
 import { processContent } from "@/lib/processContent";
 import { TbCheck, TbChecks } from "react-icons/tb";
+import { memo, useCallback } from "react";
+import { useModalImg } from "@/store/messanger";
 
 interface Props {
   message: MessageProps;
@@ -26,7 +28,7 @@ interface Props {
   onDelete: (chatId: string, messageId: string) => void;
 }
 
-export const MessageBubble: React.FC<Props> = ({
+const MessageBubbleComponent: React.FC<Props> = ({
   message,
   isNew,
   onReply,
@@ -34,31 +36,29 @@ export const MessageBubble: React.FC<Props> = ({
   onDelete,
 }) => {
   const { data: session } = useSession();
+  const { setImgModal } = useModalImg();
 
-  const handleCopy = () => {
+  const handleCopy = useCallback(() => {
     if (!message.content) return;
-    navigator.clipboard.writeText(message.content || "");
+    navigator.clipboard.writeText(message.content);
     toast.success("Message copied to clipboard");
-  };
+  }, [message.content]);
 
-  const handleEdit = async () => {
+  const handleEdit = useCallback(() => {
     onEdit(message.id);
-  };
+  }, [message.id, onEdit]);
 
-  const handleReply = () => {
+  const handleReply = useCallback(() => {
     onReply(message.id);
-  };
+  }, [message.id, onReply]);
 
-  const handleDelete = async (chatId: string, messageId: string) => {
-    const comfitmessage = window.confirm(
+  const handleDelete = useCallback(() => {
+    const confirmMessage = window.confirm(
       "Are you sure you want to delete this message?"
     );
-
-    if (!comfitmessage) {
-      return;
-    }
-    onDelete(chatId, messageId);
-  };
+    if (!confirmMessage) return;
+    onDelete(message.chatId, message.id);
+  }, [message.chatId, message.id, onDelete]);
 
   const menuButton = [
     {
@@ -78,7 +78,7 @@ export const MessageBubble: React.FC<Props> = ({
       label: "Delete",
       value: "delete",
       icon: <MdDelete />,
-      fun: () => handleDelete(message.chatId, message.id),
+      fun: () => handleDelete(),
     },
   ];
 
@@ -137,6 +137,7 @@ export const MessageBubble: React.FC<Props> = ({
                     loading="lazy"
                     placeholder="blur"
                     blurDataURL={message?.replyTo?.image}
+                    priority={false}
                   />
                 )}
 
@@ -157,21 +158,25 @@ export const MessageBubble: React.FC<Props> = ({
               </div>
             )}
             {message?.image && (
-              <div className="relative rounded-[7px] overflow-hidden">
+              <div
+                className="relative rounded-[7px] overflow-hidden"
+                onClick={() => setImgModal(message?.image || "")}
+              >
                 <div
                   style={{ backgroundImage: `url(${message?.image})` }}
                   className="absolute top-0 left-0 bg-cover bg-center blur-md z-[1] w-full h-full"
                 ></div>
-                <div className="relative z-[2] flex items-center justify-center h-full">
-                  <img
+                <div className="relative z-[2] flex items-center justify-center h-full cursor-pointer">
+                  <Image
                     src={message?.image}
                     alt="basic"
                     width={500}
                     height={400}
-                    className={`block h-fit object-contain rounded-t-xl w-full max-h-[400px] ${
+                    className={`block object-contain rounded-t-xl w-full max-h-[400px] ${
                       message?.replyTo ? "mt-2" : ""
                     }`}
                     loading="lazy"
+                    priority={false}
                   />
                 </div>
               </div>
@@ -187,7 +192,9 @@ export const MessageBubble: React.FC<Props> = ({
                   )}
                 >
                   <p
-                    className="whitespace-pre-wrap break-words px-1 max-[750px]:text-[14px] max-[750px]:select-none"
+                    className={cn(
+                      "whitespace-pre-wrap break-words px-1 max-[750px]:text-[14px] max-[750px]:select-none"
+                    )}
                     dangerouslySetInnerHTML={{ __html: commentContentHTML }}
                   ></p>
                 </div>
@@ -241,3 +248,5 @@ export const MessageBubble: React.FC<Props> = ({
     </motion.div>
   );
 };
+
+export const MessageBubble = memo(MessageBubbleComponent);

@@ -20,6 +20,12 @@ interface SettingsStore {
   setSettings: (settings: boolean) => void;
 }
 
+interface modalPhoto {
+  imgModal: string | null;
+  onClose: () => void;
+  setImgModal: (imgModal: string) => void;
+}
+
 export const useMessangerStore = create<MessangerStore>((set) => ({
   openMessager: false,
   setOpenMessager: (openMessager: boolean) => set({ openMessager }),
@@ -38,4 +44,10 @@ export const useMessangerMenu = create<MenuStore>((set) => ({
 export const useMessangerSettings = create<SettingsStore>((set) => ({
   settings: false,
   setSettings: (settings: boolean) => set({ settings }),
+}));
+
+export const useModalImg = create<modalPhoto>((set) => ({
+  imgModal: "",
+  onClose: () => set({ imgModal: "" }),
+  setImgModal: (imgModal: string) => set({ imgModal }),
 }));

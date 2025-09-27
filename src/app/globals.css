@@ -251,7 +251,7 @@ p {
 }
 
 .link-text {
-  @apply inline-block w-fit text-[#2b2b2b] dark:text-[#ebebeb] text-sm font-normal leading-6 break-all underline;
+  @apply inline-block w-fit text-sm font-normal leading-6 break-all underline;
 }
 
 /* Responsive */

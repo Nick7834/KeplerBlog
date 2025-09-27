@@ -78,16 +78,50 @@ export const ChatScroll: React.FC<Props> = ({
     return () => clearTimeout(timeout);
   }, [currentChatId]);
 
+  const renderItem = React.useCallback(
+    (_: number, item: MessageProps, index: number) => {
+      const isFirst = index === 0;
+
+      if (item.type === "date" && item.date) {
+        return (
+          <div className={cn("text-center py-4", isFirst && "pt-[67px]")}>
+            <span className="text-[#333333] dark:text-[#d9d9d9] text-sm bg-[#d9d9d9]/70 dark:bg-gray-600/70 backdrop-blur-[12px] p-1 rounded-xl">
+              {format(new Date(item.date), "d MMMM yyyy")}
+            </span>
+          </div>
+        );
+      }
+
+      return (
+        <div
+          className={cn("px-5 max-[750px]:px-2 pt-1 min-h-[44px]")}
+          data-virtuoso-item-content
+        >
+          <MessageBubble
+            message={item.message}
+            isNew={isNew}
+            onReply={handleReply}
+            onEdit={handleEditPanel}
+            onDelete={handleDelete}
+          />
+        </div>
+      );
+    },
+    [isNew, handleReply, handleEditPanel, handleDelete]
+  );
+
   return (
     <Virtuoso
       key={currentChatId}
       ref={virtuosoRef}
       style={{ height: "100%", width: "100%" }}
-      data={chatItems}
+      data={chatItems as MessageProps[]}
       firstItemIndex={firstItemIndex}
-      increaseViewportBy={50}
-      overscan={50}
+      increaseViewportBy={{ top: 300, bottom: 300 }}
+      overscan={200}
+      defaultItemHeight={36}
       initialTopMostItemIndex={initialIndexRef.current ?? undefined}
+      skipAnimationFrameInResizeObserver={true}
       alignToBottom={true}
       followOutput={isAtBottom}
       atBottomStateChange={setIsAtBottom}
@@ -97,30 +131,7 @@ export const ChatScroll: React.FC<Props> = ({
           setFirstItemIndex((prev: number) => Math.max(prev - 50, 0));
         }
       }}
-      itemContent={(_, item, index) => {
-        const isFirst = index === 0;
-        if (item.type === "date") {
-          return (
-            <div className={cn("text-center py-4", isFirst && "pt-[67px]")}>
-              <span className="text-[#333333] dark:text-[#d9d9d9] text-sm bg-[#d9d9d9]/70 dark:bg-gray-600/70 backdrop-blur-[12px] p-1 rounded-xl">
-                {format(new Date(item.date), "d MMMM yyyy")}
-              </span>
-            </div>
-          );
-        }
-
-        return (
-          <div className={cn("px-10 max-[750px]:px-5 pt-1 min-h-[44px]")}>
-            <MessageBubble
-              message={item.message}
-              isNew={isNew}
-              onReply={handleReply}
-              onEdit={handleEditPanel}
-              onDelete={handleDelete}
-            />
-          </div>
-        );
-      }}
+      itemContent={renderItem}
       components={{
         Header: () => (
           <div className="flex flex-col">
