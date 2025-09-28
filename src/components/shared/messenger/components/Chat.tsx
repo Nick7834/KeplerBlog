@@ -63,6 +63,7 @@ export const Chat: React.FC<Props> = ({
   const [firstItemIndex, setFirstItemIndex] = useState(() =>
     Math.max(totalMessages - 50, 0)
   );
+
   const [isFirstLoad, setIsFirstLoad] = useState(true);
 
   useEffect(() => {

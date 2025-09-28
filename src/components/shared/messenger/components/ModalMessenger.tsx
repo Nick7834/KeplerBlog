@@ -35,6 +35,7 @@ import { Chats } from "./chats";
 import { useChatsQuery } from "../api/chats";
 import { handleChatClick } from "../api/chat/handleChatClick";
 import { ModalImg } from "./modalImg";
+import { TbMessageCircleFilled } from "react-icons/tb";
 
 interface Props {
   openMessager: boolean;
@@ -141,13 +142,17 @@ export const ModalMessenger: React.FC<Props> = ({
                   onClick={() => (
                     setCurrentChatId(""), setMenu(false), setSettings(false)
                   )}
-                  className="border-0 bg-0 dasrk:bg-0 hover:bg-0 hover:dark:bg-0 text-[#121212] dark:text-[#d9d9d9] p-0 text-base font-medium hover:outline-none"
+                  className="border-0 bg-0 dasrk:bg-0 hover:bg-0 hover:dark:bg-0 text-[#121212] dark:text-[#d9d9d9]
+                   p-0 text-base font-medium hover:outline-none [&_svg]:size-[17px]"
                 >
-                  KeplerBlog Messenger
+                  <h5 className="flex items-center gap-1">
+                    <TbMessageCircleFilled className="relative -top-0.1" />
+                    KeplerMessenger
+                  </h5>
+                  <span className="flex flex-col items-center justify-center bg-[#19191b] dark:bg-[#e5e5e5] min-w-5 h-5 w-fit rounded-full dark:text-[#474747] text-[#d9d9d9] text-sm">
+                    {formattedCount}
+                  </span>
                 </Button>
-                <span className="flex flex-col items-center justify-center bg-[#19191b] dark:bg-[#e5e5e5] min-w-5 h-5 w-fit rounded-full dark:text-[#474747] text-[#d9d9d9] text-sm">
-                  {formattedCount}
-                </span>
               </div>
               <div className="h-full flex items-center gap-3">
                 <Button

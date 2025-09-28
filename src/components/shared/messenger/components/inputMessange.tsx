@@ -62,7 +62,7 @@ export const InputMessage: React.FC<Props> = ({
     const textarea = textareaRef.current;
     if (!textarea) return;
     textarea.style.height = "20px";
-    textarea.style.height = `${Math.max(textarea.scrollHeight - 2, 20)}px`;
+    textarea.style.height = `${Math.max(textarea.scrollHeight - 1, 20)}px`;
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -139,7 +139,7 @@ export const InputMessage: React.FC<Props> = ({
           ref={textareaRef}
           placeholder="Write a message..."
           className={cn(
-            "px-0 py-0 placeholder:relative placeholder:top-[2px] leading-[20px] overflow-hidden rounded-0 p-0 h-[20px] max-[750px]:min-h-[24px] border-0 resize-none max-h-[300px] text-[16px] border-solid bg-transparent dark:bg-transparent",
+            "px-0 py-0 placeholder:relative placeholder:top-[1px] leading-[20px] overflow-hidden rounded-0 p-0 h-[20px] max-[750px]:min-h-[24px] border-0 resize-none max-h-[300px] text-[16px] border-solid bg-transparent dark:bg-transparent",
             textareaRef.current &&
               textareaRef.current?.scrollHeight >= 300 &&
               "scrollbar overflow-auto"

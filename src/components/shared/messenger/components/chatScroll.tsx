@@ -53,8 +53,6 @@ export const ChatScroll: React.FC<Props> = ({
     initialIndexRef.current = null;
   }, [currentChatId]);
 
-  // const prevChatIdRef = useRef<string | null>(null);
-  // const prevMessagesLengthRef = useRef<number>(messagersData.length);
   const [isAtBottom, setIsAtBottom] = useState(true);
 
   useEffect(() => {
@@ -84,7 +82,7 @@ export const ChatScroll: React.FC<Props> = ({
 
       if (item.type === "date" && item.date) {
         return (
-          <div className={cn("text-center py-4", isFirst && "pt-[67px]")}>
+          <div className={cn("sticky top-0 text-center py-4", isFirst && "pt-[67px]")}>
             <span className="text-[#333333] dark:text-[#d9d9d9] text-sm bg-[#d9d9d9]/70 dark:bg-gray-600/70 backdrop-blur-[12px] p-1 rounded-xl">
               {format(new Date(item.date), "d MMMM yyyy")}
             </span>
@@ -94,12 +92,13 @@ export const ChatScroll: React.FC<Props> = ({
 
       return (
         <div
+          key={item.id || index}
           className={cn("px-5 max-[750px]:px-2 pt-1 min-h-[44px]")}
           data-virtuoso-item-content
         >
           <MessageBubble
             message={item.message}
-            isNew={isNew}
+            isNew={item.message.optimistic}
             onReply={handleReply}
             onEdit={handleEditPanel}
             onDelete={handleDelete}

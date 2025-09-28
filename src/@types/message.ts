@@ -1,6 +1,7 @@
 import { ChatRequest, Message } from "@prisma/client";
 
 export interface MessageProps extends Message {
+  optimistic: boolean | undefined;
   message: MessageProps;
   type?: string;
   date?: string | undefined;
