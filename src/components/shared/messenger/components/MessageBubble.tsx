@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/context-menu";
 import { processContent } from "@/lib/processContent";
 import { TbCheck, TbChecks } from "react-icons/tb";
-import { memo, useCallback } from "react";
+import { memo, useCallback, useState } from "react";
 import { useModalImg } from "@/store/messanger";
 
 interface Props {
@@ -37,6 +37,7 @@ const MessageBubbleComponent: React.FC<Props> = ({
 }) => {
   const { data: session } = useSession();
   const { setImgModal } = useModalImg();
+  const [imageLoaded, setImageLoaded] = useState(false);
 
   const handleCopy = useCallback(() => {
     if (!message.content) return;
@@ -163,24 +164,31 @@ const MessageBubbleComponent: React.FC<Props> = ({
                 onClick={() => setImgModal(message?.image || "")}
               >
                 <div
-                  style={{ backgroundImage: `url(${message?.image})` }}
-                  className="absolute top-0 left-0 bg-cover bg-center blur-md z-[1] w-full h-full"
+                  style={{
+                    backgroundImage: `url(${message?.image})`,
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                  }}
+                  className={`absolute top-0 left-0 w-full h-full blur-md z-[1] ${
+                    imageLoaded ? "hidden" : ""
+                  }`}
                 ></div>
+
                 <div className="relative z-[2] flex items-center justify-center h-full cursor-pointer">
                   <Image
                     src={message?.image}
                     alt="basic"
                     width={500}
                     height={400}
-                    className={`block object-contain rounded-t-xl w-full max-h-[400px] ${
-                      message?.replyTo ? "mt-2" : ""
-                    }`}
+                    className="block object-contain rounded-t-xl w-full max-h-[400px]"
+                    onLoadingComplete={() => setImageLoaded(true)}
                     loading="lazy"
                     priority={false}
                   />
                 </div>
               </div>
             )}
+
             <div className={cn("p-2 relative", !message?.content && "p-0")}>
               {message?.content && (
                 <div
