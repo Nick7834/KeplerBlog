@@ -1,5 +1,5 @@
-export const lightenColor = (hex: string, amount: number) => {
-  hex = hex.replace("#", "");
+export const lightenColor = (hex: string | undefined, amount: number) => {
+  hex = (hex || "#7391d5").replace("#", "");
 
   const num = parseInt(hex, 16);
   let r = (num >> 16) + amount;
