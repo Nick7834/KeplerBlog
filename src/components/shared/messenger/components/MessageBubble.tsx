@@ -19,6 +19,8 @@ import { processContent } from "@/lib/processContent";
 import { TbCheck, TbChecks } from "react-icons/tb";
 import { memo, useCallback, useState } from "react";
 import { useModalImg } from "@/store/messanger";
+import { useSettingsMessage } from "@/store/settingsMessage";
+import { lightenColor } from "@/lib/lightenColor";
 
 interface Props {
   message: MessageProps;
@@ -38,6 +40,9 @@ const MessageBubbleComponent: React.FC<Props> = ({
   const { data: session } = useSession();
   const { setImgModal } = useModalImg();
   const [imageLoaded, setImageLoaded] = useState(false);
+
+  const { backgroundColorMessage, textColor, fontSize, radiusSize } =
+    useSettingsMessage();
 
   const handleCopy = useCallback(() => {
     if (!message.content) return;
@@ -124,10 +129,32 @@ const MessageBubbleComponent: React.FC<Props> = ({
                 : "bg-[#ebebeb] dark:bg-[#2b2b2b] text-[#2b2b2b] dark:text-[#ebebeb] rounded-bl-none"
             }
           `}
+            style={{
+              ...(message.senderId === session?.user.id
+                ? {
+                    backgroundColor: backgroundColorMessage,
+                    color: textColor,
+                  }
+                : {}),
+              borderTopLeftRadius: `${radiusSize}px`,
+              borderTopRightRadius: `${radiusSize}px`,
+              borderBottomLeftRadius:
+                message.senderId === session?.user.id ? `${radiusSize}px` : "0",
+              borderBottomRightRadius:
+                message.senderId === session?.user.id ? "0" : `${radiusSize}px`,
+            }}
           >
             {message?.replyTo && (
-              <div className="relative flex items-center gap-1 px-4 py-1 m-2 mb-0 rounded-[10px] bg-[#9fb8f4]">
-                <span className="absolute w-[3px] h-[calc(100%-10px)] left-[8px] bg-[#7391d5] rounded-[5px]"></span>
+              <div
+                className="relative flex items-center gap-1 px-4 py-1 m-2 mb-0 rounded-[10px] bg-[#9fb8f4]"
+                style={{
+                  backgroundColor: lightenColor(backgroundColorMessage, 30),
+                }}
+              >
+                <span
+                  className="absolute w-[3px] h-[calc(100%-10px)] left-[8px] bg-[#7391d5] rounded-[5px]"
+                  style={{ backgroundColor: backgroundColorMessage }}
+                ></span>
                 {message?.replyTo?.image && (
                   <Image
                     src={message?.replyTo?.image}
@@ -203,6 +230,7 @@ const MessageBubbleComponent: React.FC<Props> = ({
                     className={cn(
                       "whitespace-pre-wrap break-words px-1 max-[750px]:text-[14px] max-[750px]:select-none"
                     )}
+                    style={{ fontSize: `${fontSize}px` }}
                     dangerouslySetInnerHTML={{ __html: commentContentHTML }}
                   ></p>
                 </div>

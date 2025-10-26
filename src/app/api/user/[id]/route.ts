@@ -1,14 +1,19 @@
-import { getUserSession } from '@/lib/get-user-session';
-import { prisma } from '@/prisma/prisma-client';
-import { NextResponse } from 'next/server';
+import { getUserSession } from "@/lib/get-user-session";
+import { prisma } from "@/prisma/prisma-client";
+import { NextResponse } from "next/server";
 
-
-export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function GET(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
   const userIds = await getUserSession();
   const { id: id } = await params;
 
   if (!id) {
-    return NextResponse.json({ message: 'User ID is required' }, { status: 400 });
+    return NextResponse.json(
+      { message: "User ID is required" },
+      { status: 400 }
+    );
   }
 
   try {
@@ -25,6 +30,13 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
         verified: true,
         backgroundChat: true,
         customBackgroundChat: true,
+        settings: {
+          select: {
+            backgroundColor: true,
+            textColor: true,
+            fontSize: true,
+          },
+        },
         followers: {
           select: {
             id: true,
@@ -35,8 +47,8 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
         _count: {
           select: {
             following: true,
-            posts: true
-          }
+            posts: true,
+          },
         },
         posts: {
           select: {
@@ -52,7 +64,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
     });
 
     if (!user) {
-      return NextResponse.json({ message: 'User not found' }, { status: 404 });
+      return NextResponse.json({ message: "User not found" }, { status: 404 });
     }
 
     let isFollowing = false;
@@ -69,6 +81,6 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
     return NextResponse.json({ ...user, isFollowing });
   } catch (error) {
     console.error(error);
-    return NextResponse.json({ message: 'Server error' }, { status: 500 });
+    return NextResponse.json({ message: "Server error" }, { status: 500 });
   }
 }

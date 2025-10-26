@@ -15,7 +15,10 @@ import { useResize } from "../hooks/useResize";
 import { useHiddenScroll } from "../hooks/useHiddenScroll";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { BiSolidNotificationOff } from "react-icons/bi";
-import { NotificationDataType, useNotifications } from "../hooks/useNotifications";
+import {
+  NotificationDataType,
+  useNotifications,
+} from "../hooks/useNotifications";
 
 interface Props {
   session: Session | null;
@@ -138,10 +141,10 @@ export const NotificationComponent: React.FC<Props> = ({ session }) => {
                         )}
 
                         <div className="flex items-center gap-3">
-                          {notification.sender && notification.sender.profileImage ? (
+                          {notification.sender &&
+                          notification.sender.profileImage ? (
                             <img
-                              src={
-                                notification.sender.profileImage}
+                              src={notification.sender.profileImage}
                               alt="avatar"
                               className="min-w-[50px] max-w-[50px] w-full min-h-[50px] max-h-[50px] h-full object-cover rounded-full"
                             />
@@ -151,9 +154,16 @@ export const NotificationComponent: React.FC<Props> = ({ session }) => {
                             </span>
                           )}
                           <p className="text-[#333333] dark:text-[#d9d9d9] text-sm font-medium">
-                            {width < 720 && notification.message.length > 75
-                              ? notification.message.substring(0, 75).trim() +
-                                "..."
+                            {width >= 720
+                              ? notification.message.length > 150
+                                ? `${notification.message
+                                    .substring(0, 150)
+                                    .trim()}...`
+                                : notification.message
+                              : notification.message.length > 75
+                              ? `${notification.message
+                                  .substring(0, 110)
+                                  .trim()}...`
                               : notification.message}
                           </p>
                         </div>

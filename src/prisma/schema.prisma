@@ -39,13 +39,15 @@ model User {
   chats1 Chat[] @relation("User1Chats")
   chats2 Chat[] @relation("User2Chats")
 
-  chatTo      ChatRequest[] @relation("ChatRequestTo")
-  chatFrom    ChatRequest[] @relation("ChatRequestFrom")
+  chatTo   ChatRequest[] @relation("ChatRequestTo")
+  chatFrom ChatRequest[] @relation("ChatRequestFrom")
 
   messagePrivate MessagesPrivacy @default(All)
-  
-  backgroundChat String?
+
+  backgroundChat       String?
   customBackgroundChat String?
+
+  settings SettingsMessenger? @relation("UserSettings")
 
   isOnline     Boolean? @default(false)
   typingInChat String?  @db.ObjectId
@@ -111,7 +113,7 @@ model Notification {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String   @db.ObjectId
-  sender    User?     @relation("NotificationSender", fields: [senderId], references: [id], onDelete: Cascade)
+  sender    User?    @relation("NotificationSender", fields: [senderId], references: [id], onDelete: Cascade)
   senderId  String?  @db.ObjectId
   type      String
   message   String
@@ -152,13 +154,13 @@ model Chat {
   user2Id String @db.ObjectId
 
   messages Message[]
-  unreadBy String? @db.ObjectId 
+  unreadBy String?   @db.ObjectId
 
-  mutedBy String[] @db.ObjectId @default([])
+  mutedBy String[] @default([]) @db.ObjectId
 
   lastActivityAt DateTime? @default(now())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 
   @@unique([user1Id, user2Id])
 }
@@ -169,8 +171,8 @@ model ChatRequest {
   from   User   @relation("ChatRequestFrom", fields: [fromId], references: [id], onDelete: Cascade)
   fromId String @db.ObjectId
 
-  to     User   @relation("ChatRequestTo", fields: [toId], references: [id], onDelete: Cascade)
-  toId   String @db.ObjectId
+  to   User   @relation("ChatRequestTo", fields: [toId], references: [id], onDelete: Cascade)
+  toId String @db.ObjectId
 
   status ChatRequestStatus @default(PENDING)
 
@@ -195,6 +197,20 @@ model Message {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model SettingsMessenger {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  user   User   @relation(name: "UserSettings", fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  userId String @unique @db.ObjectId
+
+  backgroundColor String @default("#7391d5")
+  textColor       String @default("#ebebeb")
+  fontSize        String @default("14")
+  radiusSize      String @default("12")
+
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
 }
 
 enum Role {

@@ -8,6 +8,7 @@ import { User } from "@prisma/client";
 import { Search } from "./search";
 import Link from "next/link";
 import { useUserAvatar } from "@/store/user";
+import { useSettingsMessage } from "@/store/settingsMessage";
 
 interface Props {
   className?: string;
@@ -18,6 +19,12 @@ export const Header: React.FC<Props> = ({ className }) => {
   const [user, setUser] = useState<User | null>(null);
   const [searchMobOpen, setSearchMobOpen] = useState(false);
   const { setAvatarUser, setUserName, setBackgroundChat } = useUserAvatar();
+  const {
+    setBackgroundColorMessage,
+    setTextColor,
+    setFontSize,
+    setRadiusSize,
+  } = useSettingsMessage();
 
   useEffect(() => {
     if (session?.user?.id) {
@@ -28,6 +35,11 @@ export const Header: React.FC<Props> = ({ className }) => {
           setAvatarUser(data.profileImage);
           setUserName(data.username);
           setBackgroundChat(data.backgroundChat);
+          setRadiusSize(data.settings?.radiusSize);
+
+          setBackgroundColorMessage(data.settings?.backgroundColor);
+          setTextColor(data.settings?.textColor);
+          setFontSize(data.settings?.fontSize);
         } catch (error) {
           console.error("Request failed:", error);
         }
