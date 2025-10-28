@@ -60,7 +60,7 @@ export const ModalVerification: React.FC<Props> = ({
     {
       label: "Followers",
       current: user?._count.following,
-      required: 12,
+      required: 20,
       icon: <IoPeopleSharp size={20} />,
     },
     {
@@ -70,7 +70,7 @@ export const ModalVerification: React.FC<Props> = ({
           total + post._count.likes,
         0
       ),
-      required: 250,
+      required: 400,
       icon: <BiSolidLike size={20} />,
     },
     {
@@ -92,7 +92,7 @@ export const ModalVerification: React.FC<Props> = ({
       icon: <MdVerified size={20} />,
     },
     {
-      label: "Active Account (Last 30 Days)",
+      label: "Active Account (Last 7 Days)",
       current: user?.isActive,
       required: false,
       icon: <BiSolidUserAccount size={20} />,
@@ -173,7 +173,7 @@ export const ModalVerification: React.FC<Props> = ({
                         {cond.icon} {cond.label}
                       </span>
                       {cond.label === "Verified Email" ||
-                      cond.label === "Active Account (Last 30 Days)" ? (
+                      cond.label === "Active Account (Last 7 Days)" ? (
                         cond.current ? (
                           <IoIosCheckmarkCircleOutline
                             size={20}
@@ -191,7 +191,7 @@ export const ModalVerification: React.FC<Props> = ({
                     </p>
 
                     {cond.label !== "Verified Email" &&
-                      cond.label !== "Active Account (Last 30 Days)" && (
+                      cond.label !== "Active Account (Last 7 Days)" && (
                         <div className="w-full bg-gray-300 rounded-full h-3">
                           <motion.div
                             className="h-3 rounded-full bg-gradient-to-r from-blue-400 via-blue-500 to-blue-600"

@@ -71,6 +71,7 @@ export async function GET() {
               name: "new_notification",
               data: {
                 id: notification.id,
+                createdAt: new Date(),
                 message: `User "${
                   userName.charAt(0).toUpperCase() + userName.slice(1)
                 }"

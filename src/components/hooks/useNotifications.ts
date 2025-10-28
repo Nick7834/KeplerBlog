@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 import { Notification } from "@prisma/client";
 
 export interface NotificationDataType extends Notification {
+  createdAt: Date;
   sender: {
     id: string;
     username: string;

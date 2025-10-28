@@ -19,6 +19,7 @@ import {
   NotificationDataType,
   useNotifications,
 } from "../hooks/useNotifications";
+import { getShortTimeAgo } from "../hooks/useDate";
 
 interface Props {
   session: Session | null;
@@ -43,6 +44,8 @@ export const NotificationComponent: React.FC<Props> = ({ session }) => {
     hasMore,
     loadMoreNotifications,
   } = useNotifications(session, width);
+
+  console.log(notificationsData);
 
   const formattedCount = UseFormatNumber(notificationCount);
 
@@ -153,19 +156,27 @@ export const NotificationComponent: React.FC<Props> = ({ session }) => {
                               <FaRegUser className="text-[#333333]" />
                             </span>
                           )}
-                          <p className="text-[#333333] dark:text-[#d9d9d9] text-sm font-medium">
-                            {width >= 720
-                              ? notification.message.length > 150
+                          <div className="flex flex-col gap-1">
+                            <p className="text-[#333333] dark:text-[#d9d9d9] text-sm font-medium">
+                              {width >= 720
+                                ? notification.message.length > 150
+                                  ? `${notification.message
+                                      .substring(0, 150)
+                                      .trim()}...`
+                                  : notification.message
+                                : notification.message.length > 75
                                 ? `${notification.message
-                                    .substring(0, 150)
+                                    .substring(0, 110)
                                     .trim()}...`
-                                : notification.message
-                              : notification.message.length > 75
-                              ? `${notification.message
-                                  .substring(0, 110)
-                                  .trim()}...`
-                              : notification.message}
-                          </p>
+                                : notification.message}
+                            </p>
+                            <span className="text-[#6a6a6a] dark:text-[#cecece] text-xs">
+                              {notification.createdAt &&
+                                getShortTimeAgo(
+                                  new Date(notification.createdAt)
+                                )}
+                            </span>
+                          </div>
                         </div>
                       </div>
                       {notification.postImage && (

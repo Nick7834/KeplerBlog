@@ -48,15 +48,15 @@ export async function checkAndVerifyActiveUsers() {
   const userUpdates = activeUsers
     .map((user) => {
       const hasEnoughPosts = user._count.posts >= 10;
-      const hasEnoughFollowers = user._count.following >= 12;
+      const hasEnoughFollowers = user._count.following >= 20;
       const totalLikes = user.posts.reduce(
         (sum, post) => sum + post._count.likes,
         0
       );
-      const hasEnoughLikes = totalLikes >= 250;
+      const hasEnoughLikes = totalLikes >= 400;
       const isOldEnough =
         new Date().getTime() - new Date(user.createdAt).getTime() >=
-        30 * 24 * 60 * 60 * 1000;
+        7 * 24 * 60 * 60 * 1000;
       const shouldHaveCheckmark =
         user.role === "admin" ||
         (hasEnoughFollowers &&

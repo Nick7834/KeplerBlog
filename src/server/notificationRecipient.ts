@@ -28,6 +28,7 @@ export const getNotificationRecipients = async (
         await pusher.trigger(`user-${notificationRecipientId}`, "new_notification", {
             id: notification.id,
             type: "comment_reply",
+            createdAt: new Date(),
             message: `The user "${userName.charAt(0).toUpperCase() + userName.slice(1)}" replied to your comment on the post "${postTitle}" with the comment "${shortenedComment}"`,
             postId,
             commentId: commentId,
