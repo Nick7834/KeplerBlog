@@ -45,8 +45,6 @@ export const NotificationComponent: React.FC<Props> = ({ session }) => {
     loadMoreNotifications,
   } = useNotifications(session, width);
 
-  console.log(notificationsData);
-
   const formattedCount = UseFormatNumber(notificationCount);
 
   useHiddenScroll(isOpen);
