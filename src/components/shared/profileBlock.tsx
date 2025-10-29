@@ -13,8 +13,14 @@ import { IoChatboxEllipsesOutline } from "react-icons/io5";
 import { usePathname } from "next/navigation";
 import { postChat } from "./messenger/api/chats";
 import { useSession } from "next-auth/react";
-import { useMessangerIdChat, useMessangerMenu, useMessangerSettings, useMessangerStore } from "@/store/messanger";
+import {
+  useMessangerIdChat,
+  useMessangerMenu,
+  useMessangerSettings,
+  useMessangerStore,
+} from "@/store/messanger";
 import { useQueryClient } from "@tanstack/react-query";
+import { UseFormatNumber } from "../hooks/useFormatNumber";
 
 interface Props {
   className?: string;
@@ -45,7 +51,7 @@ interface Props {
 }
 
 export const ProfileBlock: React.FC<Props> = ({ className, user, loader }) => {
-  const {data: session} = useSession();
+  const { data: session } = useSession();
   const pathName = usePathname();
   const idUserChat = pathName.split("/")[2];
   const queryClient = useQueryClient();
@@ -115,8 +121,11 @@ export const ProfileBlock: React.FC<Props> = ({ className, user, loader }) => {
           {loader ? (
             <Skeleton className="w-[60px] h-[10px] rounded-[10px] bg-[#c1c1c1] dark:bg-[#2a2a2a]" />
           ) : (
-            <p className="text-[#333333] dark:text-[#d9d9d9] text-sm">
-              {user?._count.following}
+            <p
+              className="text-[#333333] dark:text-[#d9d9d9] text-sm"
+              title={String(user?._count.following || 0)}
+            >
+              {UseFormatNumber(user?._count.following || 0)}
             </p>
           )}
         </div>
@@ -128,10 +137,20 @@ export const ProfileBlock: React.FC<Props> = ({ className, user, loader }) => {
           {loader ? (
             <Skeleton className="w-[60px] h-[10px] rounded-[10px] bg-[#c1c1c1] dark:bg-[#2a2a2a]" />
           ) : (
-            <p className="text-[#333333] dark:text-[#d9d9d9] text-sm">
-              {user?.posts.reduce(
-                (total, post) => total + post._count.likes,
-                0
+            <p
+              className="text-[#333333] dark:text-[#d9d9d9] text-sm"
+              title={String(
+                user?.posts.reduce(
+                  (total, post) => total + post._count.likes,
+                  0
+                )
+              )}
+            >
+              {UseFormatNumber(
+                user?.posts.reduce(
+                  (total, post) => total + post._count.likes,
+                  0
+                ) || 0
               )}
             </p>
           )}
@@ -141,7 +160,18 @@ export const ProfileBlock: React.FC<Props> = ({ className, user, loader }) => {
       {session && session?.user.id !== idUserChat && (
         <Button
           loading={loaderButton}
-          onClick={() => (postChat(session?.user.id, idUserChat, setCurrentChatId, setOpenMessager, setMenu, setSettings, setLoaderButton, queryClient))}
+          onClick={() =>
+            postChat(
+              session?.user.id,
+              idUserChat,
+              setCurrentChatId,
+              setOpenMessager,
+              setMenu,
+              setSettings,
+              setLoaderButton,
+              queryClient
+            )
+          }
           variant="outline"
           className="bg-0 border-[#333333] dark:border-[#d9d9d9] hover:bg-[#333333] hover:dark:bg-[#d9d9d9] hover:text-[#e0e0e0] dark:hover:text-[#2a2a2a]"
         >
