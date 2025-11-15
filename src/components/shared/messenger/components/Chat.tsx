@@ -341,7 +341,7 @@ export const Chat: React.FC<Props> = ({
               exit={{ opacity: 0, y: 0, x: 100 }}
               transition={{ duration: 0.15 }}
               className={cn(
-                "absolute w-[95%] left-[2.5%] shadow-[0_-4px_10px_rgba(0,0,0,0.1)] bg-[#e5e5e5]/80 dark:bg-[#141414]/60 backdrop-blur-[12px] p-2 mx-auto rounded-t-lg flex justify-between items-center"
+                "absolute w-[95%] left-[2.5%] shadow-[0_-4px_10px_rgba(0,0,0,0.1)] bg-[#e5e5e5]/80 dark:bg-[#141414]/60 backdrop-blur-[12px] p-2 mx-auto rounded-lg flex justify-between items-center"
               )}
               style={{
                 bottom: filePreview
@@ -389,7 +389,7 @@ export const Chat: React.FC<Props> = ({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 0, x: 100 }}
               transition={{ duration: 0.15 }}
-              className="absolute w-[95%] left-[2.5%] shadow-[0_-4px_10px_rgba(0,0,0,0.1)] bg-[#e5e5e5]/80 dark:bg-[#141414]/60 backdrop-blur-[12px] p-2 mx-auto rounded-t-lg flex justify-between items-center"
+              className="absolute w-[95%] left-[2.5%] shadow-[0_-4px_10px_rgba(0,0,0,0.1)] bg-[#e5e5e5]/80 dark:bg-[#141414]/60 backdrop-blur-[12px] p-2 mx-auto rounded-lg flex justify-between items-center"
               style={{ bottom: formHeight + 10 + "px" }}
             >
               <img
@@ -418,7 +418,7 @@ export const Chat: React.FC<Props> = ({
               exit={{ opacity: 0, y: 0, x: 100 }}
               transition={{ duration: 0.15 }}
               className={cn(
-                "absolute w-[95%] left-[2.5%] shadow-[0_-4px_10px_rgba(0,0,0,0.1)] bg-[#e5e5e5]/80 dark:bg-[#141414]/60 backdrop-blur-[12px] p-2 mx-auto rounded-t-lg flex justify-between items-center"
+                "absolute w-[95%] left-[2.5%] shadow-[0_-4px_10px_rgba(0,0,0,0.1)] bg-[#e5e5e5]/80 dark:bg-[#141414]/60 backdrop-blur-[12px] p-2 mx-auto rounded-lg flex justify-between items-center"
               )}
               style={{
                 bottom: filePreview
