@@ -128,18 +128,18 @@ export const InputMessage: React.FC<Props> = ({
   return (
     <form
       className={cn(
-        "absolute left-0 bottom-0 w-full z-20 flex items-center justify-center gap-2 max-[750px]:gap-1 px-3 backdrop-blur-3xl bg-[#e5e5e5]/85 dark:bg-[#141414]/85 mt-2",
+        "rounded-[20px] min-h-[52px] z-20 flex items-center justify-center gap-2 max-[750px]:gap-1 px-3 backdrop-blur-[15px] bg-[#e5e5e5]/70 dark:bg-[#141414]/60 mt-2 m-[10px]",
         className
       )}
       onSubmit={(e) => e.preventDefault()}
       ref={formRef}
     >
-      <label className="block w-full rounded-[10px] px-2 py-5 cursor-text">
+      <label className="block w-full rounded-[10px] px-2 py-3 cursor-text">
         <Textarea
           ref={textareaRef}
           placeholder="Write a message..."
           className={cn(
-            "px-0 py-0 placeholder:relative placeholder:top-[1px] leading-[20px] overflow-hidden rounded-0 p-0 h-[20px] max-[750px]:min-h-[24px] border-0 resize-none max-h-[300px] text-[16px] border-solid bg-transparent dark:bg-transparent",
+            "px-0 py-0 placeholder:relative placeholder:top-[1px] placeholder:text-[#333333]/80 dark:placeholder:text-[#e5e5e5]/80 leading-[20px] overflow-hidden rounded-0 p-0 h-[20px] max-[750px]:min-h-[24px] border-0 resize-none max-h-[300px] text-[16px] border-solid bg-transparent dark:bg-transparent",
             textareaRef.current &&
               textareaRef.current?.scrollHeight >= 300 &&
               "scrollbar overflow-auto"

@@ -329,7 +329,7 @@ export const Chat: React.FC<Props> = ({
         )}
       </div>
 
-      <div className="relative z-10">
+      <div className="absolute bottom-0 z-10 w-full">
         <AnimatePresence mode="wait">
           {reply && (
             <motion.div
@@ -493,7 +493,7 @@ export const Chat: React.FC<Props> = ({
               messageValue
             )
           }
-          className="shadow-[0_-4px_10px_rgba(0,0,0,0.1)] border border-l-0 border-b-0 border-r-0 border-t border-solid border-[#b0b0b0]/70 dark:border-neutral-300/75"
+          className="shadow-[0_-4px_10px_rgba(0,0,0,0.1)] border border-solid border-[#b0b0b0]/20 dark:border-neutral-300/20"
         />
       </div>
     </div>

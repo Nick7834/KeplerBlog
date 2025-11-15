@@ -41,7 +41,7 @@ export const ChatHeader: React.FC<Props> = ({
   return (
     <div
       className={cn(
-        "absolute top-0 left-0 w-full z-20 flex items-center gap-4 p-2 shadow-lg border-b border-solid backdrop-blur-3xl bg-[#e5e5e5]/80 dark:bg-[#141414]/85 border-[#b0b0b0]/70 dark:border-neutral-300/75",
+        "absolute top-0 left-0 w-full z-20 flex items-center gap-4 p-2 shadow-lg border-b border-solid backdrop-blur-[12px] bg-[#e5e5e5]/55 dark:bg-[#141414]/60 border-[#b0b0b0]/20 dark:border-neutral-300/20",
         className
       )}
     >
