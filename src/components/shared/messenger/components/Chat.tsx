@@ -91,10 +91,10 @@ export const Chat: React.FC<Props> = ({
   const { backgroundChat } = useUserAvatar();
 
   const formRef = useRef<HTMLFormElement>(null);
-  const [formHeight, setFormHeight] = useState(67);
+  const [formHeight, setFormHeight] = useState(52);
 
   useEffect(() => {
-    setFormHeight(formRef.current?.offsetHeight || 67);
+    setFormHeight(formRef.current?.offsetHeight || 52);
   }, [messageValue]);
 
   // post
@@ -274,6 +274,8 @@ export const Chat: React.FC<Props> = ({
     if (textareaRef.current) textareaRef.current.style.height = "20px";
   }, [currentChatId]);
 
+  console.log(formHeight)
+
   return (
     <div
       className={cn(
@@ -339,12 +341,12 @@ export const Chat: React.FC<Props> = ({
               exit={{ opacity: 0, y: 0, x: 100 }}
               transition={{ duration: 0.15 }}
               className={cn(
-                "absolute w-[95%] left-[2.5%] shadow-[0_-4px_10px_rgba(0,0,0,0.1)] bg-[#e5e5e5]/80 dark:bg-[#141414]/80 backdrop-blur-3xl p-2 mx-auto rounded-t-lg flex justify-between items-center"
+                "absolute w-[95%] left-[2.5%] shadow-[0_-4px_10px_rgba(0,0,0,0.1)] bg-[#e5e5e5]/80 dark:bg-[#141414]/60 backdrop-blur-[12px] p-2 mx-auto rounded-t-lg flex justify-between items-center"
               )}
               style={{
                 bottom: filePreview
-                  ? formHeight + 63 + "px"
-                  : formHeight + "px",
+                  ? formHeight + 73 + "px"
+                  : formHeight + 10 + "px",
               }}
             >
               <div className="flex items-center gap-4">
@@ -387,8 +389,8 @@ export const Chat: React.FC<Props> = ({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 0, x: 100 }}
               transition={{ duration: 0.15 }}
-              className="absolute w-[95%] left-[2.5%] shadow-[0_-4px_10px_rgba(0,0,0,0.1)] bg-[#e5e5e5]/50 dark:bg-[#141414]/80 backdrop-blur-3xl p-2 mx-auto rounded-t-lg flex justify-between items-center"
-              style={{ bottom: formHeight + "px" }}
+              className="absolute w-[95%] left-[2.5%] shadow-[0_-4px_10px_rgba(0,0,0,0.1)] bg-[#e5e5e5]/80 dark:bg-[#141414]/60 backdrop-blur-[12px] p-2 mx-auto rounded-t-lg flex justify-between items-center"
+              style={{ bottom: formHeight + 10 + "px" }}
             >
               <img
                 src={filePreview}
@@ -416,12 +418,12 @@ export const Chat: React.FC<Props> = ({
               exit={{ opacity: 0, y: 0, x: 100 }}
               transition={{ duration: 0.15 }}
               className={cn(
-                "absolute w-[95%] left-[2.5%] shadow-[0_-4px_10px_rgba(0,0,0,0.1)] bg-[#e5e5e5]/50 dark:bg-[#141414]/80 backdrop-blur-3xl p-2 mx-auto rounded-t-lg flex justify-between items-center"
+                "absolute w-[95%] left-[2.5%] shadow-[0_-4px_10px_rgba(0,0,0,0.1)] bg-[#e5e5e5]/80 dark:bg-[#141414]/60 backdrop-blur-[12px] p-2 mx-auto rounded-t-lg flex justify-between items-center"
               )}
               style={{
                 bottom: filePreview
-                  ? formHeight + 63 + "px"
-                  : formHeight + "px",
+                  ? formHeight + 73 + "px"
+                  : formHeight + 10 + "px",
               }}
             >
               <div className="flex items-center gap-4">
