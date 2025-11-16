@@ -55,9 +55,9 @@ export const MobPanel: React.FC<Props> = ({ className }) => {
                     {navMenuMob.map((item, index) => ( 
                         <li key={index} 
                              className='flex flex-col items-center justify-center gap-1 w-full h-full'>
-                             <Link href={item.href} className={cn('flex flex-col items-center justify-center w-full h-full text-[#333333] dark:text-[#d9d9d9] text-sm font-bold', namePage === item.href && 'dark:text-[#7391d5] text-[#7391d5]')}>
-                                <span className={cn('text-[#333333] dark:text-[#d9d9d9] text-[24px] font-bold', namePage === item.href && 'dark:text-[#7391d5] text-[#7391d5]')}>{item.svg}</span>
-                                {item.name}
+                             <Link href={item.href} className={cn('flex flex-col gap-1 items-center justify-center w-full h-full text-[#333333] dark:text-[#d9d9d9] text-sm font-bold', namePage === item.href && 'dark:text-[#7391d5] text-[#7391d5]')}>
+                                <span className={cn('text-[#333333] dark:text-[#d9d9d9] text-[24px] font-bold block', namePage === item.href && 'dark:text-[#7391d5] text-[#7391d5]')}>{item.svg}</span>
+                                <span className='block mt-auto leading-3'>{item.name}</span>
                             </Link>
                         </li>
                     ))}
