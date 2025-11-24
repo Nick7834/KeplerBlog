@@ -12,18 +12,17 @@ export async function getInitialPosts(
 
   const offset = (page - 1) * limit;
 
+  const isOwnProfile = userId && user?.id && userId === user.id;
+
   try {
     const posts = await prisma.post.findMany({
       skip: offset,
       take: limit,
       orderBy: { createdAt: "desc" },
-       where: {
-        ...(userId ? { authorId: userId } : {}),
-        author: {
-          isbanned: false,
-        },
-        isbanned: false,
-        ...(userId === user?.id ? {} : { isbanned: false }),
+      where: {
+        ...(userId && { authorId: userId }),
+        ...(isOwnProfile ? {} : { author: { isbanned: false } }),
+        ...(isOwnProfile ? {} : { isbanned: false }),
       },
       include: {
         comments: {
@@ -59,9 +58,9 @@ export async function getInitialPosts(
       },
     });
 
-    const postsWithHasLiked = posts.map(post => ({
+    const postsWithHasLiked = posts.map((post) => ({
       ...post,
-      isLiked: user ? Boolean(post.likes[0]) : false
+      isLiked: user ? Boolean(post.likes[0]) : false,
     }));
 
     return postsWithHasLiked;
