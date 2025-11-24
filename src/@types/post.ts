@@ -6,6 +6,8 @@ export interface IPost {
     id: string;
     title: string;
     content?: RawDraftContentState | JsonValue;
+    banReason: string;
+    isbanned: boolean;
     image?: string[];
     author: {
         id: string;
@@ -24,7 +26,7 @@ export interface IPost {
             isverified: boolean;
         }
     }[]; 
-    isLiked: boolean ;
+    isLiked: boolean;
     isFollowing?: boolean;
     likes: {
         id: string;

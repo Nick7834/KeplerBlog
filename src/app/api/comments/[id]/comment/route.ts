@@ -1,10 +1,14 @@
+import { checkBan, checkBanPost } from "@/lib/checkBan";
 import { getUserSession } from "@/lib/get-user-session";
 import { prisma } from "@/prisma/prisma-client";
 import { getNotificationComment } from "@/server/getNotificationComment";
 import { getNotificationRecipients } from "@/server/notificationRecipient";
 import { NextResponse } from "next/server";
 
-export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function POST(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
   const authorId = await getUserSession();
   const postId = (await params).id;
   const body = await request.json();
@@ -12,28 +16,37 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
   const { content, parentId, avatar, userName } = body;
 
   if (!content || !authorId) {
-    return NextResponse.json({ error: 'Content or authorId is missing' }, { status: 400 });
+    return NextResponse.json(
+      { error: "Content or authorId is missing" },
+      { status: 400 }
+    );
   }
+
+  await checkBan(authorId.id);
+  await checkBanPost(postId);
 
   try {
     let newComment;
     let notificationRecipientId = null;
 
     if (parentId) {
-
       const parentComment = await prisma.comment.findUnique({
         where: { id: parentId },
-        select: { 
+        select: {
           authorId: true,
           post: {
             select: {
-              title: true,}
-          }
+              title: true,
+            },
+          },
         },
       });
-    
+
       if (!parentComment) {
-        return NextResponse.json({ error: 'Parent comment not found' }, { status: 404 });
+        return NextResponse.json(
+          { error: "Parent comment not found" },
+          { status: 404 }
+        );
       }
 
       notificationRecipientId = parentComment.authorId;
@@ -48,7 +61,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
             connect: { id: postId },
           },
           parent: {
-            connect: { id: parentId }, 
+            connect: { id: parentId },
           },
         },
       });
@@ -56,14 +69,13 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
       await getNotificationRecipients(
         authorId.id,
         notificationRecipientId,
-        postId, 
-        userName, 
-        newComment.id, 
+        postId,
+        userName,
+        newComment.id,
         content,
         parentComment.post.title,
-        avatar,
-      ); 
-    
+        avatar
+      );
     } else {
       newComment = await prisma.comment.create({
         data: {
@@ -87,33 +99,41 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
               title: true,
             },
           },
-        }
+        },
       });
 
       if (!post) {
-        return NextResponse.json({ error: 'Post not found' }, { status: 404 });
+        return NextResponse.json({ error: "Post not found" }, { status: 404 });
       }
 
       await getNotificationComment(
         authorId.id,
         post.post.authorId,
-        postId, 
-        userName, 
-        post.post.title, 
+        postId,
+        userName,
+        post.post.title,
         content,
         avatar
-      )
-
+      );
     }
 
-    return NextResponse.json({ message: 'Comment created successfully', comment: newComment }, { status: 201 });
+    return NextResponse.json(
+      { message: "Comment created successfully", comment: newComment },
+      { status: 201 }
+    );
   } catch (error) {
-    console.error('Error creating comment:', error);
-    return NextResponse.json({ error: 'Failed to create comment' }, { status: 500 });
+    console.error("Error creating comment:", error);
+    return NextResponse.json(
+      { error: "Failed to create comment" },
+      { status: 500 }
+    );
   }
 }
 
-export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function GET(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
   const postId = (await params).id;
 
   try {
@@ -122,7 +142,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
         postId: postId,
       },
       orderBy: {
-        createdAt: 'desc',
+        createdAt: "desc",
       },
       include: {
         author: {
@@ -143,12 +163,18 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
 
     return NextResponse.json(comments);
   } catch (error) {
-    console.error('Error fetching comments:', error);
-    return NextResponse.json({ message: 'Error fetching comments' }, { status: 500 });
+    console.error("Error fetching comments:", error);
+    return NextResponse.json(
+      { message: "Error fetching comments" },
+      { status: 500 }
+    );
   }
 }
 
-export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function PUT(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
   const authorId = await getUserSession();
   const commentId = (await params).id;
   const body = await request.json();
@@ -156,7 +182,10 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
   const { content } = body;
 
   if (!content || !authorId || !commentId) {
-    return NextResponse.json({ error: 'Content or authorId is missing' }, { status: 400 });
+    return NextResponse.json(
+      { error: "Content or authorId is missing" },
+      { status: 400 }
+    );
   }
 
   try {
@@ -165,11 +194,17 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
     });
 
     if (!existingComment) {
-      return NextResponse.json({ error: 'Comment not found  ' }, { status: 404 });
+      return NextResponse.json(
+        { error: "Comment not found  " },
+        { status: 404 }
+      );
     }
 
     if (existingComment.authorId !== authorId.id) {
-      return NextResponse.json({ error: 'You are not authorized to update this comment' }, { status: 403 });
+      return NextResponse.json(
+        { error: "You are not authorized to update this comment" },
+        { status: 403 }
+      );
     }
 
     const updatedComment = await prisma.comment.update({
@@ -184,20 +219,31 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
       },
     });
 
-    return NextResponse.json({ message: 'Comment updated successfully', comment: updatedComment }, { status: 201 });
-    
+    return NextResponse.json(
+      { message: "Comment updated successfully", comment: updatedComment },
+      { status: 201 }
+    );
   } catch (error) {
-    console.error('Error updating comment:', error);
-    return NextResponse.json({ error: 'Failed to update comment' }, { status: 500 });
+    console.error("Error updating comment:", error);
+    return NextResponse.json(
+      { error: "Failed to update comment" },
+      { status: 500 }
+    );
   }
 }
 
-export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function DELETE(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
   const authorId = await getUserSession();
   const commentId = (await params).id;
 
   if (!authorId || !commentId) {
-    return NextResponse.json({ error: 'AuthorId or commentId is missing' }, { status: 400 });
+    return NextResponse.json(
+      { error: "AuthorId or commentId is missing" },
+      { status: 400 }
+    );
   }
 
   try {
@@ -207,11 +253,13 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ i
     });
 
     if (existingComment?.authorId !== authorId.id) {
-      return NextResponse.json({ error: 'You are not authorized to delete this comment' }, { status: 403 });
+      return NextResponse.json(
+        { error: "You are not authorized to delete this comment" },
+        { status: 403 }
+      );
     }
 
     async function deleteCommentWithReplies(commentId: string) {
-
       const replies = await prisma.comment.findMany({
         where: { parentId: commentId },
         select: { id: true },
@@ -233,7 +281,10 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ i
       { status: 200 }
     );
   } catch (error) {
-    console.error('Error deleting comment:', error);
-    return NextResponse.json({ error: 'Failed to delete comment' }, { status: 500 });
+    console.error("Error deleting comment:", error);
+    return NextResponse.json(
+      { error: "Failed to delete comment" },
+      { status: 500 }
+    );
   }
 }

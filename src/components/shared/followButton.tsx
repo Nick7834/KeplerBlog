@@ -1,112 +1,121 @@
-'use client'
-import React, { useEffect, useState } from 'react';
-import { Button } from '.';
-import { cn } from '@/lib/utils';
-import { useSession } from 'next-auth/react';
-import axios from 'axios';
-import { usePathname } from 'next/navigation';
-import { useLogInStore } from '@/store/logIn';
-import { useStatusFollow } from '@/store/status';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import toast from 'react-hot-toast';
-import { updatePostFollow } from '@/lib/updateQueryData';
+"use client";
+import React, { useEffect, useState } from "react";
+import { Button } from ".";
+import { cn } from "@/lib/utils";
+import { useSession } from "next-auth/react";
+import axios from "axios";
+import { usePathname } from "next/navigation";
+import { useLogInStore } from "@/store/logIn";
+import { useStatusFollow } from "@/store/status";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import toast from "react-hot-toast";
+import { updatePostFollow } from "@/lib/updateQueryData";
 
 interface Props {
-    className?: string;
-    idUser: string | undefined;
-    setFollow?: (number: number) => void;
-    follow?: number;
-    isFollowUser: boolean;
-} 
+  className?: string;
+  idUser: string | undefined;
+  setFollow?: (number: number) => void;
+  follow?: number;
+  isFollowUser: boolean;
+  isfollow?: (boolean: boolean) => void;
+}
 
-export const FollowButton: React.FC<Props> = ({ className, idUser, setFollow, follow, isFollowUser }) => {
+export const FollowButton: React.FC<Props> = ({
+  className,
+  idUser,
+  setFollow,
+  isfollow,
+  follow,
+  isFollowUser,
+}) => {
+  const { data: session } = useSession();
 
-    const { data: session } = useSession();
+  const pathname = usePathname();
 
-    const pathname = usePathname();
+  const [Isfollow, setIsFollow] = useState(isFollowUser || false);
+  const { statusFollow, setStatusFollow } = useStatusFollow();
+  const [loading, setLoading] = useState(false);
+  const queryClient = useQueryClient();
 
-    const [Isfollow, setIsFollow] = useState(isFollowUser || false);
-    const { statusFollow, setStatusFollow } = useStatusFollow();
-      const [loading, setLoading] = useState(false);
-      const queryClient = useQueryClient();
+  const { setOpen } = useLogInStore();
 
-    const { setOpen } = useLogInStore();
+  useEffect(() => {
+    setIsFollow(isFollowUser || false);
+    isfollow?.(isFollowUser || false);
+  }, [isFollowUser, isfollow, session]);
 
-    useEffect(() => {
-        setIsFollow(isFollowUser || false);
-    }, [isFollowUser, session]);
+  const followingMutation = useMutation({
+    mutationFn: async () => {
+      await axios.post(`/api/user/${idUser}/follow`);
+    },
+    onError: () => {
+      toast.error("Something went wrong");
+    },
+  });
 
-    const followingMutation = useMutation({
-        mutationFn: async () => {
-          await axios.post(`/api/user/${idUser}/follow`);
-        },
-        onError: () => {
-          toast.error("Something went wrong");
-        },
-      });
-
-    useEffect(() => {
-
-        if(!statusFollow) {
-            return
-        }
-
-        const getFollow = async () => {
-            try {
-                const { data } = await axios.get(`/api/user/${idUser}/follow`);
-                setIsFollow(data.isFollow);
-                setStatusFollow(false)
-            } catch(error) {
-                console.error(error);
-            }
-        }
-
-        getFollow();
-
-    }, [statusFollow, setStatusFollow, idUser]);
-
-    const handleFollow = async () => {
-
-        if(!session) {
-            setOpen(true);
-            return
-        }
-
-        setIsFollow((prev: boolean) => !prev);
-
-        if(pathname.startsWith('/profile')) {
-            if (Isfollow) {
-                setFollow?.(follow ? follow - 1 : 0);
-            } else {
-                setFollow?.((follow || 0) + 1);
-            }
-        }
-
-        if (loading) return;
-
-        setLoading(true);
-
-        try {
-
-            followingMutation.mutate(undefined, {
-                onSettled: () => {
-                    updatePostFollow(queryClient, idUser as string, !Isfollow);
-                }
-            })
-
-        } catch(error) {
-            console.error(error);
-        } finally {
-            setLoading(false); 
-        }
-
+  useEffect(() => {
+    if (!statusFollow) {
+      return;
     }
 
-    return (
-        <Button onClick={handleFollow} className={cn('py-[6px] px-5 leading-2 h-fit text-sm transition-all ease-in-out duration-300', 
-        className, 
-        Isfollow && 'bg-[#7391d5] text-white hover:bg-[#7391d5]/85')}>
-            {Isfollow ? 'Following' : 'Follow'}
-        </Button>
-    )
+    const getFollow = async () => {
+      try {
+        const { data } = await axios.get(`/api/user/${idUser}/follow`);
+        setIsFollow(data.isFollow);
+        isfollow?.(data.isFollow);
+        setStatusFollow(false);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    getFollow();
+  }, [statusFollow, setStatusFollow, idUser, isfollow]);
+
+  const handleFollow = async () => {
+    if (!session) {
+      setOpen(true);
+      return;
+    }
+
+    setIsFollow((prev: boolean) => !prev);
+    isfollow?.(!Isfollow);
+
+    if (pathname.startsWith("/profile")) {
+      if (Isfollow) {
+        setFollow?.(follow ? follow - 1 : 0);
+      } else {
+        setFollow?.((follow || 0) + 1);
+      }
+    }
+
+    if (loading) return;
+
+    setLoading(true);
+
+    try {
+      followingMutation.mutate(undefined, {
+        onSettled: () => {
+          updatePostFollow(queryClient, idUser as string, !Isfollow);
+        },
+      });
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <Button
+      onClick={handleFollow}
+      className={cn(
+        "py-[6px] px-5 leading-2 h-fit text-sm transition-all ease-in-out duration-300",
+        className,
+        Isfollow && "bg-[#7391d5] text-white hover:bg-[#7391d5]/85"
+      )}
+    >
+      {Isfollow ? "Following" : "Follow"}
+    </Button>
+  );
 };

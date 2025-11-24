@@ -43,6 +43,7 @@ export const GetPosts = () => {
           initialItemCount={posts.length > 5 ? 5 : posts.length}
           useWindowScroll
           overscan={5}
+          skipAnimationFrameInResizeObserver={true}
           endReached={() => {
             if (hasNextPage && !isFetchingNextPage) fetchNextPage();
           }}

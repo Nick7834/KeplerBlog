@@ -108,7 +108,10 @@ export const ModalVerification: React.FC<Props> = ({
     );
 
   return (
-    <Dialog open={open} onOpenChange={() => setOpen(false)}>
+    <Dialog
+      open={open}
+      onOpenChange={() => setOpen(false)}
+    >
       <DialogContent
         className={cn(
           "flex flex-col w-full max-w-[95%] sm:max-w-xl p-4 mx-auto backdrop-blur-[12px] bg-[#e6e6e6]/80 dark:bg-[#19191b]/60 rounded-md max-h-[90vh] overflow-y-auto",
@@ -128,6 +131,31 @@ export const ModalVerification: React.FC<Props> = ({
               strokeWidth={4}
             />
           </div>
+        ) : user.isbanned ? ( 
+          <motion.div
+            initial={{ opacity: 0, scale: 0.3 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+            className="flex flex-col items-center justify-center gap-3 w-full h-[520px] text-red-600"
+          >
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2, duration: 0.4 }}
+            >
+              <IoMdCloseCircle size={60} />
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4, duration: 0.4 }}
+            >
+              <DialogTitle className="text-center text-red-600 text-xl font-medium">
+                Your account is blocked!
+              </DialogTitle>
+            </motion.div>
+          </motion.div>
         ) : user.isverified ? (
           <motion.div
             initial={{ opacity: 0, scale: 0.3 }}
@@ -167,7 +195,10 @@ export const ModalVerification: React.FC<Props> = ({
                 );
 
                 return (
-                  <div key={index} className="mb-3">
+                  <div
+                    key={index}
+                    className="mb-3"
+                  >
                     <p className="flex items-center justify-between mb-1 text-base text-[#333333] dark:text-[#d9d9d9]">
                       <span className="flex items-center gap-1">
                         {cond.icon} {cond.label}
@@ -180,7 +211,10 @@ export const ModalVerification: React.FC<Props> = ({
                             className="text-green-500"
                           />
                         ) : (
-                          <IoMdCloseCircle size={20} className="text-red-500" />
+                          <IoMdCloseCircle
+                            size={20}
+                            className="text-red-500"
+                          />
                         )
                       ) : (
                         <>

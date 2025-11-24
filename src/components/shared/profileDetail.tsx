@@ -31,7 +31,7 @@ const fetchPosts = async ({ pageParam = 1 }, idUser: string) => {
 };
 
 export const ProfileDetail: React.FC<Props> = ({ className, idUser }) => {
-
+  
   const { data: user, isLoading: loaderProfile } = useQuery({
     queryKey: ["user", idUser],
     queryFn: () => fetchUser(idUser),
@@ -55,21 +55,14 @@ export const ProfileDetail: React.FC<Props> = ({ className, idUser }) => {
     redirect("/");
   }
 
-  return (
-    <div
-      className={cn(
-        "flex flex-col items-center justify-center mt-[50px] pb-[30px]",
-        className
-      )}
-    >
-      <Head>
-        <title>{user?.name} - KeplerBlog</title>
-        <meta
-          name="description"
-          content={`Profile ${user?.name} - KeplerBlog`}
-        />
-        <script type="application/ld+json">
-          {`
+  <Head>
+    <title>{user?.name} - KeplerBlog</title>
+    <meta
+      name="description"
+      content={`Profile ${user?.name} - KeplerBlog`}
+    />
+    <script type="application/ld+json">
+      {`
         {
             "@context": "https://schema.org",
             "@type": "Person",
@@ -77,8 +70,16 @@ export const ProfileDetail: React.FC<Props> = ({ className, idUser }) => {
             "url": "https://kepler-blog.vercel.app/user/${user?.id}",
         }
         `}
-        </script>
-      </Head>
+    </script>
+  </Head>;
+
+  return (
+    <div
+      className={cn(
+        "flex flex-col items-center justify-center mt-[50px] pb-[30px]",
+        className
+      )}
+    >
 
       {loaderProfile ? (
         <SkeletonProfileTop className="px-[15px]" />
@@ -129,7 +130,10 @@ export const ProfileDetail: React.FC<Props> = ({ className, idUser }) => {
                   }}
                   itemContent={(index, post) => (
                     <div>
-                      <Post key={post.id} post={post} />
+                      <Post
+                        key={post.id}
+                        post={post}
+                      />
                     </div>
                   )}
                 />
@@ -138,7 +142,11 @@ export const ProfileDetail: React.FC<Props> = ({ className, idUser }) => {
           </div>
         </div>
 
-        <ProfileBlock user={user} loader={loaderProfile} className="mx-[10px] ml-0 max-[1000px]:mx-[15px]" />
+        <ProfileBlock
+          user={user}
+          loader={loaderProfile}
+          className="mx-[10px] ml-0 max-[1000px]:mx-[15px]"
+        />
       </div>
     </div>
   );

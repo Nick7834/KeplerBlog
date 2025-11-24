@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 export default async function CareatePost() {
   const session = await getUserSession();
 
-  if (!session) redirect("/");
+  if (!session || session.isbanned) redirect("/");
 
   return (
     <div className="mt-[clamp(1.875rem,1.445rem+2.15vw,3.125rem)] pb-[30px] mx-[clamp(0.938rem,calc(-15.104rem+23.33vw),3.125rem)]">

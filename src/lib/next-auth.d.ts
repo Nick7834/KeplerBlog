@@ -4,6 +4,8 @@ import { DefaultJWT } from 'next-auth/jwt';
 declare module 'next-auth' {
   interface Session {
     user: {
+      isbanned: boolean | unknown;
+      role: string | unknown;
       profileImage: string;
       username: string;
       email: string;

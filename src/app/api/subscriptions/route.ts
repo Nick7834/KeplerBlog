@@ -5,13 +5,16 @@ import { NextResponse } from "next/server";
 export async function GET(req: Request) {
   const userID = await getUserSession();
 
-  if (!userID) {  
-    return NextResponse.json({ message: 'User not authenticated' }, { status: 401 });
+  if (!userID) {
+    return NextResponse.json(
+      { message: "User not authenticated" },
+      { status: 401 }
+    );
   }
 
   const url = new URL(req.url);
-  const page = parseInt(url.searchParams.get('page') || '1', 10); 
-  const limit = parseInt(url.searchParams.get('limit') || '10', 10);
+  const page = parseInt(url.searchParams.get("page") || "1", 10);
+  const limit = parseInt(url.searchParams.get("limit") || "10", 10);
   const offset = (page - 1) * limit;
 
   try {
@@ -34,27 +37,28 @@ export async function GET(req: Request) {
             _count: {
               select: {
                 following: true,
-                posts: true,
+                posts: {
+                  where: { isbanned: false },
+                },
               },
             },
           },
         },
       },
     });
-    
-  
+
     const followingsWithStatus = await Promise.all(
       paginatedFollowings.map(async (record) => {
         const isFollowing = await prisma.follower.findFirst({
           where: {
             followerId: userID.id,
-            followingId: record.following.id, 
+            followingId: record.following.id,
           },
         });
 
         return {
           ...record.following,
-          isFollowing: !!isFollowing, 
+          isFollowing: !!isFollowing,
         };
       })
     );
@@ -71,6 +75,6 @@ export async function GET(req: Request) {
     });
   } catch (error) {
     console.error(error);
-    return NextResponse.json({ message: 'Server error' }, { status: 500 });
+    return NextResponse.json({ message: "Server error" }, { status: 500 });
   }
 }

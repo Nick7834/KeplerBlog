@@ -11,11 +11,12 @@ import { cn } from "@/lib/utils";
 import { Switch } from "../ui/switch";
 import UseCloseModal from "../hooks/useCloseModal";
 import { UseDarkMode } from "../hooks/useDarkMode";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { FaRegUser } from "react-icons/fa";
 import { User } from "@prisma/client";
 import { Button } from ".";
 import { IoClose } from "react-icons/io5";
+import { MdAdminPanelSettings } from "react-icons/md";
 
 interface Props {
   className?: string;
@@ -30,6 +31,7 @@ interface MenuItem {
 }
 
 export const Profile: React.FC<Props> = ({ className, user }) => {
+  const { data: session } = useSession();
   const [open, setOpen] = useState(false);
   const refProfile = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -65,6 +67,15 @@ export const Profile: React.FC<Props> = ({ className, user }) => {
       svg: <RxAvatar size={20} />,
       href: `/profile/${user?.id}`,
     },
+    ...(session?.user.role === "admin"
+      ? [
+          {
+            name: "Admin Panel",
+            svg: <MdAdminPanelSettings size={20} />,
+            href: "/admin",
+          },
+        ]
+      : []),
     {
       name: "Settings",
       svg: <IoMdSettings size={20} />,

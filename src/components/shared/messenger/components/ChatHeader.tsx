@@ -78,7 +78,7 @@ export const ChatHeader: React.FC<Props> = ({
               )}
               <div className="flex flex-col">
                 <span className="text-[#333333] dark:text-[#d9d9d9] text-lg font-bold flex items-center gap-1">
-                  {currentChat?.interlocutor?.username}{" "}
+                  {currentChat?.interlocutor?.username}
                   <CheckProfile
                     isverified={currentChat?.interlocutor?.isverified || false}
                     styleCheck="group-hover:top-[-14px]"

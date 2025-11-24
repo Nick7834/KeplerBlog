@@ -22,6 +22,7 @@ import { IPost } from "@/@types/post";
 import { FastAverageColor } from "fast-average-color";
 import { hexToRgb } from "@/lib/hex";
 import { UseDarkMode } from "../hooks/useDarkMode";
+import { BsFillExclamationDiamondFill } from "react-icons/bs";
 
 interface Props {
   className?: string;
@@ -34,6 +35,8 @@ export const Post: React.FC<Props> = memo(({ className, onClick, post }) => {
 
   const session = useSession();
   const { theme } = UseDarkMode();
+
+  const [ban, setBan] = useState(false);
 
   const contentState = post?.content
     ? convertFromRaw(post?.content as RawDraftContentState)
@@ -94,20 +97,55 @@ export const Post: React.FC<Props> = memo(({ className, onClick, post }) => {
           pathname.startsWith("/post") ? null : router.push(`/post/${post?.id}`)
         }
         className={cn(
-          `relative max-w-[750px] w-full flex-1 p-3 cursor-pointer rounded-[12px] transition-all ease-in-out duration-300 hover:bg-[#d1d1d1]/60 hover:dark:bg-[#333333]/60`,
-          className
+          `overflow-hidden relative max-w-[750px] w-full flex-1 p-3 cursor-pointer rounded-[12px] transition-all ease-in-out duration-300 hover:bg-[#d1d1d1]/60 hover:dark:bg-[#333333]/60`,
+          className,
+          post.isbanned && "pointer-events-none select-none"
         )}
-         onMouseEnter={() => getDominantColor(post?.image?.[0] || "")}
-          onMouseLeave={() => setBackground("")}
-          style={{
-            background: background
-              ? `rgba(${hexToRgb(background)}, ${
-                  theme === "dark" ? 0.4 : 0.25
-                })`
-              : "",
-          }}
+        onMouseEnter={() => getDominantColor(post?.image?.[0] || "")}
+        onMouseLeave={() => setBackground("")}
+        style={{
+          background: background
+            ? `rgba(${hexToRgb(background)}, ${theme === "dark" ? 0.4 : 0.25})`
+            : "",
+        }}
       >
-        <span className={cn("absolute bottom-0 left-0 w-full mx-auto max-[650px]:w-[98%] max-[650px]:left-[1%] border-b-[1px] border-[#b0b0b0]/60 dark:border-[#333333]", pathname.startsWith("/post") ? "hidden" : "")}></span>
+        <span
+          className={cn(
+            "absolute bottom-0 left-0 w-full mx-auto max-[650px]:w-[98%] max-[650px]:left-[1%] border-b-[1px] border-[#b0b0b0]/60 dark:border-[#333333]",
+            pathname.startsWith("/post") ? "hidden" : ""
+          )}
+        ></span>
+
+        {post.isbanned && (
+          <div className="absolute top-0 left-0 w-full h-full flex justify-end bg-[rgba(206,206,206,0.5)] dark:bg-[rgba(96,96,96,0.5)] z-[500]">
+            {post?.author?.id === session?.data?.user?.id && <>
+              <Button
+                onClick={(e) => (e.stopPropagation(), setBan(!ban))}
+                className="w-10 h-10 flex-shrink-0 flex justify-center items-center pointer-events-auto select-auto bg-red-500 hover:bg-red-500 hover:dark:bg-red-500 text-white [&_svg]:size-[25px] m-2 p-0 rounded-full"
+              >
+                <BsFillExclamationDiamondFill />
+              </Button>
+              {ban && (
+                <div className="absolute top-[50px] right-0 w-[300px] p-2 text-[#333333] dark:text-[#d9d9d9] rounded-[12px] bg-[#b2bbc8]/70 dark:bg-[#24272b]/80 backdrop-blur-[12px]">
+                  <p>
+                    <span className="font-semibold">Reason for blocking:</span>{" "}
+                    {post.banReason}
+                  </p>
+                  <p className="mt-2 font-bold">
+                    You can delete the post{" "}
+                    <Link
+                      href={`/edit/${post?.id}`}
+                      className="text-sky-500 pointer-events-auto select-auto w-fit font-normal"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      Go over
+                    </Link>
+                  </p>
+                </div>
+              )}
+            </>}
+          </div>
+        )}
 
         <div className="flex gap-1 items-center justify-between">
           <Link
@@ -163,7 +201,7 @@ export const Post: React.FC<Props> = memo(({ className, onClick, post }) => {
               onClick={(e) => (
                 e.stopPropagation(), router.push(`/edit/${post?.id}`)
               )}
-              className="p-0 min-h-7 min-w-7 h-fit text-xs rounded-full bg-[#d5d5d5] dark:bg-[#e0e0e0]/95 hover:bg-[#d5d5d5] hover:dark:bg-[#e0e0e0]/95"
+              className="relative p-0 min-h-7 min-w-7 h-fit text-xs rounded-full bg-[#d5d5d5] dark:bg-[#e0e0e0]/95 hover:bg-[#d5d5d5] hover:dark:bg-[#e0e0e0]/95"
             >
               <MdCreate
                 size={10}
@@ -188,13 +226,17 @@ export const Post: React.FC<Props> = memo(({ className, onClick, post }) => {
 
         {text !== "" && (
           <div className="mt-2 text-[#333333] dark:text-[#d9d9d9] text-sm font-normal leading-6 break-words whitespace-normal">
-            {!pathname.startsWith("/post")
-              ? text.length > 200
-                ? text.substring(0, 200).trim() + "..."
-                : text.trim()
-              : 
-                <div dangerouslySetInnerHTML={{ __html: commentContentText }}></div>
-              }
+            {!pathname.startsWith("/post") ? (
+              text.length > 200 ? (
+                text.substring(0, 200).trim() + "..."
+              ) : (
+                text.trim()
+              )
+            ) : (
+              <div
+                dangerouslySetInnerHTML={{ __html: commentContentText }}
+              ></div>
+            )}
           </div>
         )}
 

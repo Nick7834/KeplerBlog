@@ -29,6 +29,7 @@ export async function GET(
         isverified: true,
         verified: true,
         backgroundChat: true,
+        isbanned: true,
         customBackgroundChat: true,
         settings: {
           select: {
@@ -47,15 +48,20 @@ export async function GET(
         _count: {
           select: {
             following: true,
-            posts: true,
+            posts: {
+              where: { isbanned: false },
+            },
           },
         },
         posts: {
           select: {
             id: true,
+            isbanned: true,
             _count: {
               select: {
-                likes: true,
+                likes: {
+                  where: { post: { isbanned: false } },
+                },
               },
             },
           },

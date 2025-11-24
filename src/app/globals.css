@@ -254,6 +254,17 @@ p {
   @apply inline-block w-fit text-sm font-normal leading-6 break-all underline;
 }
 
+.post-banned::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(206, 205, 205, 0.5);
+  z-index: 1;
+}
+
 /* Responsive */
 
 @media (max-width: 1000px) {
@@ -371,7 +382,8 @@ p {
     left: 0;
     width: 100%;
     height: 100%;
-    @apply bg-[#333333]/10 dark:bg-[#333333]/40;
+    @apply bg-[#333333]/30 dark:bg-[#333333]/40;
+    backdrop-filter: blur(1.5px);
     z-index: 1;
     opacity: 0;
     visibility: hidden;

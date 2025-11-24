@@ -274,8 +274,6 @@ export const Chat: React.FC<Props> = ({
     if (textareaRef.current) textareaRef.current.style.height = "20px";
   }, [currentChatId]);
 
-  console.log(formHeight)
-
   return (
     <div
       className={cn(

@@ -7,7 +7,9 @@ export async function checkAndVerifyActiveUsers() {
   const activeUsers = await prisma.user.findMany({
     where: {
       OR: [
-        // 1. Активные юзеры с подходящей ролью
+        {
+          isbanned: false, 
+        },
         {
           role: { in: ["admin", "user"] },
           OR: [
@@ -17,7 +19,6 @@ export async function checkAndVerifyActiveUsers() {
             { comments: { some: { createdAt: { gte: oneMonthAgo } } } },
           ],
         },
-        // 2. Все с галочкой, независимо от активности и роли
         {
           isverified: true,
         },
@@ -29,16 +30,29 @@ export async function checkAndVerifyActiveUsers() {
       isverified: true,
       isverifiedEmail: true,
       createdAt: true,
+      isbanned: true,
       _count: {
         select: {
           following: true,
-          posts: true,
+          posts: {
+            where: { isbanned: false },
+          },
         },
       },
       posts: {
         select: {
+          id: true,
+          isbanned: true, 
           _count: {
-            select: { likes: true },
+            select: {
+              likes: {
+                where: {
+                  post: {
+                    isbanned: false,
+                  },
+                },
+              },
+            },
           },
         },
       },

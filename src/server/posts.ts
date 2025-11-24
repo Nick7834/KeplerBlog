@@ -17,7 +17,13 @@ export async function getInitialPosts(
       skip: offset,
       take: limit,
       orderBy: { createdAt: "desc" },
-      where: userId ? { authorId: userId } : {},
+       where: {
+        ...(userId ? { authorId: userId } : {}),
+        author: {
+          isbanned: false,
+        },
+        ...(userId === user?.id ? {} : { isbanned: false }),
+      },
       include: {
         comments: {
           select: {

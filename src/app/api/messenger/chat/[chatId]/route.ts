@@ -1,3 +1,4 @@
+import { checkBan } from "@/lib/checkBan";
 import cloudinary from "@/lib/cloudinary";
 import { getUserSession } from "@/lib/get-user-session";
 import { getPublicIdFromUrl } from "@/lib/getPublicIdFromUrl";
@@ -89,6 +90,8 @@ export async function POST(req: Request) {
       { status: 401 }
     );
   }
+
+  await checkBan(userId.id);
 
   const formData = await req.formData();
   const chatId = formData.get("chatId") as string;
@@ -292,6 +295,8 @@ export async function PATCH(req: Request) {
     );
   }
 
+  await checkBan(userId.id);
+
   const formData = await req.formData();
   const chatId = formData.get("chatId") as string;
   const messageId = formData.get("messageId") as string;
@@ -471,6 +476,8 @@ export async function DELETE(req: Request) {
       { status: 401 }
     );
   }
+
+  await checkBan(userId.id);
 
   const formData = await req.formData();
   const chatId = formData.get("chatId") as string;

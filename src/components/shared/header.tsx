@@ -52,7 +52,7 @@ export const Header: React.FC<Props> = ({ className }) => {
   return (
     <header
       className={cn(
-        "flex items-center justify-between gap-[20px] py-[clamp(0.938rem,0.599rem+0.83vw,1.25rem)] px-[clamp(0.938rem,-1.432rem+5.83vw,3.125rem)] border-b border-solid border-[#D3D3D3] dark:border-white/40",
+        "flex items-center justify-between gap-[20px] py-[clamp(0.625rem,0.511rem+0.57vw,0.938rem)] px-[clamp(0.938rem,-1.432rem+5.83vw,3.125rem)] border-b border-solid border-[#D3D3D3] dark:border-white/20",
         className
       )}
     >

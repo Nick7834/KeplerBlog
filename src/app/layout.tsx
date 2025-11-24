@@ -38,7 +38,7 @@ Readonly<{
           <main className="main pl-[270px]">
             <Dashboard />
             <div></div>
-            <div className="pt-[clamp(5.063rem,4.521rem+1.33vw,5.563rem)]">
+            <div className="pt-[clamp(4.313rem,4.063rem+1.25vw,5rem)]">
               {children}
               {/* <Suspense fallback={null}>{modal}</Suspense> */}
               <Toaster position="top-center" />

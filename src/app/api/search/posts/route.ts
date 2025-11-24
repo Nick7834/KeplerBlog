@@ -26,6 +26,10 @@ export async function GET(req: NextRequest) {
                     },
                 },
             ],
+            author: {
+                isbanned: false
+            },
+            isbanned: false
         },
         orderBy: {
             createdAt: 'desc',

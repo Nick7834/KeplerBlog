@@ -14,7 +14,7 @@ export default async function PostDetail({
 
   const user = await getUserSession();
 
-  if (!user) redirect("/");
+  if (!user || user.isbanned) redirect("/");
 
   if (!id) redirect("/");
 

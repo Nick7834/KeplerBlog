@@ -244,14 +244,14 @@ export const EditPostInput: React.FC<Props> = ({ className, post }) => {
         >
           <RiDeleteBinLine className="block translate-y-[-1px]" /> Delete Post
         </Button>
-        <Button
+        {!post.isbanned && <Button
           loading={loading}
           onClick={handlePost}
           disabled={title.length === 0 ? true : false}
           className="w-[125px] max-[125px] px-[30px] flex items-center text-[#d9d9d9] dark:text-[#333333] bg-[#333333] dark:bg-[#d9d9d9] hover:bg-[#333333]/85 dark:hover:bg-[#d9d9d9]/85"
         >
           <FaRegSave className="block translate-y-[-1px]" /> Save
-        </Button>
+        </Button>}
       </div>
     </div>
   );
