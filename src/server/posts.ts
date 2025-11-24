@@ -22,6 +22,7 @@ export async function getInitialPosts(
         author: {
           isbanned: false,
         },
+        isbanned: false,
         ...(userId === user?.id ? {} : { isbanned: false }),
       },
       include: {
