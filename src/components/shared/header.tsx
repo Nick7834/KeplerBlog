@@ -9,6 +9,8 @@ import { Search } from "./search";
 import Link from "next/link";
 import { useUserAvatar } from "@/store/user";
 import { useSettingsMessage } from "@/store/settingsMessage";
+import Image from "next/image";
+import { useDateYear } from "../hooks/useDateYear";
 
 interface Props {
   className?: string;
@@ -19,6 +21,8 @@ export const Header: React.FC<Props> = ({ className }) => {
   const [user, setUser] = useState<User | null>(null);
   const [searchMobOpen, setSearchMobOpen] = useState(false);
   const { setAvatarUser, setUserName, setBackgroundChat } = useUserAvatar();
+  const isInSeason = useDateYear();
+
   const {
     setBackgroundColorMessage,
     setTextColor,
@@ -59,8 +63,17 @@ export const Header: React.FC<Props> = ({ className }) => {
       <div className="absolute top-0 left-0 bg-[#EAEAEA]/75 dark:bg-[#171717]/80 backdrop-blur-3xl max-[1100px]:backdrop-blur-[15px] w-full h-full z-[-1]"></div>
       <Link
         href="/"
-        className='logo-mob hidden items-center w-fit text-[#848484] dark:text-[#e3e3e3] text-5xl font-medium font-["Protest_Guerrilla"]'
+        className='relative logo-mob hidden items-center w-fit text-[#848484] dark:text-[#e3e3e3] text-5xl font-medium font-["Protest_Guerrilla"]'
       >
+        {isInSeason && (
+          <Image
+            src="/year.png"
+            width={40}
+            height={40}
+            className="absolute -top-[8px] -left-[13px]"
+            alt="avatar"
+          ></Image>
+        )}
         K <span className='text-[#7391d5] font-["Protest_Guerrilla"]'>B</span>
       </Link>
 
