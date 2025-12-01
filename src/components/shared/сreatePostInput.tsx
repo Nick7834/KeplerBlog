@@ -140,7 +140,7 @@ export const CreatePostInput: React.FC<Props> = ({ className }) => {
     }, [isDirty])
 
     return (
-        <div className={cn('flex flex-col max-w-[600px] mt-8', className)}>
+        <div className={cn('flex flex-col max-w-[600px]', className)}>
 
             <Photos photos={photoPreview} setPhotoPreview={setPhotoPreview} setPhotos={setPhotos} />
 
