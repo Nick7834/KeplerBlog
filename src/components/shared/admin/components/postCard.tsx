@@ -69,7 +69,7 @@ export const PostCard: React.FC<Props> = ({ className, post, queryClient }) => {
     >
       <div className="flex">
         <Link
-          href={`/profile/${post.id}`}
+          href={`/profile/${post.authorId}`}
           className="flex items-center gap-5 w-fit"
         >
           {post.author.profileImage ? (
