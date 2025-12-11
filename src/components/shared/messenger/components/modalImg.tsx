@@ -1,5 +1,4 @@
 import React from "react";
-import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { useModalImg } from "@/store/messanger";
 import { motion, AnimatePresence } from "framer-motion";
@@ -39,13 +38,13 @@ export const ModalImg: React.FC<Props> = ({ className }) => {
             exit={{ opacity: 0, scale: 0.85 }}
             transition={{ duration: 0.3, ease: "easeInOut" }}
           >
-            <Image
+            <img
               src={imgModal}
               alt="img"
               width={800}
               height={600}
               style={{ width: "auto", height: "auto" }}
-              className="block max-h-[90vh] rounded-[7px] object-contain select-none shadow-2xl"
+              className="block max-h-[80vh] rounded-[7px] object-contain select-none shadow-2xl"
             />
           </motion.div>
         </motion.div>

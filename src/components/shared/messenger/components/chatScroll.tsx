@@ -1,11 +1,12 @@
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Virtuoso, VirtuosoHandle } from "react-virtuoso";
 import { Oval } from "react-loader-spinner";
 import { MessageProps } from "@/@types/message";
 import { MessageBubble } from "./MessageBubble";
 import { groupMessagesByDate } from "../lib/groupMessagesByDate";
+import { useSession } from "next-auth/react";
 
 interface Props {
   className?: string;
@@ -40,6 +41,7 @@ export const ChatScroll: React.FC<Props> = ({
   handleDelete,
   setFirstItemIndex,
 }) => {
+  const { data: session } = useSession();
   const chatItems = groupMessagesByDate(messagersData);
 
   const initialIndexRef = useRef<number | null>(null);
@@ -76,13 +78,18 @@ export const ChatScroll: React.FC<Props> = ({
     return () => clearTimeout(timeout);
   }, [currentChatId]);
 
-  const renderItem = React.useCallback(
+  const renderItem = useCallback(
     (_: number, item: MessageProps, index: number) => {
       const isFirst = index === 0;
 
       if (item.type === "date" && item.date) {
         return (
-          <div className={cn("sticky top-0 text-center py-4", isFirst && "pt-[67px]")}>
+          <div
+            className={cn(
+              "sticky top-0 text-center py-4",
+              isFirst && "pt-[67px]"
+            )}
+          >
             <span className="text-[#333333] dark:text-[#d9d9d9] text-sm bg-[#d9d9d9]/70 dark:bg-gray-600/70 backdrop-blur-[12px] p-1 rounded-xl">
               {format(new Date(item.date), "d MMMM yyyy")}
             </span>
@@ -102,12 +109,25 @@ export const ChatScroll: React.FC<Props> = ({
             onReply={handleReply}
             onEdit={handleEditPanel}
             onDelete={handleDelete}
+            session={session}
           />
         </div>
       );
     },
     [isNew, handleReply, handleEditPanel, handleDelete]
   );
+
+  const handleStartReached = useCallback(async () => {
+    if (hasNextPageMessages && !isFetchingNextPageMessages) {
+      await fetchNextPageMessages();
+      setFirstItemIndex((prev: number) => Math.max(prev - 50, 0));
+    }
+  }, [
+    hasNextPageMessages,
+    isFetchingNextPageMessages,
+    fetchNextPageMessages,
+    setFirstItemIndex,
+  ]);
 
   return (
     <Virtuoso
@@ -117,19 +137,14 @@ export const ChatScroll: React.FC<Props> = ({
       data={chatItems as MessageProps[]}
       firstItemIndex={firstItemIndex}
       increaseViewportBy={{ top: 300, bottom: 300 }}
-      overscan={200}
-      defaultItemHeight={36}
+      overscan={15}
       initialTopMostItemIndex={initialIndexRef.current ?? undefined}
       skipAnimationFrameInResizeObserver={true}
+      atBottomThreshold={50}
       alignToBottom={true}
       followOutput={isAtBottom}
       atBottomStateChange={setIsAtBottom}
-      startReached={async () => {
-        if (hasNextPageMessages && !isFetchingNextPageMessages) {
-          await fetchNextPageMessages();
-          setFirstItemIndex((prev: number) => Math.max(prev - 50, 0));
-        }
-      }}
+      startReached={handleStartReached}
       itemContent={renderItem}
       components={{
         Header: () => (

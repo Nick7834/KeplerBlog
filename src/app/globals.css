@@ -207,12 +207,20 @@ p {
 
 .scrollbarMessage::-webkit-scrollbar-track {
   border-radius: 6px;
-  @apply dark:bg-[#333333] bg-white;
+  @apply dark:bg-[#333333]/0 bg-white/0;
 }
 
 .scrollbarMessage::-webkit-scrollbar-thumb {
-  @apply bg-neutral-800/75 dark:bg-[#ffffff];
+  @apply bg-neutral-800/0 dark:bg-[#ffffff]/0;
   border-radius: 6px;
+}
+
+.chats:hover .scrollbarMessage::-webkit-scrollbar-track {
+  @apply dark:bg-[#333333] bg-white;
+}
+
+.chats:hover .scrollbarMessage::-webkit-scrollbar-thumb {
+  @apply bg-neutral-800/75 dark:bg-[#ffffff];
 }
 
 .scrollbarMessage::-webkit-scrollbar-thumb:hover {
@@ -255,7 +263,7 @@ p {
 }
 
 .post-banned::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;

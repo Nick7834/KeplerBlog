@@ -62,7 +62,7 @@ export const Chats: React.FC<Props> = ({
   }, [isLoading]);
 
   return (
-    <div className="overflow-x-hidden h-full p-2 pb-1 rounded-t-[10px] backdrop-blur-3xl bg-[#dad9d9]/80 dark:bg-[#1f1f22]/60 flex flex-col">
+    <div className="chats overflow-x-hidden h-full p-2 pb-1 rounded-t-[10px] backdrop-blur-3xl bg-[#dad9d9]/80 dark:bg-[#1f1f22]/60 flex flex-col">
       {isError && <p className="text-red-500">Something went wrong</p>}
       {isLoading ? (
         <div className="flex flex-col gap-2">

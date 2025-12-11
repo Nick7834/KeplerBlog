@@ -3,8 +3,6 @@ import { MdEdit, MdOutlineContentCopy } from "react-icons/md";
 import { FaReply } from "react-icons/fa6";
 import { MdDelete } from "react-icons/md";
 import { cn } from "@/lib/utils";
-import { useSession } from "next-auth/react";
-import { motion } from "framer-motion";
 import { differenceInHours, format } from "date-fns";
 import { MessageProps } from "@/@types/message";
 import toast from "react-hot-toast";
@@ -17,10 +15,11 @@ import {
 } from "@/components/ui/context-menu";
 import { processContent } from "@/lib/processContent";
 import { TbCheck, TbChecks } from "react-icons/tb";
-import { memo, useCallback, useState } from "react";
+import { memo, useCallback } from "react";
 import { useModalImg } from "@/store/messanger";
 import { useSettingsMessage } from "@/store/settingsMessage";
 import { lightenColor } from "@/lib/lightenColor";
+import { Session } from "next-auth";
 
 interface Props {
   message: MessageProps;
@@ -28,6 +27,7 @@ interface Props {
   onReply: (messageId: string) => void;
   onEdit: (messageId: string) => void;
   onDelete: (chatId: string, messageId: string) => void;
+  session: Session | null;
 }
 
 const MessageBubbleComponent: React.FC<Props> = ({
@@ -36,10 +36,9 @@ const MessageBubbleComponent: React.FC<Props> = ({
   onReply,
   onEdit,
   onDelete,
+  session,
 }) => {
-  const { data: session } = useSession();
   const { setImgModal } = useModalImg();
-  const [imageLoaded, setImageLoaded] = useState(false);
 
   const { backgroundColorMessage, textColor, fontSize, radiusSize } =
     useSettingsMessage();
@@ -107,10 +106,10 @@ const MessageBubbleComponent: React.FC<Props> = ({
   const commentContentHTML = processContent(message?.content || "", true);
 
   return (
-    <motion.div
-      initial={isNew ? { opacity: 0, scale: 0.8 } : false}
-      animate={isNew ? { opacity: 1, scale: 1 } : false}
-      transition={isNew ? { duration: 0.2 } : undefined}
+    <div
+      className={
+        isNew ? "animate-in fade-in zoom-in-90 duration-200" : undefined
+      }
     >
       <ContextMenu>
         <ContextMenuTrigger
@@ -196,9 +195,7 @@ const MessageBubbleComponent: React.FC<Props> = ({
                     backgroundSize: "cover",
                     backgroundPosition: "center",
                   }}
-                  className={`absolute top-0 left-0 w-full h-full blur-md z-[1] ${
-                    imageLoaded ? "hidden" : ""
-                  }`}
+                  className="absolute top-0 left-0 w-full h-full blur-[50px] z-[1]"
                 ></div>
 
                 <div className="relative z-[2] flex items-center justify-center h-full cursor-pointer">
@@ -208,7 +205,6 @@ const MessageBubbleComponent: React.FC<Props> = ({
                     width={500}
                     height={400}
                     className="block object-contain rounded-t-xl w-full max-h-[400px]"
-                    onLoadingComplete={() => setImageLoaded(true)}
                     loading="lazy"
                     priority={false}
                   />
@@ -281,7 +277,7 @@ const MessageBubbleComponent: React.FC<Props> = ({
           ))}
         </ContextMenuContent>
       </ContextMenu>
-    </motion.div>
+    </div>
   );
 };
 

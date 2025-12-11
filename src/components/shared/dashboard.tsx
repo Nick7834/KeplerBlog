@@ -14,7 +14,7 @@ export const Dashboard: React.FC<Props> = ({ className }) => {
   return (
     <div
       className={cn(
-        "dashboard fixed top-0 left-0 w-[270px] h-screen py-[20px] px-[30px] border-r border-solid border-[#D3D3D3] dark:border-white/40 flex flex-col",
+        "dashboard fixed top-0 left-0 w-[270px] h-screen py-[20px] px-[30px] border-r border-solid border-[#D3D3D3] dark:border-white/20 flex flex-col",
         className
       )}
     >

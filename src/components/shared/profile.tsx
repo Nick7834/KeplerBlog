@@ -35,7 +35,7 @@ export const Profile: React.FC<Props> = ({ className, user }) => {
   const [open, setOpen] = useState(false);
   const refProfile = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
-
+  
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
   const { theme, handleToggle } = UseDarkMode();
@@ -99,7 +99,11 @@ export const Profile: React.FC<Props> = ({ className, user }) => {
 
       <button
         ref={buttonRef}
-        className="block w-[48px] h-[48px] overflow-hidden rounded-full"
+        className={cn(
+          "relative block w-[48px] h-[48px] overflow-hidden rounded-full",
+          session?.user.isbanned === true &&
+            "border-[#ff0000] border-[2px] border-solid"
+        )}
         onClick={() => {
           setOpen(!open);
         }}
