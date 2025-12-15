@@ -20,6 +20,8 @@ export const MobPanel: React.FC<Props> = ({ className }) => {
 
      const { data: session } = useSession();
 
+     console.log(namePage)
+
     const navMenuMob = [
             {
                 name: "Home",
