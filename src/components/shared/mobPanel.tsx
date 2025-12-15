@@ -50,6 +50,8 @@ export const MobPanel: React.FC<Props> = ({ className }) => {
             }
     ]
 
+     console.log(namePage === navMenuMob[0].href)
+
     return (
         <div className={cn('mob-panel hidden fixed bottom-0 left-0 w-full z-[500]', className)}>
             <nav className='m-[5px] rounded-[20px] py-2 px-1 bg-[#E0E0E0]/70 dark:bg-[#2a2a2a]/80 backdrop-blur-[12px] border border-solid border-[#b0b0b0]/20 dark:border-[#d9d9d9]/20'>
