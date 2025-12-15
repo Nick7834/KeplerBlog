@@ -1,6 +1,8 @@
 import { GetPosts } from "@/components/shared/getPosts";
 import { IoHome } from "react-icons/io5";
 
+export const revalidate = 60;
+
 export default async function Home() {
 
   return (
