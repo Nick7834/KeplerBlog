@@ -5,7 +5,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: 'KeplerBlog',
     short_name: 'KeplerBlog',
     description: 'Share ideas, inspire others, and grow together.',
-    // start_url: '/',
+    start_url: '/',
     display: 'standalone',
     background_color: '#ffffff',
     theme_color: '#000000',
