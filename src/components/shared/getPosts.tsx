@@ -1,7 +1,7 @@
 "use client";
 import React, { useMemo } from "react";
 import { SkeletonPost } from "./skeletonPost";
-// import { Post } from "./post";
+import { Post } from "./post";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { Virtuoso } from "react-virtuoso";
 import { getInitialPosts } from "@/server/posts";
@@ -51,9 +51,7 @@ export const GetPosts = () => {
           }}
           itemContent={(index, post) => (
             <div key={post.id}>
-              {/* <Post post={post} /> */}
-
-              {post.title}
+              <Post post={post} />
             </div>
           )}
           components={{
