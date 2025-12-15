@@ -72,31 +72,38 @@ export const MobPanel: React.FC<Props> = ({ className }) => {
             !session && "grid-cols-4"
           )}
         >
-          {navMenuMob.map((item, index) => (
-            <li
-              key={index}
-              className="flex flex-col items-center justify-center gap-1 w-full h-full"
-            >
-              <Link
-                href={item.href}
-                className={cn(
-                  "flex flex-col gap-1 items-center justify-center w-full h-full text-[#333333] dark:text-[#d9d9d9] text-sm font-bold",
-                  isActive(item.href) && "dark:text-[#7391d5] text-[#7391d5]"
-                )}
+          {navMenuMob.map((item, index) => {
+            const active = isActive(item.href);
+
+            return (
+              <li
+                key={index}
+                className="flex flex-col items-center justify-center gap-1 w-full h-full"
               >
-                <span
+                <Link
+                  href={item.href}
                   className={cn(
-                    "text-[#333333] dark:text-[#d9d9d9] text-[24px] font-bold block",
-                    isActive(item.href) &&
-                      "dark:text-[#7391d5] text-[#7391d5]"
+                    "flex flex-col gap-1 items-center justify-center w-full h-full text-sm font-bold",
+                    active
+                      ? "text-[#7391d5]"
+                      : "text-[#333333] dark:text-[#d9d9d9]"
                   )}
                 >
-                  {item.svg}
-                </span>
-                <span className="block mt-auto leading-3">{item.name}</span>
-              </Link>
-            </li>
-          ))}
+                  <span
+                    className={cn(
+                      "text-[24px] font-bold block",
+                      active
+                        ? "text-[#7391d5]"
+                        : "text-[#333333] dark:text-[#d9d9d9]"
+                    )}
+                  >
+                    {item.svg}
+                  </span>
+                  <span className="block mt-auto leading-3">{item.name}</span>
+                </Link>
+              </li>
+            );
+          })}
         </ul>
       </nav>
     </div>
