@@ -51,7 +51,12 @@ export const MobPanel: React.FC<Props> = ({ className }) => {
     },
   ];
 
-  const cleanPath = namePage?.replace(/\/$/, "");
+  const isActive = (href: string) => {
+    if (href === "/") {
+      return namePage === "/";
+    }
+    return namePage === href || namePage.startsWith(href + "/");
+  };
 
   return (
     <div
@@ -76,14 +81,13 @@ export const MobPanel: React.FC<Props> = ({ className }) => {
                 href={item.href}
                 className={cn(
                   "flex flex-col gap-1 items-center justify-center w-full h-full text-[#333333] dark:text-[#d9d9d9] text-sm font-bold",
-                  cleanPath === item.href.replace(/\/$/, "") &&
-                    "dark:text-[#7391d5] text-[#7391d5]"
+                  isActive(item.href) && "dark:text-[#7391d5] text-[#7391d5]"
                 )}
               >
                 <span
                   className={cn(
                     "text-[#333333] dark:text-[#d9d9d9] text-[24px] font-bold block",
-                    cleanPath === item.href.replace(/\/$/, "") &&
+                    isActive(item.href) &&
                       "dark:text-[#7391d5] text-[#7391d5]"
                   )}
                 >
