@@ -47,9 +47,6 @@ export const Nav: React.FC<Props> = ({ className }) => {
   return (
     <nav className={className}>
       <ul className="flex flex-col gap-8">
-        {navMenu[0].href === namePage && (
-          <div>Hello World</div>
-        )}
         {navMenu.map((item, index) => (
           <li key={index}>
             <Link
