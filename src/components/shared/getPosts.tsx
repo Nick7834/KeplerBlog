@@ -5,6 +5,7 @@ import { Post } from "./post";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { Virtuoso } from "react-virtuoso";
 import { getInitialPosts } from "@/server/posts";
+import { usePathname } from "next/navigation";
 
 export const GetPosts = () => {
   const {
@@ -24,11 +25,12 @@ export const GetPosts = () => {
     refetchOnWindowFocus: false,
     refetchOnMount: false,
   });
-
+  const namePage = usePathname();
   const posts = useMemo(() => data?.pages.flat() || [], [data]);
 
   return (
     <div className="mt-[clamp(1.25rem,0.82rem+2.15vw,2.5rem)]">
+      {namePage === "/" &&  'HELLO KEPLERBLOG!'}
       {isError && <p className="text-red-500">Something went wrong</p>}
       {isLoading ? (
         <div className="flex flex-col">
