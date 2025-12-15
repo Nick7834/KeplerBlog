@@ -27,8 +27,6 @@ export const GetPosts = () => {
 
   const posts = useMemo(() => data?.pages.flat() || [], [data]);
 
-  console.log(posts)
-
   return (
     <div className="mt-[clamp(1.25rem,0.82rem+2.15vw,2.5rem)]">
       {isError && <p className="text-red-500">Something went wrong</p>}
