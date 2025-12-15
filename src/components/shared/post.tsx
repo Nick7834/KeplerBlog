@@ -97,7 +97,7 @@ export const Post: React.FC<Props> = memo(({ className, onClick, post }) => {
           pathname.startsWith("/post") ? null : router.push(`/post/${post?.id}`)
         }
         className={cn(
-          `overflow-hidden relative max-w-[750px] w-full flex-1 p-3 cursor-pointer rounded-[12px] transition-all ease-in-out duration-300 hover:bg-[#d1d1d1]/60 hover:dark:bg-[#333333]/60`,
+          `relative max-w-[750px] w-full flex-1 p-3 cursor-pointer rounded-[12px] transition-all ease-in-out duration-300 hover:bg-[#d1d1d1]/60 hover:dark:bg-[#333333]/60`,
           className,
           post.isbanned && "pointer-events-none select-none"
         )}
@@ -117,16 +117,16 @@ export const Post: React.FC<Props> = memo(({ className, onClick, post }) => {
         ></span>
 
         {post.isbanned && (
-          <div className="absolute top-0 left-0 w-full h-full flex justify-end bg-[rgba(206,206,206,0.5)] dark:bg-[rgba(96,96,96,0.5)] z-[500]">
+          <div className="absolute top-0 left-0 w-full h-full flex justify-end rounded-[12px] bg-[rgba(206,206,206,0.5)] dark:bg-[rgba(96,96,96,0.5)] z-[200]">
             {post?.author?.id === session?.data?.user?.id && <>
               <Button
                 onClick={(e) => (e.stopPropagation(), setBan(!ban))}
-                className="w-10 h-10 flex-shrink-0 flex justify-center items-center pointer-events-auto select-auto bg-red-500 hover:bg-red-500 hover:dark:bg-red-500 text-white [&_svg]:size-[25px] m-2 p-0 rounded-full"
+                className="w-7 h-7 flex-shrink-0 flex justify-center items-center pointer-events-auto select-auto bg-red-500 hover:bg-red-500 hover:dark:bg-red-500 text-white [&_svg]:size-[20px] m-2 p-0 rounded-full"
               >
                 <BsFillExclamationDiamondFill />
               </Button>
               {ban && (
-                <div className="absolute top-[50px] right-0 w-[300px] p-2 text-[#333333] dark:text-[#d9d9d9] rounded-[12px] bg-[#b2bbc8]/70 dark:bg-[#24272b]/80 backdrop-blur-[12px]">
+                <div className="absolute top-[40px] right-0 w-[300px] p-2 text-[#333333] dark:text-[#d9d9d9] text-[12px] rounded-[12px] bg-[#b2bbc8]/70 dark:bg-[#24272b]/80 backdrop-blur-[12px]">
                   <p>
                     <span className="font-semibold">Reason for blocking:</span>{" "}
                     {post.banReason}

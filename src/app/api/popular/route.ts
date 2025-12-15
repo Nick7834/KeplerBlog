@@ -47,7 +47,7 @@ export async function GET() {
       .map((post) => {
         return {
           ...post,
-          popularity: post._count.likes * 2 + post._count.comments,
+          popularity: post._count.likes * 1 + post._count.comments * 2,
           isLiked: userIds && Boolean(post.likes[0]),
         };
       })

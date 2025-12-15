@@ -9,6 +9,7 @@ export interface IPost {
     banReason: string;
     isbanned: boolean;
     image?: string[];
+    categoryId: string;
     author: {
         id: string;
         username: string;

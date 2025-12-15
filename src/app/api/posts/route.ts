@@ -28,8 +28,9 @@ export async function POST(request: Request) {
     const photos = formData.getAll("photos") as File[];
     const avatarUser = formData.get("avatarUser") as string | null;
     const userName = formData.get("userName") as string;
+    const categories = formData.get("categories") as string;
 
-    if (!title || !content) {
+    if (!title || !content || !categories) {
       return NextResponse.json(
         { error: "Missing title or content" },
         { status: 400 }
@@ -69,6 +70,7 @@ export async function POST(request: Request) {
         content,
         image: photoUrls,
         authorId: userId.id,
+        categoryId: categories,
       },
     });
 

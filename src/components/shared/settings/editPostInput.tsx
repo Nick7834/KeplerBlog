@@ -28,6 +28,7 @@ import {
 } from "@/lib/updateQueryData";
 import { Post } from "@prisma/client";
 import { usePostId } from "@/components/hooks/UsePostDetailFetch";
+import { Categories } from "../createPost/categories";
 
 interface Props {
   className?: string;
@@ -49,6 +50,7 @@ export const EditPostInput: React.FC<Props> = ({ className, post }) => {
 
   const [title, setTitle] = useState(post?.title);
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
+  const [categories, setCategories] = useState<string>(post.categoryId || "");
 
   const [oldPhoto, setOldPhotos] = useState<string[]>(post.image || []);
   const [newPhoto, setNewPhotos] = useState<File[]>([]);
@@ -111,6 +113,7 @@ export const EditPostInput: React.FC<Props> = ({ className, post }) => {
     const oldTitle = post.title;
     const oldContent = post.content;
     const oldPhotos = post.image;
+    const oldCategories = post.categoryId;
 
     const newTitle = title.trim();
     const newContent = convertToRaw(editorState.getCurrentContent());
@@ -120,13 +123,16 @@ export const EditPostInput: React.FC<Props> = ({ className, post }) => {
 
     const isContentChanged =
       JSON.stringify(newContent) !== JSON.stringify(oldContent);
-    
+
     const hasNewPhotos = newPhoto && newPhoto.length > 0;
-    const hasDeletedPhotos = JSON.stringify(newPhotos) !== JSON.stringify(oldPhotos);
+    const hasDeletedPhotos =
+      JSON.stringify(newPhotos) !== JSON.stringify(oldPhotos);
 
     const isPhotosChanged = hasNewPhotos || hasDeletedPhotos;
 
-    if (!isTitleChanged && !isContentChanged && !isPhotosChanged) {
+    const isCategoriesChanged = oldCategories !== categories;
+
+    if (!isTitleChanged && !isContentChanged && !isPhotosChanged && !isCategoriesChanged) {
       setLoading(false);
       toast.error("No changes detected.");
       return;
@@ -145,6 +151,7 @@ export const EditPostInput: React.FC<Props> = ({ className, post }) => {
     formData.append("content", JSON.stringify(rawContent));
     oldPhoto.forEach((oldPhoto) => formData.append("oldPhoto", oldPhoto));
     newPhoto.forEach((newPhotos) => formData.append("newPhotos", newPhotos));
+    formData.append("categories", categories);
 
     try {
       const response = await axios.put(`/api/posts/${post.id}/edit`, formData);
@@ -157,6 +164,7 @@ export const EditPostInput: React.FC<Props> = ({ className, post }) => {
           title: isTitleChanged ? newTitle : oldTitle,
           content: isContentChanged ? rawContent : oldContent,
           image: isPhotosChanged ? newPhotos : oldPhotos,
+          categoryId: categories,
         };
 
         mutation.mutate(editPost);
@@ -218,6 +226,11 @@ export const EditPostInput: React.FC<Props> = ({ className, post }) => {
 
   return (
     <div className={cn("flex flex-col max-w-[600px] mt-8", className)}>
+      <Categories
+        categories={categories}
+        setCategories={setCategories}
+      />
+      
       <Photos
         photos={photoPreview}
         setPhotoPreview={setPhotoPreview}
@@ -244,14 +257,16 @@ export const EditPostInput: React.FC<Props> = ({ className, post }) => {
         >
           <RiDeleteBinLine className="block translate-y-[-1px]" /> Delete Post
         </Button>
-        {!post.isbanned && <Button
-          loading={loading}
-          onClick={handlePost}
-          disabled={title.length === 0 ? true : false}
-          className="w-[125px] max-[125px] px-[30px] flex items-center text-[#d9d9d9] dark:text-[#333333] bg-[#333333] dark:bg-[#d9d9d9] hover:bg-[#333333]/85 dark:hover:bg-[#d9d9d9]/85"
-        >
-          <FaRegSave className="block translate-y-[-1px]" /> Save
-        </Button>}
+        {!post.isbanned && (
+          <Button
+            loading={loading}
+            onClick={handlePost}
+            disabled={title.length === 0 ? true : false}
+            className="w-[125px] max-[125px] px-[30px] flex items-center text-[#d9d9d9] dark:text-[#333333] bg-[#333333] dark:bg-[#d9d9d9] hover:bg-[#333333]/85 dark:hover:bg-[#d9d9d9]/85"
+          >
+            <FaRegSave className="block translate-y-[-1px]" /> Save
+          </Button>
+        )}
       </div>
     </div>
   );

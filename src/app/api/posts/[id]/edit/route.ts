@@ -45,8 +45,9 @@ export async function PUT(
     ) as Prisma.JsonValue | null;
     const oldPhoto = formData.getAll("oldPhoto") as string[];
     const newPhoto = formData.getAll("newPhotos") as File[];
+    const categories = formData.get("categories") as string;
 
-    if (!title || !content) {
+    if (!title || !content || !categories) {
       return NextResponse.json(
         { error: "Missing title or content" },
         { status: 400 }
@@ -98,6 +99,7 @@ export async function PUT(
         title,
         content,
         image: finalPhotos,
+        categoryId: categories,
       },
     });
 

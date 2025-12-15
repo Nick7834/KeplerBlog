@@ -72,9 +72,39 @@ model Post {
   isbanned     Boolean        @default(false)
   banReason    String         @default("")
   Notification Notification[]
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
+
+  categoryId String   @db.ObjectId
+  category   Category @relation(fields: [categoryId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
+
+model Category {
+  id       String     @id @default(auto()) @map("_id") @db.ObjectId
+  name     String     @unique
+  slug     String     @unique
+  icon     String
+  posts    Post[]
+  // preferences UserPreference[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// model UserPreference {
+//   id         String @id @default(auto()) @map("_id") @db.ObjectId
+//   userId     String @db.ObjectId
+//   categoryId String @db.ObjectId
+//   score      Float  @default(0)
+
+//   user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+//   category Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+//   updatedAt DateTime @updatedAt
+
+//   @@unique([userId, categoryId])
+// }
 
 model Comment {
   id        String    @id @default(auto()) @map("_id") @db.ObjectId

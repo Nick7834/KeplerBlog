@@ -31,9 +31,9 @@ export const PostDetails: React.FC<Props> = ({ className, idPost }) => {
   });
 
   const scrollToSection = () => {
-    // if (commetsRef.current) {
-    //   commetsRef.current.scrollIntoView({ behavior: "smooth" });
-    // }
+    if (commetsRef.current) {
+      commetsRef.current.scrollIntoView({ behavior: "smooth" });
+    }
   };
 
   if (!isLoading && !data) {
