@@ -1,19 +1,19 @@
 "use client";
 import React, { useMemo } from "react";
-import { SkeletonPost } from "./skeletonPost";
-import { Post } from "./post";
+// import { SkeletonPost } from "./skeletonPost";
+// import { Post } from "./post";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { Virtuoso } from "react-virtuoso";
+// import { Virtuoso } from "react-virtuoso";
 import { getInitialPosts } from "@/server/posts";
 
 export const GetPosts = () => {
   const {
     data,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-    isLoading,
-    isError,
+    // fetchNextPage,
+    // hasNextPage,
+    // isFetchingNextPage,
+    // isLoading,
+    // isError,
   } = useInfiniteQuery({
     queryKey: ["posts"],
     queryFn: ({ pageParam = 1 }) => getInitialPosts(pageParam, 10),
@@ -31,7 +31,7 @@ export const GetPosts = () => {
 
   return (
     <div className="mt-[clamp(1.25rem,0.82rem+2.15vw,2.5rem)]">
-      {isError && <p className="text-red-500">Something went wrong</p>}
+      {/* {isError && <p className="text-red-500">Something went wrong</p>}
       {isLoading ? (
         <div className="flex flex-col">
           {[...Array(5)].map((_, index) => (
@@ -64,7 +64,7 @@ export const GetPosts = () => {
               ) : null,
           }}
         />
-      )}
+      )} */}
     </div>
   );
 };

@@ -1,4 +1,4 @@
-// import { GetPosts } from "@/components/shared/getPosts";
+import { GetPosts } from "@/components/shared/getPosts";
 import { IoHome } from "react-icons/io5";
 
 export default async function Home() {
@@ -9,7 +9,7 @@ export default async function Home() {
         <h1 className="max-[650px]:mx-[clamp(0.938rem,calc(-15.104rem+23.33vw),3.125rem)] flex items-center gap-2 text-[#333333] dark:text-[#d9d9d9] text-[clamp(1.563rem,1.455rem+0.54vw,1.875rem)] font-bold">
           <IoHome /> Home
         </h1>
-        {/* <GetPosts /> */}
+        <GetPosts />
       </div>
     </div>
   );
