@@ -4,7 +4,7 @@ import Link from "next/link";
 import React, { useEffect, useRef, useState } from "react";
 
 import { IoMdSettings } from "react-icons/io";
-import { MdDarkMode } from "react-icons/md";
+import { MdDarkMode, MdPeopleAlt } from "react-icons/md";
 import { ImExit } from "react-icons/im";
 import { RxAvatar } from "react-icons/rx";
 import { cn } from "@/lib/utils";
@@ -17,6 +17,7 @@ import { User } from "@prisma/client";
 import { Button } from ".";
 import { IoClose } from "react-icons/io5";
 import { MdAdminPanelSettings } from "react-icons/md";
+import { useResize } from "../hooks/useResize";
 
 interface Props {
   className?: string;
@@ -35,8 +36,10 @@ export const Profile: React.FC<Props> = ({ className, user }) => {
   const [open, setOpen] = useState(false);
   const refProfile = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
-  
+
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+  const { width } = useResize();
 
   const { theme, handleToggle } = UseDarkMode();
 
@@ -67,6 +70,15 @@ export const Profile: React.FC<Props> = ({ className, user }) => {
       svg: <RxAvatar size={20} />,
       href: `/profile/${user?.id}`,
     },
+    ...(width <= 1100
+      ? [
+          {
+            name: "Subs",
+            svg: <MdPeopleAlt />,
+            href: "/subscriptions",
+          },
+        ]
+      : []),
     ...(session?.user.role === "admin"
       ? [
           {

@@ -3,12 +3,12 @@ import { cn } from '@/lib/utils';
 import React from 'react';
 import { HiTrendingUp } from 'react-icons/hi';
 import { IoHome } from 'react-icons/io5';
-import { MdPeopleAlt } from 'react-icons/md';
 import { IoAddOutline } from "react-icons/io5";
 import { FaNewspaper } from 'react-icons/fa6';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useSession } from 'next-auth/react';
+import { BiSolidCategory } from 'react-icons/bi';
 
 interface Props {
     className?: string;
@@ -37,14 +37,14 @@ export const MobPanel: React.FC<Props> = ({ className }) => {
                 href: "/create"
             }] : []),
             {
+                  name: "Categories",
+                  svg: <BiSolidCategory />,
+                  href: "/categories",
+                },
+            {
                 name: "For You",
                 svg: <FaNewspaper />,
                 href: "/for-you"
-            },
-            {
-                name: "Subs",
-                svg: <MdPeopleAlt />,
-                href: "/subscriptions"
             }
     ]
 

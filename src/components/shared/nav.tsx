@@ -5,6 +5,7 @@ import { IoHome } from "react-icons/io5";
 import { HiTrendingUp } from "react-icons/hi";
 import { MdPeopleAlt } from "react-icons/md";
 import { FaNewspaper } from "react-icons/fa6";
+import { BiSolidCategory } from "react-icons/bi";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
 
@@ -33,6 +34,11 @@ export const Nav: React.FC<Props> = ({ className }) => {
       href: "/trending",
     },
     {
+      name: "Categories",
+      svg: <BiSolidCategory />,
+      href: "/categories",
+    },
+    {
       name: "For You",
       svg: <FaNewspaper />,
       href: "/for-you",
@@ -58,6 +64,9 @@ export const Nav: React.FC<Props> = ({ className }) => {
             >
               {item.svg}
               {item.name}
+              {item.name === "Categories" && (
+                <span className="block ml-auto text-[12px] border px-2 rounded-[10px] bg-[#7391d5] text-[#d9d9d9]">New</span>
+              )}
             </Link>
           </li>
         ))}

@@ -511,3 +511,14 @@ p {
     font-weight: 700;
   }
 }
+
+.category-arrow::after {
+  content: "";
+  position: absolute;
+  inset: -10px;
+  background: inherit;
+  border-radius: inherit;
+  filter: blur(6px);
+  opacity: 0.6;
+  z-index: -1;
+}
