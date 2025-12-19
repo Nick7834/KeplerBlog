@@ -199,14 +199,14 @@ const MessageBubbleComponent: React.FC<Props> = ({
                 ></div>
 
                 <div className="relative z-[2] flex items-center justify-center h-full cursor-pointer">
-                  <Image
+                  <img
                     src={message?.image}
                     alt="basic"
                     width={500}
                     height={400}
                     className="block object-contain rounded-t-xl w-full max-h-[400px]"
                     loading="lazy"
-                    priority={false}
+                    // priority={false}
                   />
                 </div>
               </div>
