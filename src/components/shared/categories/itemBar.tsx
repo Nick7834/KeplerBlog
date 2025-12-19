@@ -136,7 +136,7 @@ export const ItemBar: React.FC<Props> = ({ className }) => {
             <Button
               onClick={() => swiperRef.current?.slidePrev()}
               className={cn(
-                "category-arrow w-[42px] h-[42px] flex-shrink-0 absolute -left-1 top-[50%] translate-y-[-50%] z-20 p-0 px-2 m-0 rounded-full bg-[#EAEAEA] dark:bg-[#171717] text-[#333333] dark:text-[#d9d9d9] shadow-[0_0_40px_25px_rgba(234,234,234,1)] dark:shadow-[0_0_40px_25px_rgba(23,23,23,1)] blur-[0.5px]",
+                "category-arrow w-[42px] h-[42px] flex-shrink-0 absolute -left-1 top-[50%] translate-y-[-50%] z-20 p-0 px-2 m-0 rounded-full bg-[#EAEAEA] dark:bg-[#171717] hover:bg-[#d2d2d2] dark:hover:bg-[#252525] text-[#333333] dark:text-[#d9d9d9] shadow-[0_0_40px_25px_rgba(234,234,234,1)] dark:shadow-[0_0_40px_25px_rgba(23,23,23,1)] blur-[0.5px]",
                 isBeginning ? "opacity-0 pointer-events-none" : "opacity-100"
               )}
             >
@@ -145,7 +145,7 @@ export const ItemBar: React.FC<Props> = ({ className }) => {
             <Button
               onClick={() => swiperRef.current?.slideNext()}
               className={cn(
-                "category-arrow w-[42px] h-[42px] flex-shrink-0 absolute -right-1 top-[50%] translate-y-[-50%] z-20 p-0 px-2 m-0 rounded-full rotate-180 bg-[#EAEAEA] dark:bg-[#171717] text-[#333333] dark:text-[#d9d9d9] shadow-[0_0_40px_25px_rgba(234,234,234,1)] dark:shadow-[0_0_40px_25px_rgba(23,23,23,1)] blur-[0.5px]",
+                "category-arrow w-[42px] h-[42px] flex-shrink-0 absolute -right-1 top-[50%] translate-y-[-50%] z-20 p-0 px-2 m-0 rounded-full rotate-180 bg-[#EAEAEA] dark:bg-[#171717] hover:bg-[#d2d2d2] dark:hover:bg-[#252525] text-[#333333] dark:text-[#d9d9d9] shadow-[0_0_40px_25px_rgba(234,234,234,1)] dark:shadow-[0_0_40px_25px_rgba(23,23,23,1)] blur-[0.5px]",
                 isEnd ? "opacity-0 pointer-events-none" : "opacity-100"
               )}
             >
