@@ -92,9 +92,9 @@ export const ItemBar: React.FC<Props> = ({ className }) => {
                 onClick={() => onCategoryClick(null)}
                 variant="secondary"
                 className={cn(
-                  "select-none p-0 m-0 rounded-[10px] dark:bg-[#333333] bg-[#d9d9d9] text-[#333333] dark:text-[#d9d9d9]",
+                  "select-none p-0 m-0 rounded-[10px] dark:bg-[#333333] bg-[#d9d9d9] text-[#333333] dark:text-[#d9d9d9] hover:bg-[#c9c8c8] dark:hover:bg-[#333333]/55",
                   !activeCategory &&
-                    "bg-[#7391d5] dark:bg-[#7391d5] text-[#d9d9d9] dark:text-[#d9d9d9]"
+                    "bg-[#7391d5] dark:bg-[#7391d5] hover:bg-[#7391d5] dark:hover:bg-[#7391d5] text-[#d9d9d9] dark:text-[#d9d9d9]"
                 )}
               >
                 <span className="flex items-center whitespace-nowrap justify-center px-3 py-2">
@@ -116,9 +116,9 @@ export const ItemBar: React.FC<Props> = ({ className }) => {
                     onClick={() => onCategoryClick(item.name)}
                     variant="secondary"
                     className={cn(
-                      "select-none p-0 m-0 rounded-[10px] dark:bg-[#333333] bg-[#d9d9d9] text-[#333333] dark:text-[#d9d9d9]",
+                      "select-none p-0 m-0 rounded-[10px] dark:bg-[#333333] bg-[#d9d9d9] text-[#333333] dark:text-[#d9d9d9] hover:bg-[#c9c8c8] dark:hover:bg-[#333333]/55",
                       activeCategory === item.name &&
-                        "bg-[#7391d5] dark:bg-[#7391d5] text-[#d9d9d9] dark:text-[#d9d9d9]"
+                        "bg-[#7391d5] dark:bg-[#7391d5] hover:bg-[#7391d5] dark:hover:bg-[#7391d5] text-[#d9d9d9] dark:text-[#d9d9d9]"
                     )}
                   >
                     <span className="flex items-center whitespace-nowrap justify-center px-3 py-2">
