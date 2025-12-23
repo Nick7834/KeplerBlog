@@ -13,6 +13,7 @@ import { IoSearch } from "react-icons/io5";
 import { Skeleton } from "../ui/skeleton";
 import { NotificationComponent } from "./notificationComponent";
 import { Messenger } from "./messenger/components/messenger";
+import { YearModal } from "./yearlyStats/components/yearModal";
 
 interface Props {
   className?: string;
@@ -57,6 +58,7 @@ export const AutchModalBlock: React.FC<Props> = ({
             </Link>
             <Messenger />
             <NotificationComponent session={session} />
+            <YearModal />
             <Profile user={user} />
           </div>
         ) : (
