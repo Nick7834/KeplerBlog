@@ -33,7 +33,12 @@ export const Sliders = ({ data }: { data: Props }) => {
         thresholdDelta: 20,
         sensitivity: 1,
       }}
-      speed={1000}
+      speed={500}
+      breakpoints={{
+        751: {
+          speed: 1000,
+        },
+      }}
       resistance={true}
       resistanceRatio={0}
       modules={[Mousewheel, Navigation, Parallax]}
@@ -167,6 +172,10 @@ export const Sliders = ({ data }: { data: Props }) => {
         >
           <GratitudeSlide />
         </div>
+
+        <p className="text-xs font-light text-white/50 uppercase tracking-widest">
+          Jan 1 – Dec 24 Highlights
+        </p>
       </SwiperSlide>
     </Swiper>
   );

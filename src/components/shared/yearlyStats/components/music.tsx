@@ -25,6 +25,22 @@ export const Music: React.FC = () => {
     };
   }, []);
 
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        audioRef.current?.pause();
+      } else {
+        audioRef.current?.play();
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, []);
+
   const toggleMusic = () => {
     if (audioRef.current) {
       if (isPlaying) {

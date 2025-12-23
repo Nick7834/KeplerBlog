@@ -14,6 +14,7 @@ import { Skeleton } from "../ui/skeleton";
 import { NotificationComponent } from "./notificationComponent";
 import { Messenger } from "./messenger/components/messenger";
 import { YearModal } from "./yearlyStats/components/yearModal";
+import { useIsYearlyEventActive } from "../hooks/useEventPeriod";
 
 interface Props {
   className?: string;
@@ -31,6 +32,7 @@ export const AutchModalBlock: React.FC<Props> = ({
   setSearchMobOpen,
 }) => {
   const { open, setOpen } = useLogInStore();
+  const isEventActive = useIsYearlyEventActive();
 
   if (status === "loading") {
     return (
@@ -58,7 +60,7 @@ export const AutchModalBlock: React.FC<Props> = ({
             </Link>
             <Messenger />
             <NotificationComponent session={session} />
-            <YearModal />
+            {isEventActive && <YearModal />}
             <Profile user={user} />
           </div>
         ) : (
