@@ -174,7 +174,7 @@ export const Sliders = ({ data }: { data: Props }) => {
         </div>
 
         <p className="text-xs font-light text-white/50 uppercase tracking-widest">
-          Jan 1 – Dec 24 Highlights
+          Jan 1 – Dec 23 Highlights
         </p>
       </SwiperSlide>
     </Swiper>

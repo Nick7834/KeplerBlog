@@ -61,7 +61,7 @@ export const MagnetSlide: React.FC<Props> = ({
             </div>
             <div className="text-left">
               <h4 className="text-2xl font-black text-white leading-none">
-                +{followersCount}
+                +{followersCount.toLocaleString()}
               </h4>
               <p className="text-slate-500 text-[10px] uppercase tracking-wider mt-1">
                 New followers

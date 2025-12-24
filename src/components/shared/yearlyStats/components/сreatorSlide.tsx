@@ -40,7 +40,7 @@ export const CreatorSlide: React.FC<Props> = ({ className, postsCount }) => {
 
           <div className="relative z-10">
             <span className="text-[120px] font-black text-white leading-none tracking-tighter select-none">
-              {postsCount}
+              {postsCount.toLocaleString()}
             </span>
             <p className="text-emerald-500/60 font-bold tracking-[0.5em] text-sm mt-[-10px]">
               POSTS CREATED

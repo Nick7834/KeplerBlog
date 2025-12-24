@@ -58,7 +58,7 @@ export const LikeSlide: React.FC<Props> = ({
             <MessageSquare className="w-6 h-6 text-blue-400 mb-4" />
             <p className="text-slate-400 text-xs font-medium mb-1">Comments</p>
             <h4 className="text-3xl font-bold text-white tracking-tight">
-              {commentsCount}
+              {commentsCount.toLocaleString()}
             </h4>
           </div>
 
@@ -66,7 +66,7 @@ export const LikeSlide: React.FC<Props> = ({
             <UserPlus className="w-6 h-6 text-emerald-400 mb-4" />
             <p className="text-slate-400 text-xs font-medium mb-1">Followed</p>
             <h4 className="text-3xl font-bold text-white tracking-tight">
-              {followsCount}
+              {followsCount.toLocaleString()}
             </h4>
           </div>
         </div>

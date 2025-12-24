@@ -42,7 +42,7 @@ export const ConnectorSlide: React.FC<Props> = ({ className, sentCount, received
             <p className="text-blue-300 text-[10px] uppercase font-bold mb-1 tracking-widest">
               Sent
             </p>
-            <h4 className="text-3xl font-black text-white">{sentCount}</h4>
+            <h4 className="text-3xl font-black text-white">{sentCount.toLocaleString()}</h4>
           </div>
 
           <div className="bg-white/5 border border-white/10 p-5 rounded-t-[24px] rounded-br-[24px] mr-auto w-[85%] text-left relative overflow-hidden">
@@ -50,7 +50,7 @@ export const ConnectorSlide: React.FC<Props> = ({ className, sentCount, received
             <p className="text-slate-500 text-[10px] uppercase font-bold mb-1 tracking-widest">
               Received
             </p>
-            <h4 className="text-3xl font-black text-white">{receivedCount}</h4>
+            <h4 className="text-3xl font-black text-white">{receivedCount.toLocaleString()}</h4>
           </div>
         </div>
 
