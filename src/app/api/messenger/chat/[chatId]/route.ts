@@ -95,14 +95,14 @@ export async function POST(req: Request) {
 
   const formData = await req.formData();
   const chatId = formData.get("chatId") as string;
-  const senderId = formData.get("senderId") as string;
+  // const senderId = formData.get("senderId") as string;
   const content = formData.get("content") as string;
   const replyToId = formData.get("replyToId") as string;
   const file = formData.get("file") as File;
   const tempId = formData.get("tempId") as string;
   const sentAt = formData.get("sentAt") as string;
 
-  if (!senderId || !chatId || (!content && !file)) {
+  if (!chatId || (!content && !file)) {
     return NextResponse.json(
       { error: "Missing required fields" },
       { status: 400 }
@@ -110,6 +110,26 @@ export async function POST(req: Request) {
   }
 
   try {
+    const senderId = userId.id;
+
+    const chatReq = await prisma.chat.findUnique({
+      where: { id: chatId },
+      select: {
+        user1Id: true,
+        user2Id: true,
+      },
+    });
+
+    if (
+      !chatReq ||
+      (chatReq.user1Id !== senderId && chatReq.user2Id !== senderId)
+    ) {
+      return NextResponse.json(
+        { error: "You are not a member of this chat" },
+        { status: 403 }
+      );
+    }
+
     let imageMessage = null;
 
     if (file) {
@@ -120,7 +140,7 @@ export async function POST(req: Request) {
         );
       }
 
-      if (file.size > 15 * 1024 * 1024) {
+      if (file.size > 5 * 1024 * 1024) {
         return NextResponse.json(
           { error: "Image size must be less than 5MB" },
           { status: 400 }
@@ -159,7 +179,7 @@ export async function POST(req: Request) {
 
     if (content.length > 4096) {
       return NextResponse.json(
-        { error: "Message must be less than 1000 characters" },
+        { error: "Message must be less than 4096 characters" },
         { status: 400 }
       );
     }
@@ -302,7 +322,7 @@ export async function PATCH(req: Request) {
   const messageId = formData.get("messageId") as string;
   const content = (formData.get("messageContent") as string) || "";
   const file = (formData.get("file") as File) || null;
-  const oldPhoto = (formData.get("oldPhoto") as string) || null;
+  // const oldPhoto = (formData.get("oldPhoto") as string) || null;
 
   if (!chatId || !messageId) {
     return NextResponse.json(
@@ -313,7 +333,7 @@ export async function PATCH(req: Request) {
 
   if (content.length > 4096) {
     return NextResponse.json(
-      { error: "Message must be less than 1000 characters" },
+      { error: "Message must be less than 4096 characters" },
       { status: 400 }
     );
   }
@@ -326,11 +346,17 @@ export async function PATCH(req: Request) {
       select: {
         senderId: true,
         createdAt: true,
+        chatId: true,
+        image: true,
       },
     });
 
     if (!message) {
       return NextResponse.json({ error: "Message not found" }, { status: 404 });
+    }
+
+    if (message.chatId !== chatId) {
+      return NextResponse.json({ error: "Chat mismatch" }, { status: 400 });
     }
 
     const diffHours = differenceInHours(
@@ -360,15 +386,15 @@ export async function PATCH(req: Request) {
         );
       }
 
-      if (file.size > 15 * 1024 * 1024) {
+      if (file.size > 5 * 1024 * 1024) {
         return NextResponse.json(
           { error: "Image size must be less than 5MB" },
           { status: 400 }
         );
       }
 
-      if (oldPhoto) {
-        const oldPhotoUrl = getPublicIdFromUrl(oldPhoto);
+      if (file && message.image) {
+        const oldPhotoUrl = getPublicIdFromUrl(message.image);
         const response = await cloudinary.api
           .resource(`messager/${oldPhotoUrl}`)
           .catch(() => null);
@@ -419,14 +445,14 @@ export async function PATCH(req: Request) {
       where: { id: messageId },
       data: {
         content: content || "",
-        image: messagePhotoNew || oldPhoto || null,
+        image: messagePhotoNew || message.image || null,
       },
     });
 
     pusher.trigger(`chat-${chatId}`, "update-message", {
       id: messageId,
       content,
-      image: messagePhotoNew || oldPhoto || null,
+      image: messagePhotoNew || message.image || null,
     });
 
     const lastMessage = await prisma.message.findFirst({
@@ -452,7 +478,7 @@ export async function PATCH(req: Request) {
         pusher.trigger(`chats-${id}`, "update-chat-message", {
           chatId: chatId,
           content: content,
-          image: messagePhotoNew || oldPhoto || null,
+          image: messagePhotoNew || message.image || null,
         });
       }
     }
@@ -496,6 +522,8 @@ export async function DELETE(req: Request) {
       select: {
         senderId: true,
         replyToId: true,
+        chatId: true,
+        image: true,
       },
     });
 
@@ -505,6 +533,17 @@ export async function DELETE(req: Request) {
 
     if (message.senderId !== userId.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    if (message.chatId !== chatId) {
+      return NextResponse.json({ error: "Invalid chat id" }, { status: 400 });
+    }
+
+    if (message.image) {
+      const publicId = getPublicIdFromUrl(message.image);
+      await cloudinary.uploader
+        .destroy(`messager/${publicId}`)
+        .catch((e) => console.error("Cloudinary error:", e));
     }
 
     await prisma.$transaction(async (tx) => {

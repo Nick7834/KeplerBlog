@@ -1,4 +1,6 @@
+import cloudinary from "@/lib/cloudinary";
 import { getUserSession } from "@/lib/get-user-session";
+import { getPublicIdFromUrl } from "@/lib/getPublicIdFromUrl";
 import { pusher } from "@/lib/pusher";
 import { prisma } from "@/prisma/prisma-client";
 import { NextResponse } from "next/server";
@@ -95,41 +97,63 @@ export async function DELETE(
   }
 
   try {
-
     const chat = await prisma.chat.findUnique({
       where: { id: chatId },
       select: {
-          user1: { select: { id: true } },
-          user2: { select: { id: true } },
-        },
+        user1Id: true,
+        user2Id: true,
+        user1: { select: { id: true } },
+        user2: { select: { id: true } },
+      },
     });
-
 
     if (!chat) {
       return NextResponse.json({ error: "Chat not found" }, { status: 404 });
     }
 
-    await prisma.message.updateMany({
-      where: { chatId: chatId },
-      data: { replyToId: null },
+    if (chat.user1Id !== user.id && chat.user2Id !== user.id) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
+    const messagesWithImages = await prisma.message.findMany({
+      where: { chatId, image: { not: null } },
+      select: { image: true },
     });
 
-    await prisma.message.deleteMany({
-      where: { chatId: chatId },
-    });
+    if (messagesWithImages.length > 0) {
+      const deletePromises = messagesWithImages.map((msg) => {
+        const publicId = getPublicIdFromUrl(msg.image!);
+        return cloudinary.uploader
+          .destroy(`messager/${publicId}`)
+          .catch((e) => console.error("Cloudinary delete error:", e));
+      });
+      await Promise.all(deletePromises);
+    }
 
-    const deletedChat = await prisma.chat.deleteMany({
-      where: { id: chatId, OR: [{ user1Id: user.id }, { user2Id: user.id }] },
+    await prisma.$transaction(async (tx) => {
+      await tx.message.updateMany({
+        where: { chatId },
+        data: { replyToId: null },
+      });
+
+      await tx.message.deleteMany({
+        where: { chatId },
+      });
+
+      await tx.chat.delete({
+        where: { id: chatId },
+      });
     });
 
     const recipientId =
       chat.user1.id === user.id ? chat.user2.id : chat.user1.id;
 
-    for (const id of [user.id, recipientId]) {
-      await pusher.trigger(`chats-${id}`, "chat-deleted", chatId);
-    }
+    await Promise.all([
+      pusher.trigger(`chats-${user.id}`, "chat-deleted", chatId),
+      pusher.trigger(`chats-${recipientId}`, "chat-deleted", chatId),
+    ]);
 
-    return NextResponse.json({ deletedChat });
+    return NextResponse.json({ success: true });
   } catch (error) {
     console.warn(error);
     return NextResponse.json(
