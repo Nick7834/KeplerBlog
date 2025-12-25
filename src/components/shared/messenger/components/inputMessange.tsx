@@ -78,8 +78,8 @@ export const InputMessage: React.FC<Props> = ({
       return;
     }
 
-    if (file.size > 15 * 1024 * 1024) {
-      toast.error("File size exceeds the 15MB limit.");
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("File size exceeds the 5MB limit.");
       return;
     }
 
