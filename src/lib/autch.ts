@@ -74,6 +74,14 @@ export const authOptions: AuthOptions = {
   callbacks: {
     async signIn({ user, account }) {
       try {
+        const isRegistrationDisabled = process.env.REG === "false";
+        const isOAuth =
+          account?.provider === "google" || account?.provider === "github";
+
+        if (isRegistrationDisabled && isOAuth) {
+          return false;
+        }
+
         if (account?.provider === "credentials") {
           return true;
         }
