@@ -7,6 +7,7 @@ import sharp from "sharp";
 import { getInitialPosts } from "@/server/posts";
 import { notificationQueue } from "@/lib/queue";
 import { checkBan } from "@/lib/checkBan";
+import { postRateLimit } from "@/lib/ratelimit";
 
 export async function POST(request: Request) {
   const userId = await getUserSession();
@@ -18,6 +19,15 @@ export async function POST(request: Request) {
   }
 
   await checkBan(userId.id);
+
+  const { success } = await postRateLimit.limit(userId.id);
+
+  if (!success) {
+    return NextResponse.json(
+      { error: "Too many attempts. Wait a minute." },
+      { status: 429 }
+    );
+  }
 
   try {
     const formData = await request.formData();
@@ -35,6 +45,23 @@ export async function POST(request: Request) {
         { error: "Missing title or content" },
         { status: 400 }
       );
+    }
+
+    if (photos.length > 5) {
+      return NextResponse.json({ error: "Too many photos" }, { status: 400 });
+    }
+
+    for (const photo of photos) {
+      if (photo.size > 5 * 1024 * 1024) {
+        return NextResponse.json({ error: "File too large" }, { status: 400 });
+      }
+
+      if (!photo.type.startsWith("image/")) {
+        return NextResponse.json(
+          { error: "Only images are allowed" },
+          { status: 400 }
+        );
+      }
     }
 
     const uploadPhoto = async (photo: File) => {

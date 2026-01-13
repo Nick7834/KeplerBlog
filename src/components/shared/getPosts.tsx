@@ -40,7 +40,7 @@ export const GetPosts = () => {
         <Virtuoso
           style={{ height: "100vh", width: "100%" }}
           data={posts}
-          initialItemCount={posts.length > 5 ? 5 : posts.length}
+          initialItemCount={posts.length - 1}
           useWindowScroll
           overscan={5}
           skipAnimationFrameInResizeObserver={true}

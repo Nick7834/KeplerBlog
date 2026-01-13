@@ -27,23 +27,30 @@ export const ForYouList: React.FC<Props> = ({ className }) => {
 
   const { setOpen } = useLogInStore();
 
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
-    useInfiniteQuery({
-      queryKey: ["forYou"],
-      queryFn: fetchForYou,
-      getNextPageParam: (lastPage, allPages) =>
-        lastPage.length < 10 ? undefined : allPages.length + 1,
-      initialPageParam: 1,
-      enabled: !!session,
-      staleTime: 1000 * 60 * 5,
-      refetchOnWindowFocus: false,
-      refetchOnMount: false,
-    });
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+    isError,
+  } = useInfiniteQuery({
+    queryKey: ["forYou"],
+    queryFn: fetchForYou,
+    getNextPageParam: (lastPage, allPages) =>
+      lastPage.length < 10 ? undefined : allPages.length + 1,
+    initialPageParam: 1,
+    enabled: !!session,
+    staleTime: 1000 * 60 * 5,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+  });
 
-   const posts = useMemo(() => data?.pages.flat() || [], [data]);
+  const posts = useMemo(() => data?.pages.flat() || [], [data]);
 
   return (
     <div className={cn("mt-[clamp(1.25rem,0.82rem+2.15vw,2.5rem)]", className)}>
+      {isError && <p className="text-red-500">Something went wrong</p>}
       {!session && !isLoading ? (
         <div className="flex flex-col items-center justify-center">
           <span className="text-[#333333] dark:text-[#d9d9d9] text-[clamp(5rem,3.968rem+5.16vw,8rem)]">
@@ -74,6 +81,7 @@ export const ForYouList: React.FC<Props> = ({ className }) => {
           useWindowScroll
           overscan={5}
           initialItemCount={posts.length - 1}
+          skipAnimationFrameInResizeObserver={true}
           endReached={() => {
             if (hasNextPage && !isFetchingNextPage) fetchNextPage();
           }}
@@ -86,7 +94,7 @@ export const ForYouList: React.FC<Props> = ({ className }) => {
                 </div>
               ) : null,
             EmptyPlaceholder: () =>
-              !isLoading && posts.length === 0? (
+              !isLoading && posts.length === 0 ? (
                 <div className="flex flex-col items-center justify-center gap-4">
                   <FaUsers
                     size={85}
@@ -100,7 +108,10 @@ export const ForYouList: React.FC<Props> = ({ className }) => {
           }}
           itemContent={(index, post) => (
             <div>
-              <Post key={post.id} post={post} />
+              <Post
+                key={post.id}
+                post={post}
+              />
             </div>
           )}
         />

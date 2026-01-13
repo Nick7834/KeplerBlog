@@ -20,6 +20,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { useSession } from "next-auth/react";
+import { Turnstile } from "@marsidev/react-turnstile";
 
 interface Props {
   className?: string;
@@ -28,9 +29,15 @@ interface Props {
   onClose?: () => void;
 }
 
-export const PasswordResetForm: React.FC<Props> = ({ className, setForgotPassword, emailUser, onClose }) => {
-  const {data: session} = useSession();
+export const PasswordResetForm: React.FC<Props> = ({
+  className,
+  setForgotPassword,
+  emailUser,
+  onClose,
+}) => {
+  const { data: session } = useSession();
   const { step, nextStep, reset } = usePasswordReset();
+  const [captchaToken, setCaptchaToken] = useState("");
 
   const useFormMethods = useForm<ResetPasswordEmail>({
     resolver: zodResolver(resetPasswordEmail),
@@ -53,9 +60,15 @@ export const PasswordResetForm: React.FC<Props> = ({ className, setForgotPasswor
   const handleRequestReset = async (data: ResetPasswordEmail) => {
     if (!data.email) return;
 
+    if (!session && !captchaToken) {
+      toast.error("Please complete the captcha");
+      return;
+    }
+
     try {
       const resp = await axios.post("/api/send-otp-reset", {
         email: data.email,
+        captchaToken: session ? "authorized-skip" : captchaToken,
       });
 
       if (resp.status === 200) {
@@ -91,7 +104,7 @@ export const PasswordResetForm: React.FC<Props> = ({ className, setForgotPasswor
   };
 
   const handlePasswordReset = async (data: ResetPassword) => {
-    if(!data.password || !data.repeatPassword) return;
+    if (!data.password || !data.repeatPassword) return;
 
     try {
       const email = session ? emailUser : useFormMethods.getValues("email");
@@ -104,16 +117,14 @@ export const PasswordResetForm: React.FC<Props> = ({ className, setForgotPasswor
 
       if (resp.status === 200) {
         toast.success("Password reset successfully");
-        reset()
-        if(setForgotPassword) setForgotPassword(false);
-        if(onClose) onClose();
+        reset();
+        if (setForgotPassword) setForgotPassword(false);
+        if (onClose) onClose();
       }
-
     } catch (error) {
       console.warn(error);
       toast.error("Something went wrong");
     }
-    
   };
 
   return (
@@ -130,6 +141,11 @@ export const PasswordResetForm: React.FC<Props> = ({ className, setForgotPasswor
               labelOff={true}
               placeholder="Email"
               required
+            />
+            <Turnstile
+              className="mt-4"
+              siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
+              onSuccess={(token) => setCaptchaToken(token)}
             />
             <Button
               disabled={!useFormMethods.formState.isValid}
@@ -216,20 +232,20 @@ export const PasswordResetForm: React.FC<Props> = ({ className, setForgotPasswor
             >
               <div className="flex flex-col gap-5">
                 <Form
-                    name="password"
-                    label="Password"
-                    type="password"
-                    placeholder="Password"
-                    labelOff={true}
-                    required
+                  name="password"
+                  label="Password"
+                  type="password"
+                  placeholder="Password"
+                  labelOff={true}
+                  required
                 />
                 <Form
-                    name="repeatPassword"
-                    label="Reset password"
-                    type="password"
-                    placeholder="Repeat password"
-                    labelOff={true}
-                    required
+                  name="repeatPassword"
+                  label="Reset password"
+                  type="password"
+                  placeholder="Repeat password"
+                  labelOff={true}
+                  required
                 />
               </div>
               <Button

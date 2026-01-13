@@ -14,7 +14,7 @@ import { ModalPhoto } from "./post/modalPhoto";
 import { FollowButton } from "./followButton";
 import axios from "axios";
 import { getShortTimeAgo } from "../hooks/useDate";
-import { processContentDraft } from "@/lib/processContent";
+import { processContentPost } from "@/lib/processContent";
 import { ModalShare } from "./modalShare";
 import { CheckProfile } from "./checkProfile";
 import { IPost } from "@/@types/post";
@@ -43,7 +43,7 @@ export const Post: React.FC<Props> = memo(({ className, onClick, post }) => {
   const text = contentState ? contentState.getPlainText() : "";
   const html = contentState ? stateToHTML(contentState) : "";
 
-  const commentContentText = processContentDraft(html, true);
+  const commentContentText = processContentPost(html, true);
 
   const timeAgo = getShortTimeAgo(new Date(post.createdAt));
 

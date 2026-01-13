@@ -2,6 +2,7 @@
 
 import { getUserSession } from "@/lib/get-user-session";
 import { prisma } from "@/prisma/prisma-client";
+import { emailValid } from "@/server/emailValid";
 import { Prisma } from "@prisma/client";
 import { hashSync } from "bcryptjs";
 
@@ -35,13 +36,30 @@ export async function updateUserProfile(body: Prisma.UserUpdateInput) {
   }
 }
 
-export async function registerUser(body: Prisma.UserCreateInput) {
+export async function registerUser(
+  body: {
+    email: string;
+    password: string;
+    username: string;
+  },
+) {
   if (process.env.REG === "false") {
     throw new Error("User not created");
   }
 
+  // if (!body.email || !body.password || !body.username) {
+  //   throw new Error("Email, password or username is missing");
+  // }
+
   try {
+
     const user = await prisma.user.findFirst({ where: { email: body.email } });
+
+    const validateEmail = await emailValid(body.email);
+
+    if (!validateEmail) {
+      throw new Error("Email is not valid");
+    }
 
     if (user) {
       if (!user.verified) {

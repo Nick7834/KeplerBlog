@@ -6,6 +6,8 @@ import { prisma } from "@/prisma/prisma-client";
 import { nanoid } from "nanoid";
 import bcrypt from "bcryptjs";
 import { User } from "@prisma/client";
+import { authRateLimit } from "./ratelimit";
+import { verifyCaptcha } from "@/server/verifyCaptcha";
 
 export const authOptions: AuthOptions = {
   providers: [
@@ -30,10 +32,25 @@ export const authOptions: AuthOptions = {
       credentials: {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
+        captchaToken: { label: "Captcha Token", type: "text" },
       },
-      async authorize(credentials) {
+      async authorize(credentials, req) {
         if (!credentials) {
           return null;
+        }
+
+        const ip = req.headers?.["x-forwarded-for"] || "127.0.0.1";
+
+        const { success } = await authRateLimit.limit(ip);
+
+        if (!success) {
+          throw new Error("RATE_LIMIT_EXCEEDED");
+        }
+
+        const isValid = await verifyCaptcha(credentials.captchaToken);
+
+        if (!isValid) {
+          throw new Error("Captcha is not valid");
         }
 
         const values = {

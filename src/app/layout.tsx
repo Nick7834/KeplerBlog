@@ -30,6 +30,25 @@ Readonly<{
           href="/KB.svg"
           type="image/x-icon"
         />
+        <meta
+          name="theme-color"
+          content="#EAEAEA"
+          media="(prefers-color-scheme: light)"
+        />
+        <meta
+          name="theme-color"
+          content="#171717"
+          media="(prefers-color-scheme: dark)"
+        />
+
+        <meta
+          name="apple-mobile-web-app-capable"
+          content="yes"
+        />
+        <meta
+          name="apple-mobile-web-app-status-bar-style"
+          content="black-translucent"
+        />
       </head>
       <body>
         <Providers>

@@ -153,9 +153,9 @@ export const Chats: React.FC<Props> = ({
                       >
                         <div className="flex items-center gap-1">
                           {chat.companion.username.length >
-                          (chat.companion.isverified ? 8 : 11)
+                          (chat.companion.isverified ? 7 : 9)
                             ? `${chat.companion.username
-                                .slice(0, chat.companion.isverified ? 8 : 11)
+                                .slice(0, chat.companion.isverified ? 7 : 9)
                                 .trim()}...`
                             : chat.companion.username}
                           <CheckProfile
