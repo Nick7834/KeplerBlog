@@ -60,7 +60,7 @@ export const Header: React.FC<Props> = ({ className }) => {
         className
       )}
     >
-      <div className="absolute top-0 left-0 bg-[#EAEAEA]/75 dark:bg-[#171717]/80 backdrop-blur-3xl max-[1100px]:backdrop-blur-[15px] env(safe-area-inset-top) w-full h-full z-[-1]"></div>
+      <div className="absolute top-0 left-0 bg-[#EAEAEA]/75 dark:bg-[#171717]/80 backdrop-blur-3xl max-[1100px]:backdrop-blur-[15px] pt-[env(safe-area-inset-top)] w-full h-full z-[-1]"></div>
       <Link
         href="/"
         className='relative logo-mob hidden items-center w-fit text-[#848484] dark:text-[#e3e3e3] text-5xl font-medium font-["Protest_Guerrilla"]'

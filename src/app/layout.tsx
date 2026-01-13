@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { Dashboard } from "@/components/shared/dashboard";
 import { Header } from "@/components/shared/header";
@@ -10,6 +10,19 @@ import { Toaster as Toast } from "sonner";
 export const metadata: Metadata = {
   title: "KeplerBlog",
   description: "Share ideas, inspire others, and grow together.",
+  appleWebApp: {
+    capable: true,
+    title: "KeplerBlog",
+    statusBarStyle: "black-translucent",
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#EAEAEA" },
+    { media: "(prefers-color-scheme: dark)", color: "#171717" },
+  ],
+  viewportFit: "cover",
 };
 
 export default async function RootLayout({
@@ -29,25 +42,6 @@ Readonly<{
           rel="shortcut icon"
           href="/KB.svg"
           type="image/x-icon"
-        />
-        <meta
-          name="theme-color"
-          content="#EAEAEA"
-          media="(prefers-color-scheme: light)"
-        />
-        <meta
-          name="theme-color"
-          content="#171717"
-          media="(prefers-color-scheme: dark)"
-        />
-
-        <meta
-          name="apple-mobile-web-app-capable"
-          content="yes"
-        />
-        <meta
-          name="apple-mobile-web-app-status-bar-style"
-          content="black-translucent"
         />
       </head>
       <body>
