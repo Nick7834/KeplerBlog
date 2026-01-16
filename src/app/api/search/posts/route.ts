@@ -47,7 +47,6 @@ export async function GET(req: NextRequest) {
           },
         },
         {
-          // Поиск по названию категории
           category: {
             name: {
               contains: safeQuery,
@@ -90,7 +89,13 @@ export async function GET(req: NextRequest) {
       },
       _count: {
         select: {
-          comments: true,
+          comments: {
+            where: {
+              author: {
+                isbanned: false,
+              },
+            },
+          },
           likes: true,
         },
       },

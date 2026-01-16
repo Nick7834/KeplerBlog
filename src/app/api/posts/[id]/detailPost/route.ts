@@ -53,7 +53,13 @@ export async function GET(
         },
         _count: {
           select: {
-            comments: true,
+            comments: {
+              where: {
+                author: {
+                  isbanned: false,
+                },
+              },
+            },
             likes: true,
           },
         },

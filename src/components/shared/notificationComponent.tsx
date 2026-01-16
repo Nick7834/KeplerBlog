@@ -72,11 +72,11 @@ export const NotificationComponent: React.FC<Props> = ({ session }) => {
       <div
         ref={refNotification}
         className={cn(
-          "invisible opacity-0 scale-[.9] transition-all ease-out duration-[.3s] z-[2000] fixed top-[70px] right-0 p-0 min-w-[500px] max-w-[500px] w-full mt-3 mx-5 backdrop-blur-3xl bg-[#E0E0E0]/80 dark:bg-[#2a2a2a]/80 rounded-[10px] border-[1px] border-[#b0b0b0]/70 dark:border-[#d9d9d9]/70 overflow-hidden max-[1100px]:min-w-full max-[1100px]:m-0 max-[1100px]:max-w-full max-[1100px]:rounded-none max-[1100px]:top-0 max-[1100px]:right-0 max-[1100px]:h-full max-[1100px]:border-0",
+          "invisible opacity-0 scale-[.9] transition-all ease-out duration-[.3s] z-[2000] fixed top-[65px] right-0 p-0 min-w-[500px] max-w-[500px] w-full mt-3 mx-5 backdrop-blur-3xl bg-[#E0E0E0]/80 dark:bg-[#2a2a2a]/80 rounded-[10px] border-[1px] border-[#D3D3D3] dark:border-white/20 overflow-hidden max-[1100px]:min-w-full max-[1100px]:m-0 max-[1100px]:max-w-full max-[1100px]:rounded-none max-[1100px]:top-0 max-[1100px]:right-0 max-[1100px]:h-full max-[1100px]:border-0",
           isOpen ? "visible opacity-100 scale-100" : ""
         )}
       >
-        <h2 className="text-[#333333] dark:text-[#d9d9d9] text-lg font-bold p-3 botder border-b-[1px] border-[#b0b0b0]/70 dark:border-[#d9d9d9]/70">
+        <h2 className="text-[#333333] dark:text-[#d9d9d9] text-lg font-bold p-3 botder border-b-[1px] border-[#D3D3D3] dark:border-white/20">
           Notifications
         </h2>
 

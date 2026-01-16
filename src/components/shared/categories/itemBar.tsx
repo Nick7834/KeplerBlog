@@ -58,7 +58,7 @@ export const ItemBar: React.FC<Props> = ({ className }) => {
     <div className={cn("max-[650px]:px-5", className)}>
       {isLoading ? (
         <div className="mt-5 flex items-center gap-[10px]">
-          {[...Array(5)].map((_, index) => (
+          {[...Array(4)].map((_, index) => (
             <Skeleton
               key={index}
               className="h-[40px] w-full bg-[#c1c1c1] dark:bg-[#2a2a2a]"

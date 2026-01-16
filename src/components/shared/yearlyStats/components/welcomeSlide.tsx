@@ -26,12 +26,12 @@ export const WelcomeSlide: React.FC<Props> = ({ className }) => {
     >
       <MotionWrapper>
         <span className="inline-block px-4 py-1 rounded-full bg-white/10 text-white/80 text-sm font-medium mb-6 border border-white/20 backdrop-blur-sm">
-          #KeplerBlog 2025
+          #KeplerBlog 2026
         </span>
         <h2 className="flex flex-col gap-1 text-5xl md:text-7xl max-[750px]:text-4xl font-bold text-white leading-[1.1] mb-6 tracking-tighter">
           Explore <br />
           <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#85a5f1] via-[#63b3f1] to-[#50d6db]">
-            Your 2025 Universe.
+            Your 2026 Universe.
           </span>
         </h2>
         <p className="w-[500px] max-[750px]:w-full text-xl max-[750px]:text-lg text-slate-300 mb-10 font-light max-w-2xl mx-auto text-center">

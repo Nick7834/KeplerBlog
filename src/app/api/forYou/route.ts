@@ -36,7 +36,7 @@ export async function GET(req: Request) {
         author: {
           isbanned: false,
         },
-        isbanned: false
+        isbanned: false,
       },
       include: {
         likes: {
@@ -56,7 +56,13 @@ export async function GET(req: Request) {
         _count: {
           select: {
             likes: true,
-            comments: true,
+            comments: {
+              where: {
+                author: {
+                  isbanned: false,
+                },
+              },
+            },
           },
         },
       },

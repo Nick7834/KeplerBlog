@@ -15,8 +15,8 @@ export async function GET() {
 
     await checkBan(userId.id);
 
-    const yearStart = new Date('2025-01-01T00:00:00Z');
-    const yearEnd = new Date('2025-12-23T23:59:59Z');
+    const yearStart = new Date('2026-01-01T00:00:00Z');
+    const yearEnd = new Date('2026-12-28T23:59:59Z');
 
     // get yearly stats main
 

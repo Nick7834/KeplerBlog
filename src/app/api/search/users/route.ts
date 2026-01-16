@@ -51,6 +51,7 @@ export async function GET(req: NextRequest) {
             },
           },
         ],
+        isbanned: false,
       },
       skip: offset,
       take: takeUsers,

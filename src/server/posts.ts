@@ -54,7 +54,18 @@ export async function getInitialPosts(
             isverified: true,
           },
         },
-        _count: { select: { comments: true, likes: true } },
+        _count: {
+          select: {
+            comments: {
+              where: {
+                author: {
+                  isbanned: false,
+                },
+              },
+            },
+            likes: true,
+          },
+        },
       },
     });
 

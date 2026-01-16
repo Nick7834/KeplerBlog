@@ -138,7 +138,7 @@ export const Profile: React.FC<Props> = ({ className, user }) => {
       <div
         ref={refProfile}
         className={cn(
-          "profile-modal invisible opacity-0 scale-[.9] py-5 transition-all ease-in-out duration-[.14s] absolute top-[80px] right-[40px] min-w-[300px] bg-[#E0E0E0]/50 dark:bg-[#2a2a2a]/60 backdrop-blur-3xl rounded-[10px] border border-[#b0b0b0]/70 dark:border-[#d9d9d9]/70",
+          "profile-modal invisible opacity-0 scale-[.9] py-5 transition-all ease-in-out duration-[.14s] absolute top-[75px] right-[40px] min-w-[300px] bg-[#E0E0E0]/50 dark:bg-[#2a2a2a]/60 backdrop-blur-3xl rounded-[10px] border border-[#D3D3D3] dark:border-white/20",
           open && "active-profile"
         )}
       >

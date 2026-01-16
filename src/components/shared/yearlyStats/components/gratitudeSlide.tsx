@@ -17,7 +17,7 @@ export const GratitudeSlide = () => {
           </h2>
 
           <p className="text-slate-400 text-sm font-light italic tracking-wide">
-            May your 2026 be truly{" "}
+            May your 2027 be truly{" "}
             <span className="text-white  font-semibold italic">legendary</span>.
           </p>
         </div>

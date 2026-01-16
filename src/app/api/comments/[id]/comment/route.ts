@@ -140,6 +140,9 @@ export async function GET(
     const comments = await prisma.comment.findMany({
       where: {
         postId: postId,
+        author: {
+          isbanned: false,
+        },
       },
       orderBy: {
         createdAt: "desc",
@@ -155,7 +158,13 @@ export async function GET(
         },
         _count: {
           select: {
-            replies: true,
+            replies: {
+              where: {
+                author: {
+                  isbanned: false,
+                },
+              },
+            },
           },
         },
       },

@@ -12,23 +12,21 @@ export async function GET(req: NextRequest) {
 
     const decodedCategory = slug ? decodeURIComponent(slug) : null;
 
-
     const whereCondition = decodedCategory
       ? {
           category: {
             name: decodedCategory,
           },
-
         }
       : {};
 
     const posts = await prisma.post.findMany({
       where: {
-         author: {
+        author: {
           isbanned: false,
         },
         isbanned: false,
-        ...whereCondition
+        ...whereCondition,
       },
       include: {
         comments: {
@@ -60,7 +58,18 @@ export async function GET(req: NextRequest) {
             isverified: true,
           },
         },
-        _count: { select: { comments: true, likes: true } },
+        _count: {
+          select: {
+            comments: {
+              where: {
+                author: {
+                  isbanned: false,
+                },
+              },
+            },
+            likes: true,
+          },
+        },
       },
       orderBy: {
         createdAt: "desc",
