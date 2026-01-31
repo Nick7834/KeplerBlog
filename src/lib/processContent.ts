@@ -34,7 +34,7 @@ export function processContentPost(html: string, shouldParseLinks: boolean) {
   });
 
   if (shouldParseLinks) {
-    const urlRegex = /(?<!href=")(https?:\/\/[^\s<]+)/g;
+    const urlRegex = /(https?:\/\/[^\s<]+)/g;
 
     cleanHtml = cleanHtml.replace(urlRegex, (url) => {
       const safeUrl = url.replace(/["']/g, "");
