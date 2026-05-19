@@ -20,6 +20,7 @@ import { handleDeleteChatId } from "../api/chat/handleDeleleChat";
 import { VirtuosoHandle } from "react-virtuoso";
 import { useUserAvatar } from "@/store/user";
 import { handleMutesChat } from "../api/chat/handleMutesChat";
+import { useSettingsMessage } from "@/store/settingsMessage";
 
 interface Props {
   className?: string;
@@ -37,7 +38,7 @@ export const Chat: React.FC<Props> = ({
   const { data: session } = useSession();
   const queryClient = useQueryClient();
 
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
   const { data: currentChat, isLoading: isLoadingCurrentChat } =
     useInfoChatQuery(currentChatId);
@@ -61,7 +62,7 @@ export const Chat: React.FC<Props> = ({
   const totalMessages = messages?.pages[0]?.totalMessagesCount || 0;
 
   const [firstItemIndex, setFirstItemIndex] = useState(() =>
-    Math.max(totalMessages - 50, 0)
+    Math.max(totalMessages - 50, 0),
   );
 
   const [isFirstLoad, setIsFirstLoad] = useState(true);
@@ -75,7 +76,9 @@ export const Chat: React.FC<Props> = ({
   }, [isFirstLoad, currentChatId, messagersData.length, totalMessages]);
 
   ////
-  const virtuosoRef = useRef<VirtuosoHandle>(null);
+  const virtuosoRef = useRef<VirtuosoHandle>(
+    null,
+  ) as React.RefObject<VirtuosoHandle>;
 
   const [isNew, setIsNew] = useState(false);
 
@@ -90,7 +93,10 @@ export const Chat: React.FC<Props> = ({
 
   const { backgroundChat } = useUserAvatar();
 
-  const formRef = useRef<HTMLFormElement>(null);
+  const { blur } =
+      useSettingsMessage();
+
+  const formRef = useRef<HTMLFormElement | null>(null);
   const [formHeight, setFormHeight] = useState(52);
 
   useEffect(() => {
@@ -104,7 +110,7 @@ export const Chat: React.FC<Props> = ({
   const handleNewMessage = (
     chatId: string,
     senderId: string,
-    content: string
+    content: string,
   ) => {
     if (!session) return;
     if (messageValue.trim() === "" && !filePreview) return;
@@ -144,7 +150,7 @@ export const Chat: React.FC<Props> = ({
       formData,
       session,
       reply,
-      filePreview
+      filePreview,
     );
 
     setTimeout(() => {
@@ -159,7 +165,7 @@ export const Chat: React.FC<Props> = ({
   const handleEditMessage = (
     chatId: string,
     messageId: string,
-    messageContent: string
+    messageContent: string,
   ) => {
     if (!chatId || !messageId) return;
 
@@ -194,7 +200,7 @@ export const Chat: React.FC<Props> = ({
       formData,
       filePreview,
       isEdit,
-      file
+      file,
     );
 
     setTimeout(() => {
@@ -249,7 +255,7 @@ export const Chat: React.FC<Props> = ({
     if (!chatId) return;
 
     const comfirm = window.confirm(
-      "Are you sure you want to delete this chat?"
+      "Are you sure you want to delete this chat?",
     );
 
     if (!comfirm) return;
@@ -278,7 +284,7 @@ export const Chat: React.FC<Props> = ({
     <div
       className={cn(
         "relative flex flex-col h-full rounded-bl-none rounded-tl-none max-[750px]:rounded-[0px] overflow-hidden",
-        className
+        className,
       )}
     >
       <ChatHeader
@@ -291,13 +297,8 @@ export const Chat: React.FC<Props> = ({
         mutedBy={currentChat?.mutedBy}
       />
 
-      <div
-        className="flex-1 bg-cover bg-center bg-no-repeat overflow-hidden pt-[67px] pb-[61px] max-[650px]:pb-1 max-[650px]:pt-1"
-        style={{
-          backgroundImage: `${backgroundChat ? `url(${backgroundChat})` : ""}`,
-        }}
-      >
-        {isLoadingMessages ? (
+      <div className="flex-1 bg-cover bg-center bg-no-repeat overflow-hidden pt-[67px] pb-[61px] max-[650px]:pb-1 max-[650px]:pt-1">
+        {isLoadingMessages ?
           <span className="flex items-center justify-center h-full max-[650px]:pt-[63px]">
             <Oval
               visible={true}
@@ -309,8 +310,7 @@ export const Chat: React.FC<Props> = ({
               strokeWidth={4}
             />
           </span>
-        ) : (
-          <ChatScroll
+        : <ChatScroll
             messagersData={messagersData}
             isLoadingMessages={isLoadingMessages}
             isFetchingNextPageMessages={isFetchingNextPageMessages}
@@ -326,7 +326,14 @@ export const Chat: React.FC<Props> = ({
             currentChatId={currentChatId}
             virtuosoRef={virtuosoRef}
           />
-        )}
+        }
+
+        <div
+          style={{
+            backgroundImage: `${backgroundChat ? `url(${backgroundChat})` : ""}`,
+          }}
+          className={cn("absolute top-0 left-0 w-full h-full bg-no-repeat bg-cover bg-center z-[-1]", blur && "blur-[10px]")}
+        ></div>
       </div>
 
       <div className="absolute bottom-0 z-10 w-full">
@@ -339,12 +346,11 @@ export const Chat: React.FC<Props> = ({
               exit={{ opacity: 0, y: 0, x: 100 }}
               transition={{ duration: 0.15 }}
               className={cn(
-                "absolute w-[95%] left-[2.5%] shadow-[0_-4px_10px_rgba(0,0,0,0.1)] bg-[#e5e5e5]/80 dark:bg-[#141414]/60 backdrop-blur-[12px] p-2 mx-auto rounded-lg flex justify-between items-center"
+                "absolute w-[95%] left-[2.5%] shadow-[0_-4px_10px_rgba(0,0,0,0.1)] bg-[#e5e5e5]/80 dark:bg-[#141414]/60 backdrop-blur-[12px] p-2 mx-auto rounded-lg flex justify-between items-center",
               )}
               style={{
-                bottom: filePreview
-                  ? formHeight + 73 + "px"
-                  : formHeight + 10 + "px",
+                bottom:
+                  filePreview ? formHeight + 73 + "px" : formHeight + 10 + "px",
               }}
             >
               <div className="flex items-center gap-4">
@@ -364,9 +370,9 @@ export const Chat: React.FC<Props> = ({
                       {reply.sender.username}
                     </p>
                     <span className="text-[#333333] dark:text-[#d9d9d9]">
-                      {reply.content.length > 100
-                        ? reply.content.substring(0, 100).trim() + "..."
-                        : reply.content.trim().substring(0, 100).trim()}
+                      {reply.content.length > 100 ?
+                        reply.content.substring(0, 100).trim() + "..."
+                      : reply.content.trim().substring(0, 100).trim()}
                     </span>
                   </div>
                 </div>
@@ -416,12 +422,11 @@ export const Chat: React.FC<Props> = ({
               exit={{ opacity: 0, y: 0, x: 100 }}
               transition={{ duration: 0.15 }}
               className={cn(
-                "absolute w-[95%] left-[2.5%] shadow-[0_-4px_10px_rgba(0,0,0,0.1)] bg-[#e5e5e5]/80 dark:bg-[#141414]/60 backdrop-blur-[12px] p-2 mx-auto rounded-lg flex justify-between items-center"
+                "absolute w-[95%] left-[2.5%] shadow-[0_-4px_10px_rgba(0,0,0,0.1)] bg-[#e5e5e5]/80 dark:bg-[#141414]/60 backdrop-blur-[12px] p-2 mx-auto rounded-lg flex justify-between items-center",
               )}
               style={{
-                bottom: filePreview
-                  ? formHeight + 73 + "px"
-                  : formHeight + 10 + "px",
+                bottom:
+                  filePreview ? formHeight + 73 + "px" : formHeight + 10 + "px",
               }}
             >
               <div className="flex items-center gap-4">
@@ -441,9 +446,9 @@ export const Chat: React.FC<Props> = ({
                       Edit Message
                     </p>
                     <span className="text-[#333333] dark:text-[#d9d9d9]">
-                      {isEdit.content.length > 100
-                        ? isEdit.content.substring(0, 100).trim() + "..."
-                        : isEdit.content.trim().substring(0, 100).trim()}
+                      {isEdit.content.length > 100 ?
+                        isEdit.content.substring(0, 100).trim() + "..."
+                      : isEdit.content.trim().substring(0, 100).trim()}
                     </span>
                   </div>
                 </div>
@@ -475,7 +480,7 @@ export const Chat: React.FC<Props> = ({
             handleNewMessage(
               currentChat?.id || "",
               session?.user.id || "",
-              messageValue
+              messageValue,
             )
           }
           setLoaderButtonSend={setLoaderButtonSend}
@@ -490,7 +495,7 @@ export const Chat: React.FC<Props> = ({
             handleEditMessage(
               currentChat?.id || "",
               isEdit?.id || "",
-              messageValue
+              messageValue,
             )
           }
           className="shadow-[0_-4px_10px_rgba(0,0,0,0.1)] border border-solid border-[#b0b0b0]/20 dark:border-neutral-300/20"

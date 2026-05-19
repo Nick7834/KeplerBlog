@@ -15,7 +15,7 @@ import { EmojiClickData } from "emoji-picker-react";
 
 interface Props {
   className?: string;
-  formRef: React.RefObject<HTMLFormElement>;
+  formRef: React.RefObject<HTMLFormElement | null>;
   messageValue: string;
   setMessageValue: React.Dispatch<React.SetStateAction<string>>;
   handleMessagePost: (
@@ -30,7 +30,7 @@ interface Props {
   setFilePreview: React.Dispatch<React.SetStateAction<string | null>>;
   setFile: React.Dispatch<React.SetStateAction<File | null>>;
   prewiewFile: string | null;
-  textareaRef: React.RefObject<HTMLTextAreaElement>;
+  textareaRef: React.RefObject<HTMLTextAreaElement | null>;
   messageId: string;
   edit: boolean;
   editImage: string | null;

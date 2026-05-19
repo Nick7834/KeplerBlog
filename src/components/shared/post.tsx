@@ -37,9 +37,8 @@ export const Post: React.FC<Props> = memo(({ className, onClick, post }) => {
 
   const [ban, setBan] = useState(false);
 
-  const contentState = post?.content
-    ? convertFromRaw(post?.content as RawDraftContentState)
-    : "";
+  const contentState =
+    post?.content ? convertFromRaw(post?.content as RawDraftContentState) : "";
   const text = contentState ? contentState.getPlainText() : "";
   const html = contentState ? stateToHTML(contentState) : "";
 
@@ -80,7 +79,10 @@ export const Post: React.FC<Props> = memo(({ className, onClick, post }) => {
   }, []);
 
   const getDominantColor = async (imageUrl: string) => {
-    if (!imageUrl) return;
+    if (!imageUrl || imageUrl.trim() === "") {
+      setBackground("");
+      return;
+    }
     try {
       const color = await fac.getColorAsync(imageUrl);
       setBackground(color.hex);
@@ -98,51 +100,56 @@ export const Post: React.FC<Props> = memo(({ className, onClick, post }) => {
         className={cn(
           `relative max-w-[750px] w-full flex-1 p-3 cursor-pointer rounded-[12px] transition-all ease-in-out duration-300 hover:bg-[#d1d1d1]/60 hover:dark:bg-[#333333]/60`,
           className,
-          post.isbanned && "pointer-events-none select-none"
+          post.isbanned && "pointer-events-none select-none",
         )}
         onMouseEnter={() => getDominantColor(post?.image?.[0] || "")}
         onMouseLeave={() => setBackground("")}
         style={{
-          background: background
-            ? `rgba(${hexToRgb(background)}, ${theme === "dark" ? 0.4 : 0.25})`
+          background:
+            background ?
+              `rgba(${hexToRgb(background)}, ${theme === "dark" ? 0.4 : 0.25})`
             : "",
         }}
       >
         <span
           className={cn(
             "absolute bottom-0 left-0 w-full mx-auto max-[650px]:w-[98%] max-[650px]:left-[1%] border-b-[1px] border-[#b0b0b0]/60 dark:border-[#333333]",
-            pathname.startsWith("/post") ? "hidden" : ""
+            pathname.startsWith("/post") ? "hidden" : "",
           )}
         ></span>
 
         {post.isbanned && (
           <div className="absolute top-0 left-0 w-full h-full flex justify-end rounded-[12px] bg-[rgba(206,206,206,0.5)] dark:bg-[rgba(96,96,96,0.5)] z-[200]">
-            {post?.author?.id === session?.data?.user?.id && <>
-              <Button
-                onClick={(e) => (e.stopPropagation(), setBan(!ban))}
-                className="w-7 h-7 flex-shrink-0 flex justify-center items-center pointer-events-auto select-auto bg-red-500 hover:bg-red-500 hover:dark:bg-red-500 text-white [&_svg]:size-[20px] m-2 p-0 rounded-full"
-              >
-                <BsFillExclamationDiamondFill />
-              </Button>
-              {ban && (
-                <div className="absolute top-[40px] right-0 w-[300px] p-2 text-[#333333] dark:text-[#d9d9d9] text-[12px] rounded-[12px] bg-[#b2bbc8]/70 dark:bg-[#24272b]/80 backdrop-blur-[12px]">
-                  <p>
-                    <span className="font-semibold">Reason for blocking:</span>{" "}
-                    {post.banReason}
-                  </p>
-                  <p className="mt-2 font-bold">
-                    You can delete the post{" "}
-                    <Link
-                      href={`/edit/${post?.id}`}
-                      className="text-sky-500 pointer-events-auto select-auto w-fit font-normal"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      Go over
-                    </Link>
-                  </p>
-                </div>
-              )}
-            </>}
+            {post?.author?.id === session?.data?.user?.id && (
+              <>
+                <Button
+                  onClick={(e) => (e.stopPropagation(), setBan(!ban))}
+                  className="w-7 h-7 flex-shrink-0 flex justify-center items-center pointer-events-auto select-auto bg-red-500 hover:bg-red-500 hover:dark:bg-red-500 text-white [&_svg]:size-[20px] m-2 p-0 rounded-full"
+                >
+                  <BsFillExclamationDiamondFill />
+                </Button>
+                {ban && (
+                  <div className="absolute top-[40px] right-0 w-[300px] p-2 text-[#333333] dark:text-[#d9d9d9] text-[12px] rounded-[12px] bg-[#b2bbc8]/70 dark:bg-[#24272b]/80 backdrop-blur-[12px]">
+                    <p>
+                      <span className="font-semibold">
+                        Reason for blocking:
+                      </span>{" "}
+                      {post.banReason}
+                    </p>
+                    <p className="mt-2 font-bold">
+                      You can delete the post{" "}
+                      <Link
+                        href={`/edit/${post?.id}`}
+                        className="text-sky-500 pointer-events-auto select-auto w-fit font-normal"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        Go over
+                      </Link>
+                    </p>
+                  </div>
+                )}
+              </>
+            )}
           </div>
         )}
 
@@ -153,7 +160,7 @@ export const Post: React.FC<Props> = memo(({ className, onClick, post }) => {
             className="flex items-center gap-3 w-fit"
           >
             <div>
-              {post?.author?.profileImage ? (
+              {post?.author?.profileImage ?
                 <Image
                   src={post?.author?.profileImage}
                   alt="avatar"
@@ -161,31 +168,32 @@ export const Post: React.FC<Props> = memo(({ className, onClick, post }) => {
                   height={40}
                   className="rounded-full min-w-[40px] h-[40px] object-cover"
                 />
-              ) : (
-                <span className="flex flex-col items-center justify-center z-[1] overflow-hidden rounded-full min-w-[40px] h-[40px] bg-[#c7c7c7]">
+              : <span className="flex flex-col items-center justify-center z-[1] overflow-hidden rounded-full min-w-[40px] h-[40px] bg-[#c7c7c7]">
                   <FaRegUser
                     size={20}
                     className="text-[#333333]"
                   />
                 </span>
-              )}
+              }
             </div>
             <div
               className={cn(
                 "flex items-center text-[#333333] dark:text-[#d9d9d9] text-base font-semibold whitespace-pre-wrap",
-                pathname.startsWith("/post") &&
-                  post?.author?.username.length >= 14 &&
-                  widthMob <= 450
-                  ? "block text-[12px]"
-                  : "flex"
+                (
+                  pathname.startsWith("/post") &&
+                    post?.author?.username.length >= 14 &&
+                    widthMob <= 450
+                ) ?
+                  "block text-[12px]"
+                : "flex",
               )}
             >
               <div className="flex items-center gap-[2px]">
-                {pathname.startsWith("/post")
-                  ? post?.author?.username
-                  : post?.author?.username.length > 15 && widthMob <= 380
-                  ? post?.author?.username.substring(0, 15).trim() + "..."
-                  : post?.author?.username.trim()}
+                {pathname.startsWith("/post") ?
+                  post?.author?.username
+                : post?.author?.username.length > 15 && widthMob <= 380 ?
+                  post?.author?.username.substring(0, 15).trim() + "..."
+                : post?.author?.username.trim()}
                 <CheckProfile isverified={post?.author?.isverified} />
               </div>
               <span className="mx-2">·</span>
@@ -195,10 +203,11 @@ export const Post: React.FC<Props> = memo(({ className, onClick, post }) => {
             </div>
           </Link>
 
-          {post?.author?.id === session?.data?.user?.id ? (
+          {post?.author?.id === session?.data?.user?.id ?
             <Button
               onClick={(e) => (
-                e.stopPropagation(), router.push(`/edit/${post?.id}`)
+                e.stopPropagation(),
+                router.push(`/edit/${post?.id}`)
               )}
               className="relative p-0 min-h-7 min-w-7 h-fit text-xs rounded-full bg-[#d5d5d5] dark:bg-[#e0e0e0]/95 hover:bg-[#d5d5d5] hover:dark:bg-[#e0e0e0]/95"
             >
@@ -207,8 +216,7 @@ export const Post: React.FC<Props> = memo(({ className, onClick, post }) => {
                 className="text-[#333333] dark:text-[#333333]"
               />
             </Button>
-          ) : (
-            pathname.startsWith("/post") && (
+          : pathname.startsWith("/post") && (
               <div onClick={(e) => e.stopPropagation()}>
                 <FollowButton
                   idUser={post?.author?.id}
@@ -216,7 +224,7 @@ export const Post: React.FC<Props> = memo(({ className, onClick, post }) => {
                 />
               </div>
             )
-          )}
+          }
         </div>
 
         <h2 className="mt-4 text-[#333333] dark:text-[#d9d9d9] text-lg font-bold whitespace-pre-wrap break-words">
@@ -225,17 +233,14 @@ export const Post: React.FC<Props> = memo(({ className, onClick, post }) => {
 
         {text !== "" && (
           <div className="mt-2 text-[#333333] dark:text-[#d9d9d9] text-sm font-normal leading-6 break-words whitespace-normal">
-            {!pathname.startsWith("/post") ? (
-              text.length > 200 ? (
+            {!pathname.startsWith("/post") ?
+              text.length > 200 ?
                 text.substring(0, 200).trim() + "..."
-              ) : (
-                text.trim()
-              )
-            ) : (
-              <div
+              : text.trim()
+            : <div
                 dangerouslySetInnerHTML={{ __html: commentContentText }}
               ></div>
-            )}
+            }
           </div>
         )}
 

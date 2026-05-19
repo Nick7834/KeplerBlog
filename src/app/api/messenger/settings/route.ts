@@ -8,11 +8,12 @@ export async function PATCH(req: Request) {
   if (!userId) {
     return NextResponse.json(
       { error: "User not authenticated" },
-      { status: 401 }
+      { status: 401 },
     );
   }
 
-  const { backgroundColor, textColor, fontSize, radiusSize } = await req.json();
+  const { backgroundColor, textColor, fontSize, radiusSize, blur } =
+    await req.json();
 
   try {
     const existing = await prisma.settingsMessenger.findUnique({
@@ -27,6 +28,7 @@ export async function PATCH(req: Request) {
           textColor: textColor,
           fontSize: fontSize,
           radiusSize: radiusSize,
+          isblur: blur,
         },
       });
     } else {
@@ -37,6 +39,7 @@ export async function PATCH(req: Request) {
           textColor: textColor,
           fontSize: fontSize,
           radiusSize: radiusSize,
+          isblur: blur,
         },
       });
     }
@@ -46,7 +49,7 @@ export async function PATCH(req: Request) {
     console.error(error);
     return NextResponse.json(
       { error: "Something went wrong" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

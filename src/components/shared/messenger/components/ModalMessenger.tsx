@@ -39,7 +39,7 @@ import { TbMessageCircleFilled } from "react-icons/tb";
 
 interface Props {
   openMessager: boolean;
-  modalRef: React.RefObject<HTMLDivElement>;
+  modalRef: React.RefObject<HTMLDivElement | null>;
   handleClose: () => void;
 }
 
@@ -87,7 +87,7 @@ export const ModalMessenger: React.FC<Props> = ({
 
   const { data: count, isLoading: countLoading } = useCountQuery(
     openMessager,
-    session?.user?.id || ""
+    session?.user?.id || "",
   );
 
   const conutLists = UseFormatNumber(count?.pending || 0);
@@ -99,7 +99,7 @@ export const ModalMessenger: React.FC<Props> = ({
       setMenu,
       setSettings,
       queryClient,
-      session?.user?.id || ""
+      session?.user?.id || "",
     );
   };
 
@@ -140,7 +140,9 @@ export const ModalMessenger: React.FC<Props> = ({
                 <Button
                   variant="outline"
                   onClick={() => (
-                    setCurrentChatId(""), setMenu(false), setSettings(false)
+                    setCurrentChatId(""),
+                    setMenu(false),
+                    setSettings(false)
                   )}
                   className="border-0 bg-0 dasrk:bg-0 hover:bg-0 hover:dark:bg-0 text-[#121212] dark:text-[#d9d9d9]
                    p-0 text-base font-medium hover:outline-none [&_svg]:size-[17px]"
@@ -159,7 +161,9 @@ export const ModalMessenger: React.FC<Props> = ({
                   variant="outline"
                   className="relative border-0 bg-0 dark:bg-0 hover:bg-0 hover:dark:bg-0 text-[#121212] dark:text-[#d9d9d9] p-0 text-base font-medium hover:outline-none [&_svg]:size-[25px]"
                   onClick={() => (
-                    setCurrentChatId(""), setMenu(!menu), setSettings(false)
+                    setCurrentChatId(""),
+                    setMenu(!menu),
+                    setSettings(false)
                   )}
                 >
                   <TbMessageCirclePlus />
@@ -173,7 +177,9 @@ export const ModalMessenger: React.FC<Props> = ({
                   variant="outline"
                   className="relative border-0 bg-0 dark:bg-0 hover:bg-0 hover:dark:bg-0 text-[#121212] dark:text-[#d9d9d9] p-0 text-base font-medium hover:outline-none [&_svg]:size-[25px]"
                   onClick={() => (
-                    setCurrentChatId(""), setSettings(!settings), setMenu(false)
+                    setCurrentChatId(""),
+                    setSettings(!settings),
+                    setMenu(false)
                   )}
                 >
                   <IoSettings />
@@ -195,18 +201,16 @@ export const ModalMessenger: React.FC<Props> = ({
           <AnimatePresence mode="wait">
             {!menu &&
               !settings &&
-              (currentChatId ? (
+              (currentChatId ?
                 <motion.div
-                  key="chat"
-                  initial={width <= 750 ? { translateX: "100%" } : false}
-                  animate={width <= 750 ? { translateX: 0 } : false}
-                  exit={
-                    width <= 750 ? { translateX: "100%" } : { translateX: 0 }
-                  }
+                  key={`chat-${currentChatId}`}
+                  initial={width <= 750 ? { x: "100%" } : {}}
+                  animate={width <= 750 ? { x: 0 } : {}}
+                  exit={width <= 750 ? { x: "100%" } : {}}
                   transition={
-                    width <= 750
-                      ? { duration: 0.4, ease: "easeInOut" }
-                      : undefined
+                    width <= 750 ?
+                      { duration: 0.4, ease: "easeInOut" as const }
+                    : undefined
                   }
                   className="max-[750px]:fixed max-[750px]:h-full max-[750px]:top-0 max-[750px]:left-0 max-[750px]:right-0 max-[750px]:bottom-0 max-[750px]:z-[9999] max-[750px]:bg-[#e5e5e5] max-[750px]:dark:bg-[#19191b]"
                 >
@@ -217,23 +221,21 @@ export const ModalMessenger: React.FC<Props> = ({
                     className="h-full"
                   />
                 </motion.div>
-              ) : (
-                <p className="flex flex-col gap-2 justify-center items-center text-[#333333] dark:text-[#d9d9d9] text-xl font-bold max-[750px]:hidden">
+              : <p className="flex flex-col gap-2 justify-center items-center text-[#333333] dark:text-[#d9d9d9] text-xl font-bold max-[750px]:hidden">
                   <IoMdChatbubbles size={80} />
                   Select a chat to get started.
-                </p>
-              ))}
+                </p>)}
 
             {menu && (
               <motion.div
                 key="chats"
-                initial={width <= 750 ? { translateX: "100%" } : false}
-                animate={width <= 750 ? { translateX: 0 } : false}
-                exit={width <= 750 ? { translateX: "100%" } : { translateX: 0 }}
+                initial={width <= 750 ? { translateX: "100%" } : {}}
+                animate={width <= 750 ? { translateX: 0 } : {}}
+                exit={width <= 750 ? { translateX: "100%" } : {}}
                 transition={
-                  width <= 750
-                    ? { duration: 0.4, ease: "easeInOut" }
-                    : undefined
+                  width <= 750 ?
+                    { duration: 0.4, ease: "easeInOut" as const }
+                  : undefined
                 }
                 className="p-[30px] max-[750px]:p-3 max-[750px]:fixed max-[750px]:h-full max-[750px]:top-0 max-[750px]:left-0 max-[750px]:right-0 max-[750px]:bottom-0 max-[750px]:z-[9999] max-[750px]:bg-[#e5e5e5] max-[750px]:dark:bg-[#19191b]"
               >
@@ -248,13 +250,13 @@ export const ModalMessenger: React.FC<Props> = ({
             {settings && (
               <motion.div
                 key="chats"
-                initial={width <= 750 ? { translateX: "100%" } : false}
-                animate={width <= 750 ? { translateX: 0 } : false}
-                exit={width <= 750 ? { translateX: "100%" } : { translateX: 0 }}
+                initial={width <= 750 ? { translateX: "100%" } : {}}
+                animate={width <= 750 ? { translateX: 0 } : {}}
+                exit={width <= 750 ? { translateX: "100%" } : {}}
                 transition={
-                  width <= 750
-                    ? { duration: 0.4, ease: "easeInOut" }
-                    : undefined
+                  width <= 750 ?
+                    { duration: 0.4, ease: "easeInOut" as const }
+                  : undefined
                 }
                 className="p-[30px] max-[750px]:p-3 max-[750px]:fixed max-[750px]:h-full max-[750px]:top-0 max-[750px]:left-0 max-[750px]:right-0 max-[750px]:bottom-0 max-[750px]:z-[9999] max-[750px]:bg-[#e5e5e5] max-[750px]:dark:bg-[#19191b]"
               >

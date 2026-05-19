@@ -46,7 +46,7 @@ export const ModalShare: React.FC<Props> = ({
   setShowModalShare,
 }) => {
   const [copied, setCopied] = useState(false);
-  const refInput = useRef<HTMLInputElement>(null);
+  const refInput = useRef<HTMLInputElement | null>(null);
 
   const [isCopied, setIsCopied] = useState(false);
 

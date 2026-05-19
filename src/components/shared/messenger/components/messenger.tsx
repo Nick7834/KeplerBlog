@@ -14,7 +14,7 @@ interface Props {
 
 export const Messenger: React.FC<Props> = ({ className }) => {
   const { openMessager, setOpenMessager } = useMessangerStore();
-  const modalRef = useRef<HTMLDivElement>(null);
+  const modalRef = useRef<HTMLDivElement | null>(null);
 
   const { data: session } = useSession();
 

@@ -51,7 +51,7 @@ export const Chats: React.FC<Props> = ({
     allChats.forEach((chat) => {
       if (!chat.lastMessage) {
         const randomIndex = Math.floor(
-          Math.random() * emptyChatMessages.length
+          Math.random() * emptyChatMessages.length,
         );
         map[chat.chatId] = emptyChatMessages[randomIndex];
       }
@@ -64,7 +64,7 @@ export const Chats: React.FC<Props> = ({
   return (
     <div className="chats overflow-x-hidden h-full p-2 pb-1 rounded-t-[10px] backdrop-blur-3xl bg-[#dad9d9]/80 dark:bg-[#1f1f22]/60 flex flex-col">
       {isError && <p className="text-red-500">Something went wrong</p>}
-      {isLoading ? (
+      {isLoading ?
         <div className="flex flex-col gap-2">
           {[...Array(5)].map((_, index) => (
             <Skeleton
@@ -73,13 +73,12 @@ export const Chats: React.FC<Props> = ({
             />
           ))}
         </div>
-      ) : allChats.length === 0 ? (
+      : allChats.length === 0 ?
         <div className="flex flex-1 flex-col items-center justify-center gap-2 text-[#333333] dark:text-[#d9d9d9] text-xl font-bold mt-10">
           <IoIosChatboxes size={50} />
           No chats
         </div>
-      ) : (
-        <div
+      : <div
           id="scrollable-chat-container"
           className="scrollbarMessage overflow-x-hidden scrollbar max-h-[calc(100dvh-125px)] max-[750px]:max-h-[calc(100vh-75px)]"
         >
@@ -105,6 +104,9 @@ export const Chats: React.FC<Props> = ({
             {allChats.map((chat) => (
               <motion.div
                 key={chat.chatId}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
                 layout
                 transition={{
                   type: "spring",
@@ -124,22 +126,21 @@ export const Chats: React.FC<Props> = ({
                     className={cn(
                       "flex w-full items-center gap-2 justify-start text-start min-h-[40px] h-full border-0 bg-transparent dark:bg-transparent hover:dark:bg-[#504e4e]/80 hover:bg-[#ededed]/80 px-2 py-[10px] rounded-[10px]",
                       currentChatId === chat.chatId &&
-                        "bg-[#7391d5] dark:bg-[#7391d5] hover:bg-[#8daaee]/70 hover:dark:bg-[#8daaee]/70"
+                        "bg-[#7391d5] dark:bg-[#7391d5] hover:bg-[#8daaee]/70 hover:dark:bg-[#8daaee]/70",
                     )}
                   >
                     <div className="relative">
-                      {chat.companion.profileImage ? (
+                      {chat.companion.profileImage ?
                         <img
                           src={chat.companion.profileImage}
                           alt="avatar"
                           className="min-w-[60px] w-[60px] h-[60px] rounded-full object-cover"
                           loading="lazy"
                         />
-                      ) : (
-                        <span className="flex flex-col items-center justify-center object-cover rounded-full min-w-[60px] w-[60px] h-[60px] bg-[#c7c7c7]">
+                      : <span className="flex flex-col items-center justify-center object-cover rounded-full min-w-[60px] w-[60px] h-[60px] bg-[#c7c7c7]">
                           <FaRegUser className="text-[#333333]" />
                         </span>
-                      )}
+                      }
                       {onlineUsers[chat.companion.id] && (
                         <span className="absolute bottom-0 right-0 w-[15px] h-[15px] rounded-full bg-[#7391d5] dark:bg-[#7391d5] border-[1px] border-[#ffffff]"></span>
                       )}
@@ -148,22 +149,24 @@ export const Chats: React.FC<Props> = ({
                       <div
                         className={cn(
                           "text-[#333333] dark:text-[#d9d9d9] text-lg font-bold break-all flex items-center justify-between gap-1",
-                          currentChatId === chat.chatId && "text-[#f4f4f4]"
+                          currentChatId === chat.chatId && "text-[#f4f4f4]",
                         )}
                       >
                         <div className="flex items-center gap-1">
-                          {chat.companion.username.length >
-                          (chat.companion.isverified ? 7 : 9)
-                            ? `${chat.companion.username
-                                .slice(0, chat.companion.isverified ? 7 : 9)
-                                .trim()}...`
-                            : chat.companion.username}
+                          {(
+                            chat.companion.username.length >
+                            (chat.companion.isverified ? 7 : 9)
+                          ) ?
+                            `${chat.companion.username
+                              .slice(0, chat.companion.isverified ? 7 : 9)
+                              .trim()}...`
+                          : chat.companion.username}
                           <CheckProfile
                             isverified={chat?.companion?.isverified || false}
                             className={cn(
                               "[&_svg]:size-[23px]",
                               currentChatId === chat.chatId &&
-                                "[&_svg]:text-[#f4f4f4]"
+                                "[&_svg]:text-[#f4f4f4]",
                             )}
                           />
                           {chat.mutedBy && (
@@ -175,49 +178,47 @@ export const Chats: React.FC<Props> = ({
 
                         <div className="flex items-center gap-1">
                           {chat.lastMessage.senderId === session?.user.id &&
-                            (chat.lastMessage.isRead ? (
+                            (chat.lastMessage.isRead ?
                               <span
                                 title="Read by recipient"
                                 className={cn(
                                   "text-[#7391d5]",
                                   currentChatId === chat.chatId &&
-                                    "text-[#f4f4f4]"
+                                    "text-[#f4f4f4]",
                                 )}
                               >
                                 <TbChecks size={16} />
                               </span>
-                            ) : (
-                              <span
+                            : <span
                                 title="Not read yet"
                                 className={cn(
                                   "text-[#7391d5]",
                                   currentChatId === chat.chatId &&
-                                    "text-[#f4f4f4]"
+                                    "text-[#f4f4f4]",
                                 )}
                               >
                                 <TbCheck size={16} />
-                              </span>
-                            ))}
+                              </span>)}
 
                           <span
                             className={cn(
                               "text-[#333333] dark:text-[#d9d9d9] text-xs font-normal",
-                              currentChatId === chat.chatId && "text-[#f4f4f4]"
+                              currentChatId === chat.chatId && "text-[#f4f4f4]",
                             )}
                           >
                             {chat.lastMessage?.createMessageAt &&
                               formatChatDate(
-                                String(chat.lastMessage.createMessageAt)
+                                String(chat.lastMessage.createMessageAt),
                               )}
                           </span>
                         </div>
                       </div>
                       <div className="flex items-center justify-between">
-                        {chat.lastMessage ? (
+                        {chat.lastMessage ?
                           <p
                             className={cn(
                               "text-[#333333] dark:text-[#d9d9d9] text-sm flex items-center gap-2",
-                              currentChatId === chat.chatId && "text-[#f4f4f4]"
+                              currentChatId === chat.chatId && "text-[#f4f4f4]",
                             )}
                           >
                             {chat.lastMessage.content.image && (
@@ -228,29 +229,30 @@ export const Chats: React.FC<Props> = ({
                                 loading="lazy"
                               />
                             )}
-                            {chat.lastMessage.content.text &&
-                            chat.lastMessage.content.text.length > 15
-                              ? `${chat.lastMessage.content.text
-                                  .slice(0, 15)
-                                  .trim()}...`
-                              : chat.lastMessage.content.text}
+                            {(
+                              chat.lastMessage.content.text &&
+                              chat.lastMessage.content.text.length > 15
+                            ) ?
+                              `${chat.lastMessage.content.text
+                                .slice(0, 15)
+                                .trim()}...`
+                            : chat.lastMessage.content.text}
                           </p>
-                        ) : (
-                          <p
+                        : <p
                             className={cn(
                               "text-[#5e5e5e] dark:text-[#b2b2b2] text-sm",
-                              currentChatId === chat.chatId && "text-[#f4f4f4]"
+                              currentChatId === chat.chatId && "text-[#f4f4f4]",
                             )}
                           >
                             {randomMessagesMap[chat.chatId]}
                           </p>
-                        )}
+                        }
                         {chat.unreadCount > 0 && (
                           <span
                             className={cn(
                               "flex items-center justify-center min-w-6 h-6 text-xs text-[#d9d9d9] dark:text-[#d9d9d9] bg-[#7391d5] dark:bg-[#7391d5] rounded-full",
                               currentChatId === chat.chatId &&
-                                "bg-[#d9d9d9] dark:bg-[#d9d9d9] text-[#7391d5] dark:text-[#7391d5]"
+                                "bg-[#d9d9d9] dark:bg-[#d9d9d9] text-[#7391d5] dark:text-[#7391d5]",
                             )}
                           >
                             {UseFormatNumber(chat?.unreadCount || 0)}
@@ -264,7 +266,7 @@ export const Chats: React.FC<Props> = ({
             ))}
           </InfiniteScroll>
         </div>
-      )}
+      }
     </div>
   );
 };

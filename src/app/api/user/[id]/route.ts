@@ -36,6 +36,7 @@ export async function GET(
             backgroundColor: true,
             textColor: true,
             fontSize: true,
+            isblur: true,
           },
         },
         followers: {

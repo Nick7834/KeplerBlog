@@ -31,8 +31,8 @@ export const SliderPost: React.FC<Props> = ({
 }) => {
   const [swiper, setSwiper] = useState<SwiperType | null>(null);
 
-  const prevButtonRef = useRef<HTMLButtonElement>(null);
-  const nextButtonRef = useRef<HTMLButtonElement>(null);
+  const prevButtonRef = useRef<HTMLButtonElement | null>(null);
+  const nextButtonRef = useRef<HTMLButtonElement | null>(null);
 
   useEffect(() => {
     if (swiper && slideIndex !== undefined) {

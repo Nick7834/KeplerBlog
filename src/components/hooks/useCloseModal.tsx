@@ -2,7 +2,7 @@
 import React, { useEffect } from 'react';
 
 
-const UseCloseModal= (buttonRef: React.RefObject<HTMLButtonElement>, ref: React.RefObject<HTMLDivElement>, onClose : () => void) => {
+const UseCloseModal = (buttonRef: React.RefObject<HTMLButtonElement | null>, ref: React.RefObject<HTMLDivElement | null>, onClose : () => void) => {
   
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {

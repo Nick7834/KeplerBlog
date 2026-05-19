@@ -20,7 +20,7 @@ const fetchPost = async (idPost: string) => {
 };
 
 export const PostDetails: React.FC<Props> = ({ className, idPost }) => {
-  const commetsRef = useRef<HTMLDivElement>(null);
+  const commetsRef = useRef<HTMLDivElement | null>(null);
 
   const { data, isLoading } = useQuery({
     queryKey: ["post", idPost],

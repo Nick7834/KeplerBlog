@@ -17,7 +17,7 @@ export const Search: React.FC<Props> = ({ className, setSearchMobOpen, searchMob
     const router = useRouter();
 
     const [focus, setFocus] = useState(false);
-    const ref = useRef<HTMLLabelElement>(null);
+    const ref = useRef<HTMLLabelElement | null>(null);
     const [search, setSearch] = useState('');
      const pathname = usePathname();
 

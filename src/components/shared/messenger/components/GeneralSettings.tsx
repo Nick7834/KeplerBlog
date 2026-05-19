@@ -8,6 +8,7 @@ import { TbCheck, TbChecks } from "react-icons/tb";
 import { settingsUpdate } from "../api/settings/settings";
 import toast from "react-hot-toast";
 import { useSettingsMessage } from "@/store/settingsMessage";
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface Props {
   className?: string;
@@ -16,21 +17,21 @@ interface Props {
 const messages = [
   {
     id: 1,
-    content: "Привет! Как у тебя дела сегодня?",
+    content: "Hi! How are you doing today?",
     createdAt: new Date().toISOString(),
     senderId: 1,
     isRead: true,
   },
   {
     id: 2,
-    content: "Не забудь про встречу завтра в 14:00.",
+    content: "Don't forget about the meeting tomorrow at 2:00 PM.",
     createdAt: new Date(Date.now() - 1000 * 60 * 5).toISOString(),
     senderId: 2,
     isRead: false,
   },
   {
     id: 3,
-    content: "Я только что закончил работу над проектом, посмотри, пожалуйста.",
+    content: "I just finished working on the project, please take a look.",
     createdAt: new Date(Date.now() - 1000 * 60 * 60).toISOString(),
     senderId: 1,
     isRead: true,
@@ -43,18 +44,21 @@ export const GeneralSettings: React.FC<Props> = ({ className }) => {
     textColor,
     fontSize,
     radiusSize,
+    blur,
     setBackgroundColorMessage,
     setTextColor,
     setFontSize,
     setRadiusSize,
+    setBlur,
   } = useSettingsMessage();
 
   const [sliderValue, setSliderValue] = useState<number>(fontSize || 14);
   const [backgroundMessage, setBackgroundMessage] = useState<string>(
-    backgroundColorMessage || "#7391d5"
+    backgroundColorMessage || "#7391d5",
   );
   const [color, setColor] = useState<string>(textColor || "#ebebeb");
   const [radius, setRadius] = useState<number>(radiusSize || 12);
+  const [isChecked, setIsChecked] = useState<boolean>(blur || false);
 
   const { backgroundChat } = useUserAvatar();
 
@@ -68,12 +72,14 @@ export const GeneralSettings: React.FC<Props> = ({ className }) => {
         textColor: color,
         fontSize: sliderValue.toString(),
         radiusSize: radius.toString(),
+        blur: isChecked
       });
 
       setBackgroundColorMessage(backgroundMessage);
       setTextColor(color);
       setFontSize(sliderValue);
       setRadiusSize(radius);
+      setBlur(isChecked)
     } catch (err) {
       console.error(err);
       toast.error("Something went wrong");
@@ -92,12 +98,7 @@ export const GeneralSettings: React.FC<Props> = ({ className }) => {
   };
 
   return (
-    <div
-      className={cn(
-        "mt-10 flex flex-col max-w-[500px] gap-5",
-        className
-      )}
-    >
+    <div className={cn("mt-10 flex flex-col max-w-[500px] gap-5", className)}>
       <div>
         <h4 className="font-medium text-[#2b2b2b] dark:text-[#ebebeb]">
           Text size
@@ -169,83 +170,99 @@ export const GeneralSettings: React.FC<Props> = ({ className }) => {
         </div>
       </div>
 
-      <div
-        style={{ backgroundImage: `url(${backgroundChat})` }}
-        className="mt-5 max-w-[500px] w-full min-h-[200px] bg-no-repeat bg-cover bg-center overflow-hidden rounded-[12px] py-5 px-2"
-      >
-        {messages.map((message) => (
-          <div
-            key={message.id}
-            className={`flex w-full [&:not(:first-child)]:mt-[10px] ${
-              message.senderId === 1 ? "justify-end" : "justify-start"
-            }  relative`}
-          >
+      <label className="flex items-center gap-5 justify-between">
+        <h4 className="font-medium text-[#2b2b2b] dark:text-[#ebebeb]">
+          Blur Background
+        </h4>
+
+        <Checkbox
+          id="check-bg"
+          checked={isChecked}
+          onCheckedChange={() => setIsChecked(!isChecked)}
+          className="data-[state=checked]:bg-[#7391d5] dark:data-[state=checked]:bg-[#7391d5] data-[state=checked]:border-[#7391d5] data-[state=checked]:dark:border-[#7391d5] 
+                      text-[#d9d9d9] dark:text-[#d9d9d9] border-[#d9d9d9] dark:border-[#7391d5] bg-[#7391d5]/20 dark:bg-[#7391d5]/20"
+        />
+      </label>
+
+      <div>
+        <div className="relative mt-5 max-w-[500px] w-full min-h-[200px] overflow-hidden rounded-[12px] py-5 px-2">
+          {messages.map((message) => (
             <div
-              style={{
-                ...(message.senderId === 1
-                  ? {
+              key={message.id}
+              className={`flex w-full [&:not(:first-child)]:mt-[10px] ${
+                message.senderId === 1 ? "justify-end" : "justify-start"
+              }  relative`}
+            >
+              <div
+                style={{
+                  ...(message.senderId === 1 ?
+                    {
                       backgroundColor: backgroundMessage,
                       color: color,
                     }
                   : {}),
-                borderTopLeftRadius: `${radius}px`,
-                borderTopRightRadius: `${radius}px`,
-                borderBottomLeftRadius:
-                  message.senderId === 1 ? `${radius}px` : "0",
-                borderBottomRightRadius:
-                  message.senderId === 1 ? "0" : `${radius}px`,
-              }}
-              className={`w-fit max-w-xs sm:max-w-md text-sm shadow overflow-hidden select-none
+                  borderTopLeftRadius: `${radius}px`,
+                  borderTopRightRadius: `${radius}px`,
+                  borderBottomLeftRadius:
+                    message.senderId === 1 ? `${radius}px` : "0",
+                  borderBottomRightRadius:
+                    message.senderId === 1 ? "0" : `${radius}px`,
+                }}
+                className={`w-fit max-w-xs sm:max-w-md text-sm shadow overflow-hidden select-none
                 ${
-                  message.senderId === 1
-                    ? "bg-[#7391d5] text-[#ebebeb] rounded-br-none"
-                    : "bg-[#ebebeb] dark:bg-[#2b2b2b] text-[#2b2b2b] dark:text-[#ebebeb] rounded-bl-none"
+                  message.senderId === 1 ?
+                    "bg-[#7391d5] text-[#ebebeb] rounded-br-none"
+                  : "bg-[#ebebeb] dark:bg-[#2b2b2b] text-[#2b2b2b] dark:text-[#ebebeb] rounded-bl-none"
                 }
             `}
-            >
-              <div className={cn("p-2 relative", !message?.content && "p-0")}>
-                {message?.content && (
+              >
+                <div className={cn("p-2 relative", !message?.content && "p-0")}>
+                  {message?.content && (
+                    <div
+                      className={cn(
+                        "block",
+                        message?.content?.length > 60 ?
+                          "pr-7 max-[650px]:pr-[35px]"
+                        : "pr-14 max-[650px]:pr-12",
+                      )}
+                    >
+                      <p
+                        className={cn(
+                          "whitespace-pre-wrap break-words px-1 max-[750px]:text-[14px] max-[750px]:select-none",
+                        )}
+                        style={{ fontSize: `${sliderValue}px` }}
+                      >
+                        {message.content}
+                      </p>
+                    </div>
+                  )}
                   <div
                     className={cn(
-                      "block",
-                      message?.content?.length > 60
-                        ? "pr-7 max-[650px]:pr-[35px]"
-                        : "pr-14 max-[650px]:pr-12"
+                      "absolute bottom-1 right-2 z-[5] flex gap-1 text-xs font-medium items-center opacity-70 max-[650px]:bottom-[2px] max-[650px]:right-[5px] max-[650px]:justify-end",
                     )}
                   >
-                    <p
-                      className={cn(
-                        "whitespace-pre-wrap break-words px-1 max-[750px]:text-[14px] max-[750px]:select-none"
-                      )}
-                      style={{ fontSize: `${sliderValue}px` }}
-                    >
-                      {message.content}
-                    </p>
-                  </div>
-                )}
-                <div
-                  className={cn(
-                    "absolute bottom-1 right-2 z-[5] flex gap-1 text-xs font-medium items-center opacity-70 max-[650px]:bottom-[2px] max-[650px]:right-[5px] max-[650px]:justify-end"
-                  )}
-                >
-                  {message.createdAt &&
-                    format(new Date(message.createdAt), "HH:mm")}
+                    {message.createdAt &&
+                      format(new Date(message.createdAt), "HH:mm")}
 
-                  {message.senderId === 1 &&
-                    (message.isRead ? (
-                      <span title="Read by recipient">
-                        <TbChecks size={16} />
-                      </span>
-                    ) : (
-                      <span title="Not read yet">
-                        <TbCheck size={16} />
-                      </span>
-                    ))}
+                    {message.senderId === 1 &&
+                      (message.isRead ?
+                        <span title="Read by recipient">
+                          <TbChecks size={16} />
+                        </span>
+                      : <span title="Not read yet">
+                          <TbCheck size={16} />
+                        </span>)}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))}
+
+          <div
+            style={{ backgroundImage: `url(${backgroundChat})` }}
+            className={cn("absolute top-0 left-0 w-full h-full bg-no-repeat bg-cover bg-center z-[-1]", isChecked && "blur-[15px]")}
+          ></div>
+        </div>
       </div>
 
       <Button

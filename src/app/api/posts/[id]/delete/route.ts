@@ -30,7 +30,7 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ i
     const jobToRemove = jobs.find((job) => job.data.newPostId === postId);
 
     if (jobToRemove) {
-      await notificationQueue.remove(jobToRemove.id);
+      await notificationQueue.remove(jobToRemove.id!);
     }
 
     await prisma.$transaction(async (tx) => {

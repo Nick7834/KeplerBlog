@@ -24,7 +24,7 @@ export const FormsLogin: React.FC<Props> = ({
   const { setStatusLike } = useStatusLike();
   const { setStatusFollow } = useStatusFollow();
   const [captchaToken, setCaptchaToken] = useState<string>("");
-  const turnstileRef = useRef<TurnstileInstance>(null);
+  const turnstileRef = useRef<TurnstileInstance | null>(null);
 
   const form = useForm<FormLogin>({
     resolver: zodResolver(formLoginSchema),

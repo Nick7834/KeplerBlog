@@ -87,7 +87,7 @@ export const ChatScroll: React.FC<Props> = ({
           <div
             className={cn(
               "sticky top-0 text-center py-4",
-              isFirst && "pt-[67px]"
+              isFirst && "pt-[67px]",
             )}
           >
             <span className="text-[#333333] dark:text-[#d9d9d9] text-sm bg-[#d9d9d9]/70 dark:bg-gray-600/70 backdrop-blur-[12px] p-1 rounded-xl">
@@ -114,7 +114,7 @@ export const ChatScroll: React.FC<Props> = ({
         </div>
       );
     },
-    [isNew, handleReply, handleEditPanel, handleDelete]
+    [isNew, handleReply, handleEditPanel, handleDelete],
   );
 
   const handleStartReached = useCallback(async () => {
@@ -172,13 +172,13 @@ export const ChatScroll: React.FC<Props> = ({
           </>
         ),
         EmptyPlaceholder: () =>
-          !isLoadingMessages && messagersData.length === 0 ? (
+          !isLoadingMessages && messagersData.length === 0 ?
             <p className="flex flex-col text-center justify-center h-full flex-1 text-gray-700 dark:text-[#d9d9d9]">
               <span className="w-fit bg-[#e5e5e5]/50 dark:bg-[#141414]/80 backdrop-blur-3xl rounded-full p-1 mx-auto">
                 No messages
               </span>
             </p>
-          ) : null,
+          : null,
       }}
       className="scrollbarMessage overflow-x-hidden"
     />

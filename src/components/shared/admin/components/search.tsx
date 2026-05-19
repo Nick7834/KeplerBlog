@@ -12,7 +12,7 @@ export const Search: React.FC<Props> = ({ className }) => {
   const { search, setSearch } = useSearchAdmin();
   const [input, setInput] = useState(search);
   const [focus, setFocus] = useState(false);
-  const ref = useRef<HTMLLabelElement>(null);
+  const ref = useRef<HTMLLabelElement | null>(null);
 
   useEffect(() => {
     const handClickOutside = (e: MouseEvent) => {

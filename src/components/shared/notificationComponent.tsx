@@ -27,8 +27,8 @@ interface Props {
 
 export const NotificationComponent: React.FC<Props> = ({ session }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const refNotification = useRef<HTMLDivElement>(null);
-  const buttonRef = useRef<HTMLButtonElement>(null);
+  const refNotification = useRef<HTMLDivElement | null>(null);
+  const buttonRef = useRef<HTMLButtonElement | null>(null);
 
   UseCloseModal(buttonRef, refNotification, () => setIsOpen(false));
 

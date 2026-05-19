@@ -2,7 +2,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useRef, useState } from "react";
-
 import { IoMdSettings } from "react-icons/io";
 import { MdDarkMode, MdPeopleAlt } from "react-icons/md";
 import { ImExit } from "react-icons/im";
@@ -13,7 +12,7 @@ import UseCloseModal from "../hooks/useCloseModal";
 import { UseDarkMode } from "../hooks/useDarkMode";
 import { signOut, useSession } from "next-auth/react";
 import { FaRegUser } from "react-icons/fa";
-import { User } from "@prisma/client";
+import { User } from "@prisma/client"
 import { Button } from ".";
 import { IoClose } from "react-icons/io5";
 import { MdAdminPanelSettings } from "react-icons/md";
@@ -34,8 +33,8 @@ interface MenuItem {
 export const Profile: React.FC<Props> = ({ className, user }) => {
   const { data: session } = useSession();
   const [open, setOpen] = useState(false);
-  const refProfile = useRef<HTMLDivElement>(null);
-  const buttonRef = useRef<HTMLButtonElement>(null);
+  const refProfile = useRef<HTMLDivElement | null>(null);
+  const buttonRef = useRef<HTMLButtonElement | null>(null);
 
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 

@@ -5,6 +5,7 @@ interface Settings {
   textColor?: string;
   fontSize?: string;
   radiusSize?: string;
+  blur?: boolean;
 }
 
 export const settingsUpdate = async (data: Settings) => {

@@ -28,6 +28,7 @@ export const Header: React.FC<Props> = ({ className }) => {
     setTextColor,
     setFontSize,
     setRadiusSize,
+    setBlur,
   } = useSettingsMessage();
 
   useEffect(() => {
@@ -44,6 +45,7 @@ export const Header: React.FC<Props> = ({ className }) => {
           setBackgroundColorMessage(data.settings?.backgroundColor);
           setTextColor(data.settings?.textColor);
           setFontSize(data.settings?.fontSize);
+          setBlur(data.settings?.isblur)
         } catch (error) {
           console.error("Request failed:", error);
         }
