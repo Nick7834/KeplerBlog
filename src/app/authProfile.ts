@@ -36,13 +36,11 @@ export async function updateUserProfile(body: Prisma.UserUpdateInput) {
   }
 }
 
-export async function registerUser(
-  body: {
-    email: string;
-    password: string;
-    username: string;
-  },
-) {
+export async function registerUser(body: {
+  email: string;
+  password: string;
+  username: string;
+}) {
   if (process.env.REG === "false") {
     throw new Error("User not created");
   }
@@ -52,7 +50,6 @@ export async function registerUser(
   // }
 
   try {
-
     const user = await prisma.user.findFirst({ where: { email: body.email } });
 
     const validateEmail = await emailValid(body.email);

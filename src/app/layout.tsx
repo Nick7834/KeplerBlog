@@ -27,10 +27,9 @@ export const viewport: Viewport = {
 
 export default async function RootLayout({
   children,
-}: // modal
+}:
 Readonly<{
   children: React.ReactNode;
-  // modal: React.ReactNode;
 }>) {
   return (
     <html
@@ -53,7 +52,6 @@ Readonly<{
             <div></div>
             <div className="pt-[clamp(4.313rem,4.063rem+1.25vw,5rem)]">
               {children}
-              {/* <Suspense fallback={null}>{modal}</Suspense> */}
               <Toaster position="top-center" />
               <Toast
                 position="top-right"
