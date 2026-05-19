@@ -1,6 +1,6 @@
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
+const nextConfig = {
+  /* config options here */
+  reactCompiler: true,
   images: {
     remotePatterns: [
       {
@@ -10,7 +10,7 @@ const nextConfig: NextConfig = {
       {
         protocol: "http",
         hostname: "**",
-    },
+      },
     ],
   },
 };

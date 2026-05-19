@@ -1,3 +1,4 @@
+'use client';
 import { ImessageData } from "@/@types/message";
 import { pusherClient } from "@/lib/pusherClient";
 import { Message } from "@prisma/client";
@@ -15,7 +16,7 @@ export const useChatPusher = (chatId?: string) => {
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    if (!chatId) return;
+    if (!chatId || !pusherClient) return;
 
     const channel = pusherClient.subscribe(`chat-${chatId}`);
 
