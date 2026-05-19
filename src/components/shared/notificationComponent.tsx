@@ -43,7 +43,7 @@ export const NotificationComponent: React.FC<Props> = ({ session }) => {
     isLoading,
     hasMore,
     loadMoreNotifications,
-  } = useNotifications(session, width);
+  } = useNotifications(session, width, isOpen);
 
   const formattedCount = UseFormatNumber(notificationCount);
 

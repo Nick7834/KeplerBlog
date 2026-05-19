@@ -15,8 +15,12 @@ export interface NotificationDataType extends Notification {
   senderId: string | null;
 }
 
-export const useNotifications = (session: Session | null, width: number) => {
-  const [hasMore, setHasMore] = useState(true);
+export const useNotifications = (
+  session: Session | null,
+  width: number,
+  isOpen: boolean,
+) => {
+  const [hasMore, setHasMore] = useState(false);
   const [page, setPage] = useState(1);
   const [notificationsData, setNotifications] = useState<
     NotificationDataType[]
@@ -31,8 +35,9 @@ export const useNotifications = (session: Session | null, width: number) => {
   const fetchNotifications = useCallback(async () => {
     try {
       const response = await axios.get(
-        `/api/user/notification?page=${page}&limit=${width < 1100 ? 20 : 10}`
+        `/api/user/notification?page=${page}&limit=${width < 1100 ? 20 : 10}`,
       );
+
       const data = response.data.notifications;
 
       if (!data || data.length === 0) {
@@ -40,12 +45,16 @@ export const useNotifications = (session: Session | null, width: number) => {
       } else {
         setNotifications((prevPosts) => {
           const newPosts = data.filter(
-            (post: { id: string }) => !prevPosts.some((p) => p.id === post.id)
+            (post: { id: string }) => !prevPosts.some((p) => p.id === post.id),
           );
           return [...prevPosts, ...newPosts];
         });
 
-        if (data.length < 10) setHasMore(false);
+        if (data.length < (width < 1100 ? 20 : 10)) {
+          setHasMore(false);
+        } else {
+          setHasMore(true);
+        }
       }
     } catch (error) {
       console.error("Request failed:", error);
@@ -58,12 +67,11 @@ export const useNotifications = (session: Session | null, width: number) => {
     if (page === 1) return;
 
     fetchNotifications();
-  }, [fetchNotifications, page]);
+  }, [page]);
 
   const loadMoreNotifications = () => {
-    setPage((prev) => prev + 1);
+    if (hasMore && isOpen) setPage((prev) => prev + 1);
   };
-
   // count
 
   useEffect(() => {
@@ -108,7 +116,7 @@ export const useNotifications = (session: Session | null, width: number) => {
       (newNotification: NotificationDataType) => {
         setNotifications((prevNotifications) => {
           const exists = prevNotifications.some(
-            (n) => n.id === newNotification.id
+            (n) => n.id === newNotification.id,
           );
           if (exists) return prevNotifications;
           return [newNotification, ...prevNotifications];
@@ -116,7 +124,7 @@ export const useNotifications = (session: Session | null, width: number) => {
 
         setNotificationCount((prevCount) => prevCount + 1);
         setNotificationFlag(true);
-      }
+      },
     );
 
     return () => {
@@ -145,7 +153,7 @@ export const useNotifications = (session: Session | null, width: number) => {
 
     setNotifications((prevNotifications) => {
       return prevNotifications.map((notif) =>
-        notif.id === id ? { ...notif, isRead: true } : notif
+        notif.id === id ? { ...notif, isRead: true } : notif,
       );
     });
 
@@ -163,7 +171,7 @@ export const useNotifications = (session: Session | null, width: number) => {
 
     setNotifications((prevNotifications) => {
       const updatedNotifications = prevNotifications.filter(
-        (notif) => notif.id !== id
+        (notif) => notif.id !== id,
       );
 
       if (updatedNotifications.length <= 5 && hasMore) {

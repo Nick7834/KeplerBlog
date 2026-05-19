@@ -21,13 +21,13 @@ export async function POST() {
 
         const existingNotification = await prisma.notification.findFirst({
           where: {
-            userId: userId,
+            senderId: userId,
             postId: newPostId,
           },
         });
 
         if (existingNotification) {
-          await job.remove();
+          await notificationQueue.remove(job.id as string);
           continue;
         }
 
@@ -46,37 +46,43 @@ export async function POST() {
         const chunks = chunk(followingIds, CHUNK_SIZE);
 
         for (const batchIds of chunks) {
-          await prisma.notification.createMany({
-            data: batchIds.map((id) => ({
-              userId: id,
-              senderId: userId,
-              type: "post",
-              postId: newPostId,
-              message,
-              avatar: avatarUser,
-              postImage,
+          const createdNotifications = await Promise.all(
+            batchIds.map((id) =>
+              prisma.notification.create({
+                data: {
+                  userId: id,
+                  senderId: userId,
+                  type: "post",
+                  postId: newPostId,
+                  message,
+                  avatar: avatarUser,
+                  postImage,
+                },
+                select: { id: true, userId: true },
+              }),
+            ),
+          );
+
+          await pusher.triggerBatch(
+            createdNotifications.map((notification) => ({
+              channel: `user-${notification.userId}`,
+              name: "new_notification",
+              data: {
+                id: notification.id,
+                message,
+                postId: newPostId,
+                avatar: avatarUser,
+                postImage,
+                type: "post",
+                sender: { id: userId, userName, profileImage: avatarUser },
+                createdAt: new Date(),
+                isRead: false,
+              },
             })),
-          });
-
-          const pusherEvents = batchIds.map((id) => ({
-            channel: `user-${id}`,
-            name: "new_notification",
-            data: {
-              message,
-              postId: newPostId,
-              avatar: avatarUser,
-              postImage,
-              type: "post",
-              sender: { id: userId, userName, profileImage: avatarUser },
-              createdAt: new Date(),
-              isRead: false,
-            },
-          }));
-
-          await pusher.triggerBatch(pusherEvents);
+          );
         }
 
-        await job.remove();
+        await notificationQueue.remove(job.id as string);
       } catch (error) {
         console.error(`Error processing job ${job.id}:`, error);
       }
