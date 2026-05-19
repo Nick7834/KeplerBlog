@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 
 export async function GET(
   request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const userIds = await getUserSession();
   const { id: id } = await params;
@@ -12,7 +12,7 @@ export async function GET(
   if (!id) {
     return NextResponse.json(
       { message: "User ID is required" },
-      { status: 400 }
+      { status: 400 },
     );
   }
 

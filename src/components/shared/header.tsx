@@ -45,7 +45,7 @@ export const Header: React.FC<Props> = ({ className }) => {
           setBackgroundColorMessage(data.settings?.backgroundColor);
           setTextColor(data.settings?.textColor);
           setFontSize(data.settings?.fontSize);
-          setBlur(data.settings?.isblur)
+          setBlur(data.settings?.isblur);
         } catch (error) {
           console.error("Request failed:", error);
         }
@@ -59,7 +59,7 @@ export const Header: React.FC<Props> = ({ className }) => {
     <header
       className={cn(
         "flex items-center justify-between gap-[20px] py-[clamp(0.625rem,0.511rem+0.57vw,0.938rem)] px-[clamp(0.938rem,-1.432rem+5.83vw,3.125rem)] border-b border-solid border-[#D3D3D3] dark:border-white/20",
-        className
+        className,
       )}
     >
       <div className="absolute top-0 left-0 bg-[#EAEAEA]/75 dark:bg-[#171717]/80 backdrop-blur-3xl max-[1100px]:backdrop-blur-[15px] pt-[env(safe-area-inset-top)] w-full h-full z-[-1]"></div>

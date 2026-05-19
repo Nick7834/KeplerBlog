@@ -57,11 +57,10 @@ export const NotificationComponent: React.FC<Props> = ({ session }) => {
         onClick={() => (handleClick(), setIsOpen(!isOpen))}
         className="w-fit bg-0 hover:bg-0 relative p-0 [&_svg]:size-[25px]"
       >
-        {notificationCount > 0 ? (
+        {notificationCount > 0 ?
           <IoMdNotifications className="text-[#333333] dark:text-[#d9d9d9]" />
-        ) : (
-          <IoMdNotificationsOutline className="text-[#333333] dark:text-[#d9d9d9]" />
-        )}
+        : <IoMdNotificationsOutline className="text-[#333333] dark:text-[#d9d9d9]" />
+        }
         {formattedCount > "0" && (
           <span className="p-[1px] absolute top-[-5px] right-[-5px] flex items-center justify-center min-w-6 h-6 text-xs text-[#d9d9d9] dark:text-[#d9d9d9] bg-[#7391d5] dark:bg-[#7391d5] rounded-full">
             {formattedCount}
@@ -73,7 +72,7 @@ export const NotificationComponent: React.FC<Props> = ({ session }) => {
         ref={refNotification}
         className={cn(
           "invisible opacity-0 scale-[.9] transition-all ease-out duration-[.3s] z-[2000] fixed top-[65px] right-0 p-0 min-w-[500px] max-w-[500px] w-full mt-3 mx-5 backdrop-blur-3xl bg-[#E0E0E0]/80 dark:bg-[#2a2a2a]/80 rounded-[10px] border-[1px] border-[#D3D3D3] dark:border-white/20 overflow-hidden max-[1100px]:min-w-full max-[1100px]:m-0 max-[1100px]:max-w-full max-[1100px]:rounded-none max-[1100px]:top-0 max-[1100px]:right-0 max-[1100px]:h-full max-[1100px]:border-0",
-          isOpen ? "visible opacity-100 scale-100" : ""
+          isOpen ? "visible opacity-100 scale-100" : "",
         )}
       >
         <h2 className="text-[#333333] dark:text-[#d9d9d9] text-lg font-bold p-3 botder border-b-[1px] border-[#D3D3D3] dark:border-white/20">
@@ -92,7 +91,7 @@ export const NotificationComponent: React.FC<Props> = ({ session }) => {
               <div
                 className={cn(
                   "absolute top-0 left-0 w-full flex justify-center items-center h-full",
-                  notificationsData.length >= 10 ? "static p-2" : ""
+                  notificationsData.length >= 10 ? "static p-2" : "",
                 )}
               >
                 <Oval
@@ -109,24 +108,23 @@ export const NotificationComponent: React.FC<Props> = ({ session }) => {
             scrollableTarget="scrollable-container"
             className={cn(
               "flex flex-col gap-1 h-full",
-              width < 1100 ? "pb-[10px]" : ""
+              width < 1100 ? "pb-[10px]" : "",
             )}
           >
-            {!isLoading && notificationsData.length === 0 ? (
+            {!isLoading && notificationsData.length === 0 ?
               <div className="absolute top-0 left-0 w-full flex flex-col items-center justify-center gap-2 h-full">
                 <BiSolidNotificationOff size={70} />
                 <p className="text-[#333333] dark:text-[#d9d9d9] text-lg font-bold">
                   No notifications
                 </p>
               </div>
-            ) : (
-              notificationsData.map(
+            : notificationsData.map(
                 (notification: NotificationDataType, index: number) => (
                   <Link
                     onClick={() => (
                       handleClickNotification(
                         notification.id,
-                        notification.isRead
+                        notification.isRead,
                       ),
                       setIsOpen(!isOpen)
                     )}
@@ -142,36 +140,37 @@ export const NotificationComponent: React.FC<Props> = ({ session }) => {
                         )}
 
                         <div className="flex items-center gap-3">
-                          {notification.sender &&
-                          notification.sender.profileImage ? (
+                          {(
+                            notification.sender &&
+                            notification.sender.profileImage
+                          ) ?
                             <img
                               src={notification.sender.profileImage}
                               alt="avatar"
                               className="min-w-[50px] max-w-[50px] w-full min-h-[50px] max-h-[50px] h-full object-cover rounded-full"
                             />
-                          ) : (
-                            <span className="flex flex-col items-center justify-center rounded-full min-w-[50px] max-w-[50px] w-full min-h-[50px] max-h-[50px] h-full bg-[#c7c7c7]">
+                          : <span className="flex flex-col items-center justify-center rounded-full min-w-[50px] max-w-[50px] w-full min-h-[50px] max-h-[50px] h-full bg-[#c7c7c7]">
                               <FaRegUser className="text-[#333333]" />
                             </span>
-                          )}
+                          }
                           <div className="flex flex-col gap-1">
                             <p className="text-[#333333] dark:text-[#d9d9d9] text-sm font-medium">
-                              {width >= 720
-                                ? notification.message.length > 150
-                                  ? `${notification.message
-                                      .substring(0, 150)
-                                      .trim()}...`
-                                  : notification.message
-                                : notification.message.length > 75
-                                ? `${notification.message
-                                    .substring(0, 110)
+                              {width >= 720 ?
+                                notification.message.length > 150 ?
+                                  `${notification.message
+                                    .substring(0, 150)
                                     .trim()}...`
-                                : notification.message}
+                                : notification.message
+                              : notification.message.length > 75 ?
+                                `${notification.message
+                                  .substring(0, 110)
+                                  .trim()}...`
+                              : notification.message}
                             </p>
                             <span className="text-[#6a6a6a] dark:text-[#cecece] text-xs">
                               {notification.createdAt &&
                                 getShortTimeAgo(
-                                  new Date(notification.createdAt)
+                                  new Date(notification.createdAt),
                                 )}
                             </span>
                           </div>
@@ -198,9 +197,9 @@ export const NotificationComponent: React.FC<Props> = ({ session }) => {
                       <MdVisibilityOff />
                     </Button>
                   </Link>
-                )
+                ),
               )
-            )}
+            }
           </InfiniteScroll>
         </div>
 
