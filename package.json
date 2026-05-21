@@ -2,6 +2,13 @@
   "name": "kepler-blog",
   "version": "0.1.0",
   "private": true,
+  
+  "browserslist": [
+    "ios >= 15",
+    "safari >= 15",
+    "chrome >= 90",
+    "> 0.5%"
+  ],
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "prisma generate && next build",
