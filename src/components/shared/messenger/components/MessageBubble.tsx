@@ -114,7 +114,7 @@ const MessageBubbleComponent: React.FC<Props> = ({
       <ContextMenu>
         <ContextMenuTrigger
           onMouseDown={(e) => e.preventDefault()}
-          className={`flex w-full ${
+          className={`"will-change-transform contain-layout backface-hidden flex w-full ${
             message.senderId === session?.user.id
               ? "justify-end"
               : "justify-start"
