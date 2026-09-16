@@ -149,7 +149,7 @@ export const ChatScroll: React.FC<Props> = ({
       components={{
         Header: () => (
           <div className="flex flex-col">
-            <div className="max-[650px]:h-[67px] max-[650px]:shrink-0" />
+            <div className="h-[67px] shrink-0" />
             {isFetchingNextPageMessages && (
               <div className="flex flex-col justify-center items-center gap-2 pt-2">
                 <Oval
@@ -168,7 +168,7 @@ export const ChatScroll: React.FC<Props> = ({
         Footer: () => (
           <>
             <div ref={bottomAnchorRef} />
-            <div className="min-h-[10px] max-[650px]:min-h-[80px] max-[650px]:shrink-0" />
+            <div className="min-h-[80px] shrink-0" />
           </>
         ),
         EmptyPlaceholder: () =>

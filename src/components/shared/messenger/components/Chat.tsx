@@ -93,8 +93,7 @@ export const Chat: React.FC<Props> = ({
 
   const { backgroundChat } = useUserAvatar();
 
-  const { blur } =
-      useSettingsMessage();
+  const { blur } = useSettingsMessage();
 
   const formRef = useRef<HTMLFormElement | null>(null);
   const [formHeight, setFormHeight] = useState(52);
@@ -287,6 +286,21 @@ export const Chat: React.FC<Props> = ({
         className,
       )}
     >
+      <div className="absolute inset-x-0 top-0 h-16 z-10 bg-gradient-to-b from-[#ebebeb]/50 dark:from-[#2b2b2b]/80 to-transparent pointer-events-none" />
+      <div className="absolute inset-x-0 bottom-0 h-16 z-10 bg-gradient-to-t from-[#ebebeb]/50 dark:from-[#2b2b2b]/80 to-transparent pointer-events-none" />
+
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-[-1]">
+        <div
+          style={{
+            backgroundImage: backgroundChat ? `url(${backgroundChat})` : "",
+          }}
+          className={cn(
+            "absolute -inset-4 bg-no-repeat bg-cover bg-center",
+            blur && "blur-[12px]",
+          )}
+        />
+      </div>
+
       <ChatHeader
         isLoadingCurrentChat={isLoadingCurrentChat}
         currentChat={currentChat}
@@ -297,7 +311,7 @@ export const Chat: React.FC<Props> = ({
         mutedBy={currentChat?.mutedBy}
       />
 
-      <div className="flex-1 bg-cover bg-center bg-no-repeat overflow-hidden pt-[67px] pb-[61px] max-[650px]:pb-1 max-[650px]:pt-1">
+      <div className="flex-1 bg-cover bg-center bg-no-repeat overflow-hidden">
         {isLoadingMessages ?
           <span className="flex items-center justify-center h-full max-[650px]:pt-[63px]">
             <Oval
@@ -327,13 +341,6 @@ export const Chat: React.FC<Props> = ({
             virtuosoRef={virtuosoRef}
           />
         }
-
-        <div
-          style={{
-            backgroundImage: `${backgroundChat ? `url(${backgroundChat})` : ""}`,
-          }}
-          className={cn("absolute top-0 left-0 w-full h-full bg-no-repeat bg-cover bg-center z-[-1]", blur && "blur-[10px]")}
-        ></div>
       </div>
 
       <div className="absolute bottom-0 z-10 w-full">
@@ -498,7 +505,7 @@ export const Chat: React.FC<Props> = ({
               messageValue,
             )
           }
-          className="shadow-[0_-4px_10px_rgba(0,0,0,0.1)] border border-solid border-[#b0b0b0]/20 dark:border-neutral-300/20"
+          className="shadow-[0_4px_10px_rgba(0,0,0,0.3)] border border-solid border-[#b0b0b0]/20 dark:border-neutral-300/20"
         />
       </div>
     </div>

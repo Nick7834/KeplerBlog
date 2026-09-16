@@ -21,7 +21,7 @@ interface Props {
   handleMessagePost: (
     chatId: string,
     senderId: string,
-    messageValue: string
+    messageValue: string,
   ) => void;
   loaderButtonSend: boolean;
   setLoaderButtonSend: React.Dispatch<React.SetStateAction<boolean>>;
@@ -128,8 +128,8 @@ export const InputMessage: React.FC<Props> = ({
   return (
     <form
       className={cn(
-        "rounded-[20px] min-h-[52px] z-20 flex items-center justify-center gap-2 max-[750px]:gap-1 px-3 backdrop-blur-[15px] bg-[#e5e5e5]/70 dark:bg-[#141414]/60 mt-2 m-[10px]",
-        className
+        "rounded-full min-h-[52px] z-20 flex items-center justify-center gap-2 max-[750px]:gap-1 px-3 backdrop-blur-[15px] bg-[#e5e5e5]/70 dark:bg-[#141414]/60 mt-2 m-[10px]",
+        className,
       )}
       onSubmit={(e) => e.preventDefault()}
       ref={formRef}
@@ -142,7 +142,7 @@ export const InputMessage: React.FC<Props> = ({
             "px-0 py-0 placeholder:relative placeholder:top-[1px] placeholder:text-[#333333]/80 dark:placeholder:text-[#e5e5e5]/80 leading-[20px] overflow-hidden rounded-0 p-0 h-[20px] max-[750px]:min-h-[24px] border-0 resize-none max-h-[300px] text-[16px] border-solid bg-transparent dark:bg-transparent",
             textareaRef.current &&
               textareaRef.current?.scrollHeight >= 300 &&
-              "scrollbar overflow-auto"
+              "scrollbar overflow-auto",
           )}
           value={messageValue}
           onChange={(e) => setMessageValue(e.target.value)}
@@ -160,17 +160,16 @@ export const InputMessage: React.FC<Props> = ({
             multiple
             onChange={handleFileChange}
           />
-          {edit ? (
+          {edit ?
             <RiImageEditLine
               size={20}
               className="text-[#333333] dark:text-[#d9d9d9]"
             />
-          ) : (
-            <FiPaperclip
+          : <FiPaperclip
               size={20}
               className="text-[#333333] dark:text-[#d9d9d9]"
             />
-          )}
+          }
         </label>
       )}
 
@@ -180,7 +179,7 @@ export const InputMessage: React.FC<Props> = ({
           onClick={() => setShowPicker(!showPicker)}
           className={cn(
             "bg-0 p-0 hover:bg-0 [&_svg]:size-[25px] text-[#333333] dark:text-[#d9d9d9]",
-            showPicker ? "text-[#7391d5] dark:text-[#7391d5]" : ""
+            showPicker ? "text-[#7391d5] dark:text-[#7391d5]" : "",
           )}
         >
           <HiOutlineEmojiHappy />
@@ -204,7 +203,9 @@ export const InputMessage: React.FC<Props> = ({
           hover:bg-[#7391d5]/85 dark:hover:bg-[#7391d5]/85 max-[750px]:hover:bg-transparent max-[750px]:dark:hover:bg-transparent
          [&_svg]:size-[20px] max-[750px]:[&_svg]:size-[25px] max-[750px]:text-[#7391d5] max-[750px]:dark:text-[#7391d5]"
       >
-        {edit ? <FaCheck /> : <BiSolidSend />}
+        {edit ?
+          <FaCheck />
+        : <BiSolidSend />}
       </Button>
     </form>
   );
