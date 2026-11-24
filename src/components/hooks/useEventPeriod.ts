@@ -16,7 +16,7 @@ export const useIsYearlyEventActive = () => {
       endYear = currentYear + 1;
     }
 
-    const startDate = new Date(startYear, 11, 24); 
+    const startDate = new Date(startYear, 11, 28); 
     const endDate = new Date(endYear, 0, 12);
 
     return isWithinInterval(now, {
